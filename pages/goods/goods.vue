@@ -1,6 +1,6 @@
 
 <template>
-	 <view class=" tab" >
+	 <view class=" tab">
 		 <view class="pic" >
 		  <image src="../../static/logo.png" mode="" style=""></image>		
 		 </view>
@@ -9,53 +9,47 @@
 	 			<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" @iconClick="iconClick" suffixIcon="camera"  :styles="styles"></uni-easyinput>
 	 		</uni-section>
 		 </view>
-		 
-		 
    	</view>
-	<view class="content">
+	<!-- <view class="content">
 		<view class="item" v-for="(item,index) in goodslist" @click="tap_item(item,index)" >
-			<image :src=item.icon mode="" style="width: 60rpx;height: 60rpx;margin-top: 30rpx;margin-bottom: 10rpx;"></image>
+			<image :src="item.icon" mode="" style="width: 60rpx;height: 60rpx;margin-top: 30rpx;margin-bottom: 10rpx;"></image>
 			<view class="">
 					{{item.name}}
 			</view>
 		</view>
-	</view>
+	</view> -->
 
 
 <view class="goods" style="display: flex;background-color:rgba(255, 255, 255, 1) ;">
 	<view style="width: 113rpx;height: 100%;background-color: #F1EDE9; ">
-	<view class="select" style="" v-for="(item,index) in selectlist" >
-		{{item.name}}
-	</view>	
+		<view class="select" v-for="(item,index) in selectlist" :style="index === selectIndex ? 'background-color: #FFFFFF;' : ''" @click="selectIndex = index">
+			{{item.name}}
+		</view>
 	</view>
 	<view style="display: block;">
 	 <view class="select1">
-	    <view class="p1">
+	    <view :style="upIndex === 0 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(0)">
 		综合
 	    </view>
-	    <view class="p1">
+	    <view :style="upIndex === 1 ? 'color: #75694A':''" @click="changeUpIndex(1)">
 		最新
 	    </view>
-		<view class="p2">
+		<view class="p2" :style="upIndex === 2 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(2)">
 		价格
-		  <view  style="margin-left: 5rpx;margin-top: -10rpx;">
-			<view  style="width: 10rpx;height: 15rpx;">
-			<uni-icons type="up" size="10" style="" color="rgba(126, 117, 92, 1)"></uni-icons>	
-			</view>
-		   <view  style="width: 10rpx;height: 15rpx;">
-		   <uni-icons type="down" size="10" color="rgba(126, 117, 92, 1)" ></uni-icons>	
-		   </view>
+		  <view  class="arrow">
+			<uni-icons type="up" size="10" :style="price === 'up' ? ' font-weight: 800;' : 'font-weight:100'" :color="price === 'up' ? '#75694A': '#7E755C'"></uni-icons>	
+			<uni-icons type="down" :style="price === 'down' ? ' font-weight: 800;' : 'font-weight:100'" size="10" :color="price === 'down' ? '#75694A': '#7E755C'" ></uni-icons>
 		</view>
 		
 		</view>
-		<view class="p2">
+		<view class="p2" :style="upIndex === 3 ? 'color: #75694A':''" @click="changeUpIndex(3)">
 		销量
 		<view  style="margin-left: 5rpx;margin-top: -10rpx;">
 			<view  style="width: 10rpx;height: 15rpx;">
-			<uni-icons type="up" size="10" style="" color="rgba(126, 117, 92, 1)"></uni-icons>	
+			<uni-icons type="up" size="10" style="" :color="sale === 'up' ? '#75694A': '#7E755C'"></uni-icons>
 			</view>
 		   <view  style="width: 10rpx;height: 15rpx;">
-		   <uni-icons type="down" size="10" color="rgba(126, 117, 92, 1)"></uni-icons>	
+		   <uni-icons type="down" size="10" :color="sale === 'down' ? '#75694A': '#7E755C'"></uni-icons>	
 		   </view>
 		</view>
 		</view>
@@ -93,32 +87,34 @@ import TnSubsection from '@/uni_modules/tuniaoui-vue3/components/subsection/src/
 import TnSubsectionItem from '@/uni_modules/tuniaoui-vue3/components/subsection/src/subsection-item.vue'
 import { reactive, toRefs } from 'vue'
 import TnScrollList from '@/uni_modules/tuniaoui-vue3/components/scroll-list/src/scroll-list.vue'
-const subsectionValue = ref<number>(0)
-	 let value = ref('')
-	 let password = ref('')  
-	 let button=[0]
-	 let temp=[0]
-	 let i=0
-	 let styles = ref({  
-	   color: 'rgba(182, 176, 167, 1)',  
-	   borderColor: 'rgba(182, 176, 167, 1)'  
-	 })
+const subsectionValue = ref(0)
+let value = ref('')
+let password = ref('')  
+let button=[0]
+let temp=[0]
+let i=0
+let styles = ref({
+	color: 'rgba(182, 176, 167, 1)',  
+	borderColor: 'rgba(182, 176, 167, 1)'  
+})
 function iconClick(type){
-			
 	if(type=='suffix')	
 	{
 		console.log(type)
-	}  }
-	 const state = reactive({
-	        show1: false,
-	        width: '80%',
-	        height: '100%',
-	      })						
-	 const handleClick1 = () => {
+	}
+}
+const state = reactive({
+	show1: false,
+	width: '80%',
+	height: '100%',
+})					
+const handleClick1 = () => {
 	state.show1 = true
 }
-		
-	 let selectlist=[
+
+// 选中的list的index
+const selectIndex = ref(0)
+let selectlist=[
 	{
 		name: '芒果干',
 			
@@ -130,52 +126,57 @@ function iconClick(type){
 	{
 		name: '地瓜干',
 	},
-]				
-							
-let goodslist=[
+]
+
+// 记录价格升序降序
+const price = ref(undefined)
+// 记录销量升序降序
+const sale = ref(undefined)
+// 选中头部的index
+const upIndex = ref(0)
+
+const changeUpIndex = (index) => {
+	console.log('index', index)
+	upIndex.value = index
+	if (index === 2) {
+		if (price.value === 'down') {
+			price.value = 'up'
+		} else {
+			price.value = 'down'
+		}
+	}
+	if (index === 3) {
+		if (sale.value === 'down') {
+			sale.value = 'up'
+		} else {
+			sale.value = 'down'
+		}
+	}
+	// 更新数据
+}
+
+let infolist = [
 	{
 		name: '芒果干',
 		icon: '../../static/logo.png',
-			
-	},{
-		name: '苹果干',
-		icon: '../../static/logo.png'
-	},{
-		name: '地瓜干',
-		icon: '../../static/logo.png'
+		detail:'休闲芒果干大礼包，50g一包超值',
+		price:'189',
+		num:'200'
 	},
 	{
-		name: '猕猴桃干',
-		icon: '../../static/logo.png'
+		name: '芒果干',
+		icon: '../../static/logo.png',
+		detail:'休闲芒果干大礼包，50g一包超值',
+		price:'189',
+		num:'200'
 	},
-	{
-		name: '各类水果',
-		icon: '../../static/logo.png'
-	},
-	 ]
-	
-let infolist=[{
-	name: '芒果干',
-	icon: '../../static/logo.png',
-	detail:'休闲芒果干大礼包，50g一包超值',
-	price:'189',
-	num:'200'
-},
-{
-	name: '芒果干',
-	icon: '../../static/logo.png',
-	detail:'休闲芒果干大礼包，50g一包超值',
-	price:'189',
-	num:'200'
-},
-	
 ]
 
 </script>
 
 <style lang="scss">
 page{
-		background-color: #F7F7F7;
+	background-color: #F7F7F7;
 }
 
 .tab{
@@ -217,32 +218,38 @@ page{
 	border-radius: 40rpx 40rpx  0 0;
 	position: relative;
 	z-index: 999;
-	padding-top: 30rpx;
 	.select{
 		height: 107rpx;
 		font-family: Inter, Inter;
 		font-weight: 400;
 		font-size: 25rpx;
 		color: #555555;
-		line-height: 35rpx;
-		text-align: center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		font-style: normal;
-		margin-top: 30rpx;
 	}
 	.select1{
 		width:620rpx ;
 		height:80rpx ;
-		margin-top: -10rpx;
 		font-family: Inter, Inter;
 		font-weight: normal;
 		font-size: 29rpx;
 		line-height: 40rpx;
-		color: #75694A;
+		color: #7E755C;
 		display: flex;
-		text-align: center;
+		align-items: center;
 		justify-content: space-around;
 		.p2{
 			display: flex;
+			align-items: center;
+			.arrow{
+				margin-left: 5rpx;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+			}
 		}
 	}
 	.block3{

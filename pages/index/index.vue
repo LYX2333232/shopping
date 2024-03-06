@@ -40,23 +40,38 @@
 		<view class="words_left">
 			{{words_left}}
 		</view>
-		<view  style="	width: 35%;text-align: right;border-bottom: 3rpx solid #eee7d7;">
+		<view  style="width: 280rpx;text-align: right;border-bottom: 3rpx solid #eee7d7;">
 			<view class="words_right1">{{words_right1}}</view>
 			<view class="words_right2" style="">{{words_right2}}</view>
 		</view>
 	</view>
 	<view class="area">
-		<view class="toarea"  v-for="(item,index) in areaList" @click="tap_item(index)">
-			<image :src="item.icon" mode="" style="position: absolute; z-index: -999;width: 170px;height: 75px;"></image>	
-			<view  class="name" >
-		  {{item.name}}
-			</view>
-	
-			<view  style="font-size: 22rpx;margin-left: 20rpx;">
-			查看全部
-			</view>
-			
-		</view>
+		<TnWaterFall  :data="areaList"  width="100%">
+			<template #left="{ item }">
+				<view class="toarea" @click="tap_item(index)">
+					<image :src="item.icon" mode="" style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>	
+					<view  class="name" >
+				  {{item.name}}
+					</view>
+					<view  style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
+					查看全部
+					</view>
+					
+				</view>
+			</template>
+			<template #right="{ item }">
+				<view class="toarea" @click="tap_item(index)">
+					<image :src="item.icon" mode="" style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>	
+					<view  class="name" >
+				  		{{item.name}}
+					</view>
+					<view  style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
+					查看全部
+					</view>
+					
+				</view>
+			</template>
+		</TnWaterFall>
 	</view>
 	 
 
@@ -68,63 +83,61 @@
 </template>
 
 <script   setup>
-	import TnSwiper from '@/uni_modules/tuniaoui-vue3/components/swiper/src/swiper.vue'
-	import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
-	import TnSearchBox from '@/uni_modules/tuniaoui-vue3/components/search-box/src/search-box.vue'
-	import {ref} from 'vue';
-	let words_left="特产鲜果 有机蔬菜"
-	let words_right1="sharing love"
-	let words_right2="健康 x 营养 x 有机"
-	const currentSwiperIndex = ref(0)
-	// 轮播图数据
-	const swiperData = [
-	  '../../static/logo.png',
-	 '../../static/logo.png',
-	 '../../static/logo.png',
-	]
-	let funList=[
-		{
-			name: '限时秒杀',
-			icon: '../../static/logo.png'
-			},{
-			name: '今日开团',
-			icon: '../../static/logo.png'
+import TnSwiper from '@/uni_modules/tuniaoui-vue3/components/swiper/src/swiper.vue'
+import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import TnSearchBox from '@/uni_modules/tuniaoui-vue3/components/search-box/src/search-box.vue'
+import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
+import {ref} from 'vue';
+let words_left="特产鲜果 有机蔬菜"
+let words_right1="sharing love"
+let words_right2="健康 x 营养 x 有机"
+const currentSwiperIndex = ref(0)
+// 轮播图数据
+const swiperData = [
+	'../../static/logo.png',
+	'../../static/logo.png',
+	'../../static/logo.png',
+]
+let funList=[
+	{
+		name: '限时秒杀',
+		icon: '../../static/logo.png'
 		},{
-			name: '领券中心',
-			icon: '../../static/logo.png'
-		},
-	]
-	let areaList=[
-		{
-			name: '生鲜食养',
-			icon: '../../static/logo.png'
-			},{
-			name: '有机专区',
-			icon: '../../static/logo.png'
+		name: '今日开团',
+		icon: '../../static/logo.png'
+	},{
+		name: '领券中心',
+		icon: '../../static/logo.png'
+	},
+]
+let areaList=[
+	{
+		name: '生鲜食养',
+		icon: '../../static/logo.png'
 		},{
-			name: '臻臻鲜果',
-			icon: '../../static/logo.png'
-		},
-		{
-			name: '美容养颜',
-			icon: '../../static/logo.png'
-		}
-	]
-    let value = ref('');  
-    let password = ref('');  
-  
-    let styles = ref({  
-      color: 'rgba(182, 176, 167, 1)',  
-      borderColor: 'rgba(182, 176, 167, 1)'  
-    })
-	function iconClick(type){
-		
-				if(type=="suffix")	
-					{
-						console.log(type)
-					}		
+		name: '有机专区',
+		icon: '../../static/logo.png'
+	},{
+		name: '臻臻鲜果',
+		icon: '../../static/logo.png'
+	},
+	{
+		name: '美容养颜',
+		icon: '../../static/logo.png'
 	}
-  
+]
+let value = ref('');
+let styles = ref({  
+	color: 'rgba(182, 176, 167, 1)',  
+	borderColor: 'rgba(182, 176, 167, 1)'  
+})
+function iconClick(type){
+	
+			if(type=="suffix")	
+				{
+					console.log(type)
+				}
+}
 </script>
 
 <style lang="scss">
@@ -146,130 +159,132 @@
 }
 .white_boxs{
 	height: 100vh;
-	 background-color: rgba(248, 248, 248, 1);
-		margin-top: -40rpx;
-		border-radius: 40rpx 40rpx  0 0;
-		position: relative;
-		z-index: 999;
-			
-		.tab{
-			height: 100rpx;
-			padding-top: 22rpx;
-			display: flex;
-			.pic{
-			width: 32px;
-			  height: 32px;
-			margin-right: 20rpx;
-			border-radius: 50rpx;
-				
-			}
-				
+	background-color: rgba(248, 248, 248, 1);
+	margin-top: -40rpx;
+	border-radius: 40rpx 40rpx  0 0;
+	position: relative;
+	z-index: 999;
 		
+	.tab{
+		height: 100rpx;
+		padding-top: 22rpx;
+		display: flex;
+		.pic{
+		width: 32px;
+			height: 32px;
+		margin-right: 20rpx;
+		border-radius: 50rpx;
 			
 		}
-		.top{
-			display: flex;
-			flex-direction: row;
-		}
-		.function{
-			margin-top: 15rpx;
-			display: flex;
-			text-align: center;
-			justify-content: space-between;
-		}
-		.tofunction{
-			  box-shadow: 0px 0px 6px 0px rgba(67, 57, 41, 0.15);
-			  background-color: rgba(255, 255, 255, 1);
-			  border-radius: 6px;
-			  width: 100px;
-			  height: 88px;
 			
-			  .img{
-				   width: 26px;
-				   height: 26px;
-				  text-align: center;
-				  margin: 0 auto;
-				  margin-top: 35rpx;
-				  margin-bottom: 25rpx;
-			  }
-		}
-			.show_words{
-				display: flex;
-				justify-content: space-between;
-				margin-top: 25rpx;
-				.words_left{
-			    width: 30%;
-				 font-size: 20px;
-				  color: rgba(223, 165, 42, 1);
-				font-family: Microsoft YaHei UI-Bold;
-				font-weight: 700;
-		        }
-				
-				.words_right1{
-					overflow-wrap: break-word;
-					color: rgba(255, 197, 48, 1);
-				font-family: Modern Antiqua-Regular;;
-				font-size: 20px;
-				  overflow-wrap: break-word;
-				font-weight: normal;
-				white-space: nowrap;
-				}
-				.words_right2{
-				overflow-wrap: break-word;
-				color: rgba(176, 176, 176, 1);
-				font-size: 12px;
-				font-family: Inter-Regular;
-				font-weight: normal;
-				white-space: nowrap;
-				line-height: 30px;
-				}
-			}
-			.area{
-				display: flex;
-				justify-content: space-between;
-				flex-wrap: wrap;
-			margin-top: 10rpx;
-				.toarea{
-				margin-top: 10rpx;
-				  width: 170px;
-				  height: 75px;
-				
-				  .name{
-					 font-size: 30rpx;
-					 color: white;
-					 margin-top: 30rpx;
-					 margin-bottom: 13rpx;
-					margin-left: 20rpx;
-					  
-				  }
-				}
-			}
-			.search{
-				display: flex;
-				width: 610rpx;
-				height: 72rpx;
-				margin-top: 20rpx;
-				
-				border-radius: 20rpx;
-				justify-content: space-between;
-				border:1.5px solid rgba(182, 176, 167, 1) ;
-				.pic1{
-					margin-left: 20rpx;
-					 width: 40rpx;
-					height: 40rpx;
-					 display:block; 
-					 -webkit-align-self:center;
-				}
-				.pic2{
-				background-color: #a9abff;
-				width: 80rpx;
-				height: 80rpx;
-				  margin-right: 20rpx;
-				  display:block;
-				  -webkit-align-self:center;
-				}
-			}
+	
 		
 	}
-
+	.top{
+		display: flex;
+		flex-direction: row;
+	}
+	.function{
+		margin-top: 15rpx;
+		display: flex;
+		text-align: center;
+		justify-content: space-between;
+	}
+	.tofunction{
+		box-shadow: 0px 0px 6px 0px rgba(67, 57, 41, 0.15);
+		background-color: rgba(255, 255, 255, 1);
+		border-radius: 6px;
+		width: 100px;
+		height: 88px;
+	
+		.img{
+			width: 26px;
+			height: 26px;
+			text-align: center;
+			margin: 0 auto;
+			margin-top: 35rpx;
+			margin-bottom: 25rpx;
+		}
+	}
+	.show_words{
+		display: flex;
+		justify-content: space-between;
+		margin-top: 25rpx;
+		.words_left{
+			width: 30%;
+			font-size: 20px;
+			color: rgba(223, 165, 42, 1);
+			font-family: Microsoft YaHei UI-Bold;
+			font-weight: 700;
+		}
+		
+		.words_right1{
+			overflow-wrap: break-word;
+			color: rgba(255, 197, 48, 1);
+			font-family: Modern Antiqua-Regular;;
+			font-size: 20px;
+			overflow-wrap: break-word;
+			font-weight: normal;
+			white-space: nowrap;
+		}
+		.words_right2{
+		overflow-wrap: break-word;
+		color: rgba(176, 176, 176, 1);
+		font-size: 12px;
+		font-family: Inter-Regular;
+		font-weight: normal;
+		white-space: nowrap;
+		line-height: 30px;
+		}
+	}
+	.area{
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		margin-top: 10rpx;
+		.toarea{
+			position: relative;
+			margin-top: 10rpx;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			width: 340rpx;
+			height: 150rpx;
+			color: white;
+			.name{
+				font-size: 30rpx;
+				margin-top: 30rpx;
+				margin-bottom: 13rpx;
+				margin-left: 20rpx;
+				
+			}
+		}
+	}
+	.search{
+		display: flex;
+		width: 610rpx;
+		height: 72rpx;
+		margin-top: 20rpx;
+		
+		border-radius: 20rpx;
+		justify-content: space-between;
+		border:1.5px solid rgba(182, 176, 167, 1) ;
+		.pic1{
+			margin-left: 20rpx;
+				width: 40rpx;
+			height: 40rpx;
+				display:block; 
+				-webkit-align-self:center;
+		}
+		.pic2{
+		background-color: #a9abff;
+		width: 80rpx;
+		height: 80rpx;
+			margin-right: 20rpx;
+			display:block;
+			-webkit-align-self:center;
+		}
+	}
+	
+}
 </style>
