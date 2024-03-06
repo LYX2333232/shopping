@@ -3,7 +3,7 @@
 		<image src="../../static/logo.png" mode="aspectFill" style="width: 100%;height: 575rpx;"></image>
 		
 	<view class="white_boxs">
-		 <view style=" width: 90%;margin: 0 auto;">
+		<view style=" width: 90%;margin: 0 auto;">
 				
 			
 	    <view style="display: flex;">
