@@ -31,26 +31,21 @@
 	    <view :style="upIndex === 0 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(0)">
 		综合
 	    </view>
-	    <view :style="upIndex === 1 ? 'color: #75694A':''" @click="changeUpIndex(1)">
+	    <view :style="upIndex === 1 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(1)">
 		最新
 	    </view>
 		<view class="p2" :style="upIndex === 2 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(2)">
-		价格
-		  <view  class="arrow">
-			<uni-icons type="up" size="10" :style="price === 'up' ? ' font-weight: 800;' : 'font-weight:100'" :color="price === 'up' ? '#75694A': '#7E755C'"></uni-icons>	
-			<uni-icons type="down" :style="price === 'down' ? ' font-weight: 800;' : 'font-weight:100'" size="10" :color="price === 'down' ? '#75694A': '#7E755C'" ></uni-icons>
-		</view>
-		
-		</view>
-		<view class="p2" :style="upIndex === 3 ? 'color: #75694A':''" @click="changeUpIndex(3)">
-		销量
-		<view  style="margin-left: 5rpx;margin-top: -10rpx;">
-			<view  style="width: 10rpx;height: 15rpx;">
-			<uni-icons type="up" size="10" style="" :color="sale === 'up' ? '#75694A': '#7E755C'"></uni-icons>
+			价格
+			<view class="arrow">
+					<uni-icons type="up" size="10" :style="price === 'up' ? ' font-weight: 800;' : 'font-weight:100'" :color="price === 'up' ? '#75694A': '#7E755C'"></uni-icons>	
+					<uni-icons type="down" :style="price === 'down' ? ' font-weight: 800;' : 'font-weight:100'" size="10" :color="price === 'down' ? '#75694A': '#7E755C'" ></uni-icons>
 			</view>
-		   <view  style="width: 10rpx;height: 15rpx;">
-		   <uni-icons type="down" size="10" :color="sale === 'down' ? '#75694A': '#7E755C'"></uni-icons>	
-		   </view>
+		</view>
+		<view class="p2" :style="upIndex === 3 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(3)">
+		销量
+		<view class="arrow">
+			<uni-icons type="up" size="10" :style="sale === 'up' ? ' font-weight: 800;' : 'font-weight:100'" :color="sale === 'up' ? '#75694A': '#7E755C'"></uni-icons>
+		   	<uni-icons type="down" size="10" :style="sale === 'down' ? ' font-weight: 800;' : 'font-weight:100'" :color="sale === 'down' ? '#75694A': '#7E755C'"></uni-icons>
 		</view>
 		</view>
      </view>
@@ -231,23 +226,23 @@ page{
 	}
 	.select1{
 		width:620rpx ;
-		height:80rpx ;
+		height:120rpx ;
 		font-family: Inter, Inter;
 		font-weight: normal;
-		font-size: 29rpx;
-		line-height: 40rpx;
 		color: #7E755C;
 		display: flex;
 		align-items: center;
 		justify-content: space-around;
 		.p2{
+			height: 100%;
 			display: flex;
 			align-items: center;
+			justify-content: center;
 			.arrow{
 				margin-left: 5rpx;
+				height:100%;
 				display: flex;
 				flex-direction: column;
-				align-items: center;
 				justify-content: center;
 			}
 		}
