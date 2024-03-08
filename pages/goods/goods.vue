@@ -10,66 +10,55 @@
 	 		</uni-section>
 		 </view>
    	</view>
-	<!-- <view class="content">
-		<view class="item" v-for="(item,index) in goodslist" @click="tap_item(item,index)" >
-			<image :src="item.icon" mode="" style="width: 60rpx;height: 60rpx;margin-top: 30rpx;margin-bottom: 10rpx;"></image>
-			<view class="">
-					{{item.name}}
-			</view>
-		</view>
-	</view> -->
 
 
 <view class="goods" style="display: flex;background-color:rgba(255, 255, 255, 1) ;">
 	<view style="width: 113rpx;height: 100%;background-color: #F1EDE9; ">
-		<view class="select" v-for="(item,index) in selectlist" :style="index === selectIndex ? 'background-color: #FFFFFF;' : ''" @click="selectIndex = index">
+		<view class="select" v-for="(item,index) in selectlist" :key="index" :style="index === selectIndex ? 'background-color: #FFFFFF;' : ''" @click="selectIndex = index">
 			{{item.name}}
 		</view>
 	</view>
 	<view style="display: block;">
-	 <view class="select1">
-	    <view :style="upIndex === 0 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(0)">
-		综合
-	    </view>
-	    <view :style="upIndex === 1 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(1)">
-		最新
-	    </view>
-		<view class="p2" :style="upIndex === 2 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(2)">
-			价格
+		<view class="select1">
+			<view :style="upIndex === 0 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(0)">
+			综合
+			</view>
+			<view :style="upIndex === 1 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(1)">
+			最新
+			</view>
+			<view class="p2" :style="upIndex === 2 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(2)">
+				价格
+				<view class="arrow">
+						<uni-icons type="up" size="10" :style="price === 'up' ? ' font-weight: 800;' : 'font-weight:100'" :color="price === 'up' ? '#75694A': '#7E755C'"></uni-icons>	
+						<uni-icons type="down" :style="price === 'down' ? ' font-weight: 800;' : 'font-weight:100'" size="10" :color="price === 'down' ? '#75694A': '#7E755C'" ></uni-icons>
+				</view>
+			</view>
+			<view class="p2" :style="upIndex === 3 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(3)">
+			销量
 			<view class="arrow">
-					<uni-icons type="up" size="10" :style="price === 'up' ? ' font-weight: 800;' : 'font-weight:100'" :color="price === 'up' ? '#75694A': '#7E755C'"></uni-icons>	
-					<uni-icons type="down" :style="price === 'down' ? ' font-weight: 800;' : 'font-weight:100'" size="10" :color="price === 'down' ? '#75694A': '#7E755C'" ></uni-icons>
+				<uni-icons type="up" size="10" :style="sale === 'up' ? ' font-weight: 800;' : 'font-weight:100'" :color="sale === 'up' ? '#75694A': '#7E755C'"></uni-icons>
+				<uni-icons type="down" size="10" :style="sale === 'down' ? ' font-weight: 800;' : 'font-weight:100'" :color="sale === 'down' ? '#75694A': '#7E755C'"></uni-icons>
+			</view>
 			</view>
 		</view>
-		<view class="p2" :style="upIndex === 3 ? 'color: #75694A;font-size: 1.1rem':''" @click="changeUpIndex(3)">
-		销量
-		<view class="arrow">
-			<uni-icons type="up" size="10" :style="sale === 'up' ? ' font-weight: 800;' : 'font-weight:100'" :color="sale === 'up' ? '#75694A': '#7E755C'"></uni-icons>
-		   	<uni-icons type="down" size="10" :style="sale === 'down' ? ' font-weight: 800;' : 'font-weight:100'" :color="sale === 'down' ? '#75694A': '#7E755C'"></uni-icons>
-		</view>
-		</view>
-     </view>
-	 
-	 <view class="block3">
-	 	
-	 
-	 <view class="block3"  v-for="(item) in infolist" >
-		 <view style="display: block;">
-		<image :src="item.icon"  mode="" class="image"></image>
-		<view style="width: 96%;margin: 0 auto;font-size: 24rpx;">
-			{{item.detail}}
-		</view>
-		<view style="display: flex;justify-content: space-between;width: 94%;margin-top: 15rpx;">
-			<view class="text1">
-				¥{{item.price}}
-			</view>
-			<view class="text2">
-				已售{{item.num}}包
+		<view class="main">
+			<view class="block3"  v-for="(item,index) in infolist" :key="index" @click="toDetail(index)">
+				<view style="display: block;">
+					<image :src="item.icon"  mode="" class="image"></image>
+					<view style="width: 96%;margin: 0 auto;font-size: 24rpx;">
+						{{item.detail}}
+					</view>
+					<view style="display: flex;justify-content: space-between;width: 94%;margin-top: 15rpx;">
+						<view class="text1">
+							¥{{item.price}}
+						</view>
+						<view class="text2">
+							已售{{item.num}}包
+						</view>
+					</view>
+				</view>
 			</view>
 		</view>
-		</view>
-	 </view>
-	</view>
 	</view>
 
 </view>
@@ -77,17 +66,10 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import TnSubsection from '@/uni_modules/tuniaoui-vue3/components/subsection/src/subsection.vue'
-import TnSubsectionItem from '@/uni_modules/tuniaoui-vue3/components/subsection/src/subsection-item.vue'
-import { reactive, toRefs } from 'vue'
-import TnScrollList from '@/uni_modules/tuniaoui-vue3/components/scroll-list/src/scroll-list.vue'
-const subsectionValue = ref(0)
+import { ref } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
+
 let value = ref('')
-let password = ref('')  
-let button=[0]
-let temp=[0]
-let i=0
 let styles = ref({
 	color: 'rgba(182, 176, 167, 1)',  
 	borderColor: 'rgba(182, 176, 167, 1)'  
@@ -97,14 +79,6 @@ function iconClick(type){
 	{
 		console.log(type)
 	}
-}
-const state = reactive({
-	show1: false,
-	width: '80%',
-	height: '100%',
-})					
-const handleClick1 = () => {
-	state.show1 = true
 }
 
 // 选中的list的index
@@ -150,7 +124,7 @@ const changeUpIndex = (index) => {
 	// 更新数据
 }
 
-let infolist = [
+const infolist = ref([
 	{
 		name: '芒果干',
 		icon: '../../static/logo.png',
@@ -165,8 +139,49 @@ let infolist = [
 		price:'189',
 		num:'200'
 	},
-]
+	{
+		name: '芒果干',
+		icon: '../../static/logo.png',
+		detail:'休闲芒果干大礼包，50g一包超值',
+		price:'189',
+		num:'200'
+	},
+])
+const toDetail = (id) => {
+	uni.navigateTo({
+		url: '/pages/goods/goods_detail?id=' + id
+	})
+}
 
+const getData = () => {
+	const info = [
+	{
+		name: '芒果干',
+		icon: '../../static/logo.png',
+		detail:'休闲芒果干大礼包，50g一包超值',
+		price:'189',
+		num:'200'
+	},
+	{
+		name: '芒果干',
+		icon: '../../static/logo.png',
+		detail:'休闲芒果干大礼包，50g一包超值',
+		price:'189',
+		num:'200'
+	},
+	{
+		name: '芒果干',
+		icon: '../../static/logo.png',
+		detail:'休闲芒果干大礼包，50g一包超值',
+		price:'189',
+		num:'200'
+	},
+	]
+	infolist.value = info
+}
+onShow(()=>{
+	getData()
+})
 </script>
 
 <style lang="scss">
@@ -247,6 +262,12 @@ page{
 			}
 		}
 	}
+
+	.main{
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
 	.block3{
 		display: flex;
 		margin-left: 15rpx;
