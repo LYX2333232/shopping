@@ -11,67 +11,93 @@
 				</slot>
 			</view>
 		</view>
+		<view class="title">
+			<slot>
+				{{title}}
+			</slot>
+		</view>
 	</view>
 </template>
  
 <script>
-	export default {
-		name: "backPages",
-		props: {
-			backtext: String,
-		},
- 
-        //这里原来使用的onLoad一直有bug（不重新进入页面就会错位），
-        // 后来使用onShow  更改于2022/09/30  以后再修改
-		onLoad() {
-			//加载时调用 getHeight
-			this.getHeight();
-		},
-		methods: {
-			//利用胶囊按钮定位宽高
-			
- 
-			//直接返回上一级
-			back_page() {
-			
+export default {
+	name: "backPages",
+	props: {
+		backtext: String,
+		title: String
+	},
+
+	//这里原来使用的onLoad一直有bug（不重新进入页面就会错位），
+	// 后来使用onShow  更改于2022/09/30  以后再修改
+	onLoad() {
+		//加载时调用 getHeight
+		this.getHeight();
+	},
+	methods: {
+		//利用胶囊按钮定位宽高
+		
+
+		//直接返回上一级
+		back_page() {
+			// 获取当前页面栈
+			const pages = getCurrentPages()
+			if (pages.length === 1) {
+				uni.switchTab({
+					url: '/pages/index/index'
+				})
+				return
+			}
+			else
 				uni.navigateBack({
 					delta: 1 // 返回的页面数
 				})
-				
-			},
-		}
- 
+		},
 	}
+}
 </script>
  
 <style scoped>
-	.big_out {
-		position: fixed;
-	    z-index: 999;
-		/* background-color: red; */
-margin-top: 60rpx;
-	}
- 
-	.back {
-		position: absolute;
-		height: 50rpx;
-		width: 120rpx;
-	}
- 
-	.back_img {
-		/* 用border值来控制箭头粗细 */
-		border: 3px solid black;
-		/* 上、右、下、左  四个边框的宽度 */
-		border-width: 0px 2px 2px 0px;
-		display: inline-block;
-		/* padding值控制箭头大小 */
-		padding: 5px;
-		transform: rotate(135deg);
-		-webkit-transform: rotate(135deg);
-		margin-left: 30rpx;
-	}
- 
-	.back_text {
-		float: right;
-	}
+.big_out {
+	position: fixed;
+	display: flex;
+	width: 750rpx;
+	justify-content: center;
+	align-items: center;
+	z-index: 999;
+	/* background-color: red; */
+	margin-top: 60rpx;
+	background: transparent;
+}
+.back {
+	position: absolute;
+	left: 0;
+	height: 50rpx;
+	width: 120rpx;
+}
+.back_img {
+	/* 用border值来控制箭头粗细 */
+	border: 3px solid black;
+	/* 上、右、下、左  四个边框的宽度 */
+	border-width: 0px 2px 2px 0px;
+	display: inline-block;
+	/* padding值控制箭头大小 */
+	padding: 5px;
+	transform: rotate(135deg);
+	-webkit-transform: rotate(135deg);
+	margin-left: 30rpx;
+}
+.back_text {
+	float: right;
+}
+
+.title{
+	font-family: FZYaoTi, FZYaoTi;
+	font-weight: 400;
+	font-size: 46rpx;
+	color: #000000;
+	line-height: 69rpx;
+	text-align: left;
+	font-style: normal;
+	text-transform: none;
+}
 </style>

@@ -35,13 +35,18 @@
 				"navigationStyle": "custom"
 			}
 		},
-		
 		{
 			"path": "pages/goods/goods_detail",
 			"style": {
-			"navigationBarTitleText": "",
-			"enablePullDownRefresh": false,
-			"navigationStyle": "custom"
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/seckill/index",
+			"style": {
+				"navigationStyle": "custom"
 			}
 		}
 	],
@@ -57,8 +62,8 @@
 		"selectedColor": "#C8B697",
 		"borderStyle": "white",
 		"navigationBarTextStyle": "black",
-	
-		"list": [{
+		"list": [
+			{
 				"iconPath": "/static/icon/tabbar/1.png",
 				"selectedIconPath": "/static/icon/tabbar/11.png",
 				"pagePath": "pages/index/index",
