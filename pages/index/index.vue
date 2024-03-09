@@ -170,6 +170,11 @@ const top_button = (index) => {
 			url: '/pages/index/seckill/index'
 		})
 	}
+	if (index == 1) {
+		uni.navigateTo({
+			url: '/pages/index/today/index'
+		})
+	}
 }
 
 // 底部的图片按钮

@@ -184,6 +184,7 @@ onShow(() => {
 .all{
   position: relative;
   width: 100vw;
+  min-height: 100vh;
   background: #F7F7F7;
   z-index: -2;
 }
