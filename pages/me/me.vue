@@ -5,8 +5,8 @@
 	<view class="top">
 		<view class="avatar">
 			<image src="../../static/logo.png" mode="widthFix" class="image"></image>
-			<view class="tabel">
-				个人买家
+			<view class="tabel" :style="isBuyer ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);':'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
+				{{isBuyer ? '个人买家':'分销商'}}
 			</view>
 		</view>
 		<view style="margin-left:30rpx">
@@ -26,7 +26,7 @@
 		</view>
 	</view>
 	
-	<view class="middle" >
+	<view v-if="isBuyer" class="middle" >
 		<image src="../../static/logo.png" mode="aspectFill" style="position: absolute; z-index: -999;width: 700rpx;height: 140.38rpx;border-radius: 11.54rpx;" ></image>
 	
 
@@ -51,29 +51,51 @@
 	
 	</view>
 
+	<view v-else class="block1">
+		<view  style="display: flex;justify-content: space-between;">
+		<view class="myorder">
+			分销中心
+		</view>
+		<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;" @click="toall">
+			全部订单	
+		<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)" style="margin-left: -5rpx;"></uni-icons>
+		</view>
+		</view>
+		<view class="function">
+		<view class="tofunction"  v-for="(item,index) in funList0" @click="tap_item(index)">
+			<view class="img" >
+				<img :src="item.icon" alt="" mode="aspectFill" />
+			</view>
+			<view  style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
+			{{item.name}}	
+			</view>
+			
+		</view>
+		</view>
+	</view>
 
-<view class="block1" >
-	<view  style="display: flex;justify-content: space-between;"> 	 
-	<view class="myorder">
-	我的订单
-	</view>
-	<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;" @click="toall">
-	全部订单	
-	<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)" style="margin-left: -5rpx;"></uni-icons>
-	</view>
-	</view>
-	<view class="function">
-	<view class="tofunction"  v-for="(item,index) in funList" @click="tap_item(index)">
-		<view class="img" >
-			<img :src="item.icon" alt="" mode="aspectFill" />
+	<view class="block1">
+		<view  style="display: flex;justify-content: space-between;">
+		<view class="myorder">
+			我的订单
 		</view>
-		<view  style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
-		{{item.name}}	
+		<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;" @click="toall">
+			全部订单	
+		<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)" style="margin-left: -5rpx;"></uni-icons>
 		</view>
-		
+		</view>
+		<view class="function">
+		<view class="tofunction"  v-for="(item,index) in funList" @click="tap_item(index)">
+			<view class="img" >
+				<img :src="item.icon" alt="" mode="aspectFill" />
+			</view>
+			<view  style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
+			{{item.name}}	
+			</view>
+			
+		</view>
+		</view>
 	</view>
-	</view>
-</view>
 
 <view class="block2">
 
@@ -104,6 +126,26 @@ import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 
 const userInfo = ref({})
 
+const isBuyer = ref(false)
+
+const funList0 = ref([
+	{
+		name: '账户余额',
+		icon: '../../static/icon/me/wallet.png'
+	},
+	{
+		name: '我的团队',
+		icon: '../../static/icon/me/team.png'
+	},
+	{
+		name: '销售记录',
+		icon: '../../static/icon/me/sell.png'
+	},
+	{
+		name: '佣金记录',
+		icon: '../../static/icon/me/income.png'
+	}
+])
 
 let funList=[
 	{
@@ -121,30 +163,7 @@ let funList=[
 		icon: '../../static/icon/me/after.png'
 	},
 ]
-let funList1=[
-	{
-		name: '账号设置',
-		icon: '../../static/icon/me/setting.png'
-		},{
-		name: '消息中心',
-		icon: '../../static/icon/me/message.png'
-	},{
-		name: '收货地址',
-		icon: '../../static/icon/me/location.png'
-	},
-	{
-		name: '联系客服',
-		icon: '../../static/icon/me/service.png'
-	},
-	{
-		name: '我的优惠券',
-		icon: '../../static/icon/me/money.png'
-	},
-	{
-		name: '意见反馈',
-		icon: '../../static/icon/me/feedback.png'
-	}
-]
+const funList1= ref([])
 
 const getData = () => {
 	const user = {
@@ -152,6 +171,58 @@ const getData = () => {
 		num: '123456'
 	}
 	userInfo.value = user
+	let list 
+	if(isBuyer.value)
+		list = [
+			{
+				name: '账号设置',
+				icon: '../../static/icon/me/setting.png'
+			},
+			{
+				name: '消息中心',
+				icon: '../../static/icon/me/message.png'
+			},
+			{
+				name: '收货地址',
+				icon: '../../static/icon/me/location.png'
+			},
+			{
+				name: '联系客服',
+				icon: '../../static/icon/me/service.png'
+			},
+			{
+				name: '我的优惠券',
+				icon: '../../static/icon/me/money.png'
+			},
+			{
+				name: '意见反馈',
+				icon: '../../static/icon/me/feedback.png'
+			}
+		]
+	else
+		list = [
+			{
+				name: '账号设置',
+				icon: '../../static/icon/me/setting.png'
+			},
+			{
+				name: '消息中心',
+				icon: '../../static/icon/me/message.png'
+			},
+			{
+				name: '收货地址',
+				icon: '../../static/icon/me/location.png'
+			},
+			{
+				name: '核销记录',
+				icon: ''
+			},
+			{
+				name: '联系客服',
+				icon: '../../static/icon/me/service.png'
+			},
+		]
+	funList1.value = list
 }
 
 onShow(() => {
@@ -181,12 +252,11 @@ page{
 			}
 			.tabel{
 				position: absolute;
-				background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);
-				width: 121.15rpx;
 				height: 36.54rpx;
 				border-radius:53.85rpx;
-				color: rgba(152, 99, 40, 1);
 				bottom: -20rpx;
+				text-align: center;
+				padding: 0 20rpx;
 			}
 		}
 		.denglu{
@@ -251,7 +321,7 @@ page{
 		height: 232.69rpx;
 		background-color: #fff;
 		border-radius: 13.46rpx;
-		margin-top: 40rpx;
+		margin-top: 15rpx;
 		
 		.myorder{
 			font-family: Inter, Inter;

@@ -175,6 +175,11 @@ const top_button = (index) => {
 			url: '/pages/index/today/index'
 		})
 	}
+	if (index == 2) {
+		uni.navigateTo({
+			url: '/pages/index/coupon/index'
+		})
+	}
 }
 
 // 底部的图片按钮
