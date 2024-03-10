@@ -79,13 +79,13 @@
 		<view class="myorder">
 			我的订单
 		</view>
-		<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;" @click="toall">
+		<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;" @click="tap_order(-1)">
 			全部订单	
-		<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)" style="margin-left: -5rpx;"></uni-icons>
+			<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)" style="margin-left: -5rpx;"></uni-icons>
 		</view>
 		</view>
 		<view class="function">
-		<view class="tofunction"  v-for="(item,index) in funList" @click="tap_item(index)">
+		<view class="tofunction"  v-for="(item,index) in funList" @click="tap_order(index)">
 			<view class="img" >
 				<img :src="item.icon" alt="" mode="aspectFill" />
 			</view>
@@ -164,6 +164,14 @@ let funList=[
 	},
 ]
 const funList1= ref([])
+
+// 点击订单
+const tap_order = (index) => {
+	console.log(index)
+	uni.navigateTo({
+		url: '/pages/me/order/index?index='+index
+	})
+}
 
 // 点击我的应用的内容
 const tap_application = (index) => {
