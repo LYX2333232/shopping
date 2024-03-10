@@ -104,7 +104,7 @@
 	</view>
 	
 	<view class="function">
-		<view class="tofunction"  v-for="(item,index) in funList1" @click="tap_item(index)">
+		<view class="tofunction"  v-for="(item,index) in funList1" @click="tap_application(index)">
 			<view class="img" >
 				<img :src="item.icon" alt="" mode="aspectFill" />
 			</view>
@@ -165,15 +165,23 @@ let funList=[
 ]
 const funList1= ref([])
 
+// 点击我的应用的内容
+const tap_application = (index) => {
+	console.log(index)
+	if (index === 1) {
+		uni.navigateTo({
+			url: '/pages/me/message/index'
+		})
+	}
+}
+
 const getData = () => {
 	const user = {
 		name: '个人买家',
 		num: '123456'
 	}
 	userInfo.value = user
-	let list 
-	if(isBuyer.value)
-		list = [
+	const list = [
 			{
 				name: '账号设置',
 				icon: '../../static/icon/me/setting.png'
@@ -198,30 +206,7 @@ const getData = () => {
 				name: '意见反馈',
 				icon: '../../static/icon/me/feedback.png'
 			}
-		]
-	else
-		list = [
-			{
-				name: '账号设置',
-				icon: '../../static/icon/me/setting.png'
-			},
-			{
-				name: '消息中心',
-				icon: '../../static/icon/me/message.png'
-			},
-			{
-				name: '收货地址',
-				icon: '../../static/icon/me/location.png'
-			},
-			{
-				name: '核销记录',
-				icon: ''
-			},
-			{
-				name: '联系客服',
-				icon: '../../static/icon/me/service.png'
-			},
-		]
+	]
 	funList1.value = list
 }
 
