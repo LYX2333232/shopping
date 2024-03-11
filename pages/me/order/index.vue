@@ -146,7 +146,6 @@ const getData = (index,search='1') => {
 }
 
 onLoad((options) => {
-  console.log('options', options)
   switchTab(parseInt(options.index) + 1)
   getData(parseInt(options.index) + 1)
 })

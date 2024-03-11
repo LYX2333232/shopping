@@ -50,6 +50,39 @@
 		<view class="text1" style="width: 90%;margin: 0 auto;">
 			<text>商品详情</text>
 		</view>
+		<image
+			v-for="image in detailImg"
+			:src="image"
+			mode="widthFix"
+			style="width: 90%;margin: 10rpx 5%;"
+		/>
+	</view>
+	<view class="comment">
+		<view class="text1" style="width: 90%;margin: 0 auto;">
+			<text>评论</text>
+		</view>
+		<view class="card" v-for="(comment,index) in commentList" :key="index">
+			<view class="tn-flex-center-start tn-w-5-6">
+				<image
+					:src="comment.avatar"
+					mode="scaleToFill"
+					style="width: 46rpx;height: 46rpx;border-radius: 50%;margin-right: 20rpx;"
+				/>
+				<text class="name">{{comment.name}}</text>
+			</view>
+			<view class="tn-flex-center-start tn-w-5-6 tn-m-lg">
+				{{ comment.comment }}
+			</view>
+			<view class="tn-flex-center-start tn-w-5-6">
+				<image
+					v-for="(img, index) in comment.imgs"
+					:key="index"
+					:src="img"
+					mode="aspectFill"
+					style="width: 200rpx;height: 200rpx;margin-right: 10rpx;"
+				/>
+			</view>
+		</view>
 	</view>
 
 	<view class="uni-container">				
@@ -62,7 +95,9 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import Header from '@/components/header.vue'
+
 let cost="150"
 let bcost="150"
 let sell="150"
@@ -112,6 +147,39 @@ let size = [
 		value: 2
 	}
 ];		
+
+const detailImg = [
+	'https://source.unsplash.com/random',
+	'https://source.unsplash.com/random',
+	'https://source.unsplash.com/random',
+	'https://source.unsplash.com/random'
+];
+
+const commentList = ref([
+	{
+		avatar: 'https://source.unsplash.com/random',
+		name: '用户1',
+		star: 4,
+		comment: '商品不错',
+		imgs: [
+			'https://source.unsplash.com/random',
+			'https://source.unsplash.com/random',
+			'https://source.unsplash.com/random'
+		]
+	},
+	{
+		avatar: 'https://source.unsplash.com/random',
+		name: '用户2',
+		star: 5,
+		comment: '东西挺好',
+		imgs: [
+			'https://source.unsplash.com/random',
+			'https://source.unsplash.com/random',
+			'https://source.unsplash.com/random'
+		]
+	}
+])
+
 function onClick(e) {
 	uni.showToast({
 		title: `点击${e.content.text}`,
@@ -198,8 +266,7 @@ page{
 }
 .moredetail{
 	background-color: #fff;
-	height: 1000rpx;
-	margin-top: 15rpx;
+	margin: 20rpx 0 20rpx;
 	padding-top:20rpx;
 	.text1{
 		font-family: Inter, Inter;
@@ -210,9 +277,44 @@ page{
 		text-align: left;   
 	}
 }
+
+.comment{
+	background-color: #fff;
+	margin-top: 20rpx;
+	padding:20rpx 0 120rpx;
+	.text1{
+		font-family: Inter, Inter;
+		font-weight:600;
+		font-size: 27rpx;
+		color: #75694A;
+		line-height: 40rpx;
+		text-align: left;   
+	}
+	.card{
+		margin-top: 30rpx;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		min-height: 200rpx;
+		.name{
+			font-family: Noto Sans SC, Noto Sans SC;
+			font-weight: 500;
+			font-size: 23rpx;
+			color: #494949;
+			line-height: 27rpx;
+			text-align: left;
+			font-style: normal;
+			text-transform: none;
+		}
+	}
+}
+
 .goods-carts {
 	height: 146rpx;
-	
+	background: #FFFFFF;
+	box-shadow: 0rpx 8rpx 12rpx 0rpx rgba(0,0,0,0.2);
+	border-radius: 50rpx 50rpx 0rpx 0rpx;
+
 	/* #ifndef APP-NVUE */
 	display: flex;
 	/* #endif */
