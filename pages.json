@@ -74,9 +74,9 @@
 			}
 		},
 		{
-			"path": "pages/me/order/orderDetail",
+			"path": "pages/me/message/chat",
 			"style": {
-				"navigationBarTitleText": "orderDetail"
+				"navigationStyle": "custom"
 			}
 		}
 	],

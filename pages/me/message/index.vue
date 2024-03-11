@@ -3,22 +3,18 @@
   <view class="all">
     <view class="top">
       <view style="margin-right: 30rpx" @click="back_page">
-        <TnIcon name="left" color="#834820"/>
+        <TnIcon name="left" color="#834820" />
       </view>
       消息中心
       <text v-if="haveMessage">({{ total }})</text>
       <view class="clear">
-        <TnIcon name="clear" color="#834820"/>
+        <TnIcon name="clear" color="#834820" />
       </view>
     </view>
     <view class="main">
-      <view class="card" v-for="(item,index) in messageList" :key="index">
+      <view class="card" v-for="(item, index) in messageList" :key="index" @click="toChat(index)">
         <view class="tn-flex-center-start">
-          <image
-            :src="item.img"
-            mode="scaleToFill"
-            style="width: 100rpx;height: 100rpx;border-radius: 15rpx;"
-          />
+          <image :src="item.img" mode="scaleToFill" style="width: 100rpx;height: 100rpx;border-radius: 15rpx;" />
           <view class="text">
             <view class="title">{{ item.title }}</view>
             <view class="message">{{ item.last_message }}</view>
@@ -26,7 +22,8 @@
         </view>
         <view class="right">
           <text class="time">{{ item.last_time }}</text>
-          <view class="number" :style="item.unread > 0 ? 'visibility: visible':'visibility: hidden'">{{ item.unread }}</view>
+          <view class="number" :style="item.unread > 0 ? 'visibility: visible' : 'visibility: hidden'">{{ item.unread }}
+          </view>
         </view>
       </view>
     </view>
@@ -35,7 +32,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import {onShow} from '@dcloudio/uni-app'
+import { onShow } from '@dcloudio/uni-app'
 import Header from '@/components/header.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 
@@ -57,7 +54,13 @@ const back_page = () => {
     return
   }
   uni.navigateBack({
-    delta:1,
+    delta: 1,
+  })
+}
+
+const toChat = (index) => {
+  uni.navigateTo({
+    url: '/pages/me/message/chat?index=' + index
   })
 }
 
@@ -66,56 +69,56 @@ const getData = () => {
 
   const list = [
     {
-      img:'https://source.unsplash.com/random',
+      img: 'https://source.unsplash.com/random',
       title: '三只松鼠旗舰店',
       last_message: '您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货您的订单已发货',
       last_time: '10分钟前',
       unread: 1
     },
     {
-      img:'https://source.unsplash.com/random',
+      img: 'https://source.unsplash.com/random',
       title: '三只松鼠旗舰店',
       last_message: '您的订单已发货',
       last_time: '10分钟前',
       unread: 1
     },
     {
-      img:'https://source.unsplash.com/random',
+      img: 'https://source.unsplash.com/random',
       title: '三只松鼠旗舰店',
       last_message: '您的订单已发货',
       last_time: '昨天',
       unread: 0
     },
     {
-      img:'https://source.unsplash.com/random',
+      img: 'https://source.unsplash.com/random',
       title: '三只松鼠旗舰店',
       last_message: '您的订单已发货',
       last_time: '昨天',
       unread: 0
     },
     {
-      img:'https://source.unsplash.com/random',
+      img: 'https://source.unsplash.com/random',
       title: '三只松鼠旗舰店',
       last_message: '您的订单已发货',
       last_time: '前天',
       unread: 4
     },
     {
-      img:'https://source.unsplash.com/random',
+      img: 'https://source.unsplash.com/random',
       title: '三只松鼠旗舰店',
       last_message: '您的订单已发货',
       last_time: '前天',
       unread: 5
     },
     {
-      img:'https://source.unsplash.com/random',
+      img: 'https://source.unsplash.com/random',
       title: '三只松鼠旗舰店',
       last_message: '您的订单已发货',
       last_time: '上周',
       unread: 0
     },
     {
-      img:'https://source.unsplash.com/random',
+      img: 'https://source.unsplash.com/random',
       title: '三只松鼠旗舰店',
       last_message: '您的订单已发货',
       last_time: '上个月',
@@ -140,12 +143,12 @@ onShow(() => {
 </script>
 
 <style lang="scss" scoped>
-.all{
+.all {
   width: 100%;
   min-height: 100vh;
 }
 
-.top{
+.top {
   font-family: PingFang SC, PingFang SC;
   font-weight: 500;
   font-size: 35rpx;
@@ -163,12 +166,13 @@ onShow(() => {
   padding-left: 50rpx;
   padding-bottom: 40rpx;
   background: #F7F7F7;
-  .clear{
+
+  .clear {
     margin-left: 30rpx;
   }
 }
 
-.main{
+.main {
   width: 100%;
   min-height: 100vh;
   margin-top: 250rpx;
@@ -177,19 +181,22 @@ onShow(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  .card{
+
+  .card {
     width: 90%;
     display: flex;
     justify-content: space-between;
     margin-top: 60rpx;
-    .text{
+
+    .text {
       height: 100%;
       display: flex;
       flex-direction: column;
       align-items: start;
       justify-content: space-around;
       margin-left: 20rpx;
-      .title{
+
+      .title {
         font-family: PingFang SC, PingFang SC;
         font-weight: 600;
         font-size: 27rpx;
@@ -199,7 +206,8 @@ onShow(() => {
         font-style: normal;
         text-transform: none;
       }
-      .message{
+
+      .message {
         font-family: PingFang SC, PingFang SC;
         font-weight: 300;
         font-size: 23rpx;
@@ -214,12 +222,14 @@ onShow(() => {
         white-space: nowrap;
       }
     }
-    .right{
+
+    .right {
       display: flex;
       flex-direction: column;
       justify-content: space-around;
       align-items: flex-end;
-      .time{
+
+      .time {
         font-family: PingFang SC, PingFang SC;
         font-weight: 400;
         font-size: 23rpx;
@@ -229,7 +239,8 @@ onShow(() => {
         font-style: normal;
         text-transform: none;
       }
-      .number{
+
+      .number {
         width: 30rpx;
         height: 30rpx;
         border-radius: 50%;
