@@ -281,7 +281,7 @@ page{
 .comment{
 	background-color: #fff;
 	margin-top: 20rpx;
-	padding:20rpx 0 120rpx;
+	padding:20rpx 0 150rpx;
 	.text1{
 		font-family: Inter, Inter;
 		font-weight:600;

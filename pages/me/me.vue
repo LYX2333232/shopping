@@ -97,25 +97,40 @@
 		</view>
 	</view>
 
-<view class="block2">
+	<view class="block2">
 
-	<view class="myorder">
-			我的应用
-	</view>
-	
-	<view class="function">
-		<view class="tofunction"  v-for="(item,index) in funList1" @click="tap_application(index)">
-			<view class="img" >
-				<img :src="item.icon" alt="" mode="aspectFill" />
-			</view>
-			<view  style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
-			{{item.name}}	
-			</view>
-			
+		<view class="myorder">
+				我的应用
 		</view>
+		
+		<view class="function">
+			<view class="tofunction"  v-for="(item,index) in funList1" @click="tap_application(index)">
+				<view class="img" >
+					<img :src="item.icon" alt="" mode="aspectFill" />
+				</view>
+				<view  style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
+				{{item.name}}	
+				</view>
+				
+			</view>
+		</view>
+		
 	</view>
-	
-</view>
+
+	<TnPopup v-model="feedback" bg-color="#FFFFFF" width="660" height="280">
+		<view style="margin: 30rpx">
+			<TnForm>
+				<TnFormItem label="反馈内容" label-width="auto">
+					<TnInput type="textarea" placeholder="请输入反馈内容" height="150" v-model="feedbackContent" />
+				</TnFormItem>
+			</TnForm>
+		</view>
+		<view class="footer">
+			<TnButton type="info" width="160" height="52" @click="cancelFeedback">取消</TnButton>
+			<TnButton bg-color="#C8B697" text-color="#FFFFFF" width="160" height="52" @click="submitFeedback">提交</TnButton>
+		</view>
+	</TnPopup>
+
 
 </view>	
 </template>
@@ -123,6 +138,11 @@
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
+import TnForm from '@/uni_modules/tuniaoui-vue3/components/form/src/form.vue'
+import TnFormItem from '@/uni_modules/tuniaoui-vue3/components/form/src/form-item.vue'
+import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
+import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 
 const userInfo = ref({})
 
@@ -163,7 +183,10 @@ let funList=[
 		icon: '../../static/icon/me/after.png'
 	},
 ]
-const funList1= ref([])
+const funList1 = ref([])
+
+// 反馈的弹出窗
+const feedback = ref(false)
 
 // 点击订单
 const tap_order = (index) => {
@@ -180,6 +203,10 @@ const tap_application = (index) => {
 		uni.navigateTo({
 			url: '/pages/me/message/index'
 		})
+	}
+	// 点击反馈
+	if (index === 5) {
+		feedback.value = true
 	}
 }
 
@@ -369,6 +396,13 @@ page{
 			margin-top: 35rpx;
 			margin-bottom: 25rpx;
 		}
+	}
+
+	.footer{
+		width: 100%;
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
 	}
 }
 </style>
