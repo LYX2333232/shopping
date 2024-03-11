@@ -192,7 +192,7 @@ function buttonClick(e) {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 page{
 	background-color: rgba(248, 248, 248, 1);
 }

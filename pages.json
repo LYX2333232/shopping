@@ -72,6 +72,12 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/me/order/orderDetail",
+			"style": {
+				"navigationBarTitleText": "orderDetail"
+			}
 		}
 	],
 	"globalStyle": {

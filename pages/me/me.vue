@@ -250,7 +250,7 @@ onShow(() => {
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 page{
 	width: 750rpx;
 	height: auto;

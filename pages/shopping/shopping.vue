@@ -209,7 +209,7 @@ onShow(() => {
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 page{
 	background-color: rgba(247, 247, 247, 1);
 	padding-top: 100rpx;

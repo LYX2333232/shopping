@@ -184,7 +184,7 @@ onShow(()=>{
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 page{
 	background-color: #F7F7F7;
 }

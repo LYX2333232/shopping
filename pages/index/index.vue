@@ -226,7 +226,7 @@ onHide(() => {
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .swiper-container {
 	width: 100%;
