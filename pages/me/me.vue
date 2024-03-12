@@ -217,6 +217,12 @@ const tap_application = (index) => {
 			url: '/pages/me/message/index'
 		})
 	}
+	// 收货地址
+	if (index === 2) {
+		uni.navigateTo({
+			url: '/pages/me/address/index'
+		})
+	}
 	// 我的优惠券
 	if (index === 4) {
 		uni.navigateTo({
