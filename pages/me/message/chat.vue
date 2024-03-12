@@ -13,7 +13,17 @@
         <view>{{ message.message }} </view>
       </view>
     </view>
-
+  </view>
+  <view class="bottom">
+    <TnButton plain icon="voice" shape="circle" border-color="#C8B697" text-color="#C8B697" width="60" height="60">
+    </TnButton>
+    <TnInput border-color="#DCE5E8" placeholder="输入消息" @confirm="input" v-model="message" trim height="60"
+      :custom-style="{ width: '450rpx', margin: '0 15rpx' }" />
+    <TnButton plain icon="pacman" shape="circle" border-color="#C8B697" text-color="#C8B697" width="60" height="60">
+    </TnButton>
+    <TnButton plain icon="add" shape="circle" border-color="#C8B697" text-color="#C8B697" width="60" height="60"
+      @click="send" :custom-style="{ margin: '0 15rpx' }">
+    </TnButton>
   </view>
 </template>
 
@@ -21,6 +31,8 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import Header from '@/components/header.vue'
+import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 
 // 对方名称
 const title = ref('三只松鼠旗舰店')
@@ -29,6 +41,8 @@ const avatars = ref({
   my: 'https://source.unsplash.com/random?1',
   other: 'https://source.unsplash.com/random?2'
 })
+
+const message = ref('')
 
 const messageList = ref([])
 
@@ -176,5 +190,17 @@ onLoad((e) => {
     }
   }
 
+}
+
+.bottom {
+  width: 100%;
+  height: 100rpx;
+  position: fixed;
+  bottom: 0;
+  border-radius: 20rpx 20rpx 0 0;
+  padding: 40rpx;
+  background: #FBFBFB;
+  display: flex;
+  align-items: center;
 }
 </style>
