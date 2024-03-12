@@ -157,7 +157,7 @@ onShow(() => {
   text-align: right;
   font-style: normal;
   text-transform: none;
-  padding-top: 150rpx;
+  padding-top: 100rpx;
   position: fixed;
   top: 0;
   z-index: 10;
@@ -175,7 +175,7 @@ onShow(() => {
 .main {
   width: 100%;
   min-height: 100vh;
-  margin-top: 250rpx;
+  margin-top: 150rpx;
   border-radius: 15rpx;
   background: #FFFFFF;
   display: flex;

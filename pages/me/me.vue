@@ -1,138 +1,144 @@
-
 <template>
-<view style="width: 93%; margin: 0 auto;">
+	<view style="width: 93%; margin: 0 auto;">
 
-	<view class="top">
-		<view class="avatar">
-			<image src="../../static/logo.png" mode="widthFix" class="image"></image>
-			<view class="tabel" :style="isBuyer ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);':'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
-				{{isBuyer ? '个人买家':'分销商'}}
-			</view>
-		</view>
-		<view style="margin-left:30rpx">
-			<view class="tn-flex-center-start">
-				<view class="denglu" v-if="login==1">
-				点击授权登录	
+		<view class="top">
+			<view class="avatar">
+				<image src="../../static/logo.png" mode="widthFix" class="image"></image>
+				<view class="tabel"
+					:style="isBuyer ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);' : 'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
+					{{ isBuyer ? '个人买家' : '分销商' }}
 				</view>
-				<view class="denglu" v-else>
-				{{ userInfo.name }}
+			</view>
+			<view style="margin-left:30rpx">
+				<view class="tn-flex-center-start">
+					<view class="denglu" v-if="login == 1">
+						点击授权登录
+					</view>
+					<view class="denglu" v-else>
+						{{ userInfo.name }}
+					</view>
+					<TnIcon size="40" color="#6D6D6D" name="edit-write" @click="toedit"></TnIcon>
 				</view>
-				<TnIcon size="40" color="#6D6D6D" name="edit-write" @click="toedit" ></TnIcon>
-			</view>
-			
-			<view class="bianhao" >
-				编号：{{userInfo.num}}
-			</view>
-		</view>
-	</view>
-	
-	<view v-if="isBuyer" class="middle" >
-		<image src="../../static/logo.png" mode="aspectFill" style="position: absolute; z-index: -999;width: 700rpx;height: 140.38rpx;border-radius: 11.54rpx;" ></image>
-	
 
-	 <view  class="block">
-		<view class="image">
-			<image src="../../static/icon/tabbar/1.png" mode="" ></image>
-		</view>
-		
-		<view class="p1">
-			立即加盟分销商
-		</view>
-     </view>
-		<view class="block">
-			
-			<view class="p2">
-			多重好礼任你选，各种特权
-			</view>
-			<view class="p3" @click="tojoin">
-			立即加盟	
+				<view class="bianhao">
+					编号：{{ userInfo.num }}
+				</view>
 			</view>
 		</view>
-	
-	</view>
 
-	<view v-else class="block1">
-		<view  style="display: flex;justify-content: space-between;">
-		<view class="myorder">
-			分销中心
-		</view>
-		<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;" @click="toall">
-			全部订单	
-		<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)" style="margin-left: -5rpx;"></uni-icons>
-		</view>
-		</view>
-		<view class="function">
-		<view class="tofunction"  v-for="(item,index) in funList0" @click="tap_item(index)">
-			<view class="img" >
-				<img :src="item.icon" alt="" mode="aspectFill" />
-			</view>
-			<view  style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
-			{{item.name}}	
-			</view>
-			
-		</view>
-		</view>
-	</view>
+		<view v-if="isBuyer" class="middle">
+			<image src="../../static/logo.png" mode="aspectFill"
+				style="position: absolute; z-index: -999;width: 700rpx;height: 140.38rpx;border-radius: 11.54rpx;">
+			</image>
 
-	<view class="block1">
-		<view  style="display: flex;justify-content: space-between;">
-		<view class="myorder">
-			我的订单
-		</view>
-		<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;" @click="tap_order(-1)">
-			全部订单	
-			<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)" style="margin-left: -5rpx;"></uni-icons>
-		</view>
-		</view>
-		<view class="function">
-		<view class="tofunction"  v-for="(item,index) in funList" @click="tap_order(index)">
-			<view class="img" >
-				<img :src="item.icon" alt="" mode="aspectFill" />
-			</view>
-			<view  style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
-			{{item.name}}	
-			</view>
-			
-		</view>
-		</view>
-	</view>
 
-	<view class="block2">
+			<view class="block">
+				<view class="image">
+					<image src="../../static/icon/tabbar/1.png" mode=""></image>
+				</view>
 
-		<view class="myorder">
+				<view class="p1">
+					立即加盟分销商
+				</view>
+			</view>
+			<view class="block">
+
+				<view class="p2">
+					多重好礼任你选，各种特权
+				</view>
+				<view class="p3" @click="tojoin">
+					立即加盟
+				</view>
+			</view>
+
+		</view>
+
+		<view v-else class="block1">
+			<view style="display: flex;justify-content: space-between;">
+				<view class="myorder">
+					分销中心
+				</view>
+				<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;" @click="toall">
+					全部订单
+					<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)"
+						style="margin-left: -5rpx;"></uni-icons>
+				</view>
+			</view>
+			<view class="function">
+				<view class="tofunction" v-for="(item, index) in funList0" @click="tap_item(index)">
+					<view class="img">
+						<img :src="item.icon" alt="" mode="aspectFill" />
+					</view>
+					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
+						{{ item.name }}
+					</view>
+
+				</view>
+			</view>
+		</view>
+
+		<view class="block1">
+			<view style="display: flex;justify-content: space-between;">
+				<view class="myorder">
+					我的订单
+				</view>
+				<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;"
+					@click="tap_order(-1)">
+					全部订单
+					<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)"
+						style="margin-left: -5rpx;"></uni-icons>
+				</view>
+			</view>
+			<view class="function">
+				<view class="tofunction" v-for="(item, index) in funList" @click="tap_order(index)">
+					<view class="img">
+						<img :src="item.icon" alt="" mode="aspectFill" />
+					</view>
+					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
+						{{ item.name }}
+					</view>
+
+				</view>
+			</view>
+		</view>
+
+		<view class="block2">
+
+			<view class="myorder">
 				我的应用
-		</view>
-		
-		<view class="function">
-			<view class="tofunction"  v-for="(item,index) in funList1" @click="tap_application(index)">
-				<view class="img" >
-					<img :src="item.icon" alt="" mode="aspectFill" />
-				</view>
-				<view  style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
-				{{item.name}}	
-				</view>
-				
 			</view>
+
+			<view class="function">
+				<view class="tofunction" v-for="(item, index) in funList1" @click="tap_application(index)">
+					<view class="img">
+						<img :src="item.icon" alt="" mode="aspectFill" />
+					</view>
+					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
+						{{ item.name }}
+					</view>
+
+				</view>
+			</view>
+
 		</view>
-		
+
+		<TnPopup v-model="feedback" bg-color="#FFFFFF" width="660" height="280">
+			<view style="margin: 30rpx">
+				<TnForm>
+					<TnFormItem label="反馈内容" label-width="auto">
+						<TnInput type="textarea" placeholder="请输入反馈内容" height="150" v-model="feedbackContent" />
+					</TnFormItem>
+				</TnForm>
+			</view>
+			<view class="footer">
+				<TnButton type="info" width="160" height="52" @click="cancelFeedback">取消</TnButton>
+				<TnButton bg-color="#C8B697" text-color="#FFFFFF" width="160" height="52" @click="submitFeedback">提交
+				</TnButton>
+			</view>
+		</TnPopup>
+
+
 	</view>
-
-	<TnPopup v-model="feedback" bg-color="#FFFFFF" width="660" height="280">
-		<view style="margin: 30rpx">
-			<TnForm>
-				<TnFormItem label="反馈内容" label-width="auto">
-					<TnInput type="textarea" placeholder="请输入反馈内容" height="150" v-model="feedbackContent" />
-				</TnFormItem>
-			</TnForm>
-		</view>
-		<view class="footer">
-			<TnButton type="info" width="160" height="52" @click="cancelFeedback">取消</TnButton>
-			<TnButton bg-color="#C8B697" text-color="#FFFFFF" width="160" height="52" @click="submitFeedback">提交</TnButton>
-		</view>
-	</TnPopup>
-
-
-</view>	
 </template>
 <script setup>
 import { ref } from 'vue'
@@ -167,14 +173,14 @@ const funList0 = ref([
 	}
 ])
 
-let funList=[
+let funList = [
 	{
 		name: '待付款',
 		icon: '../../static/icon/me/topay.png'
-		},{
+	}, {
 		name: '待发货',
 		icon: '../../static/icon/me/wait.png'
-	},{
+	}, {
 		name: '待收货',
 		icon: '../../static/icon/me/truck.png'
 	},
@@ -192,16 +198,29 @@ const feedback = ref(false)
 const tap_order = (index) => {
 	console.log(index)
 	uni.navigateTo({
-		url: '/pages/me/order/index?index='+index
+		url: '/pages/me/order/index?index=' + index
 	})
 }
 
 // 点击我的应用的内容
 const tap_application = (index) => {
 	console.log(index)
+	// 账号设置
+	if (index === 0) {
+		uni.navigateTo({
+			url: '/pages/me/account/index'
+		})
+	}
+	// 消息中心
 	if (index === 1) {
 		uni.navigateTo({
 			url: '/pages/me/message/index'
+		})
+	}
+	// 我的优惠券
+	if (index === 4) {
+		uni.navigateTo({
+			url: '/pages/me/coupon/index'
 		})
 	}
 	// 点击反馈
@@ -217,30 +236,30 @@ const getData = () => {
 	}
 	userInfo.value = user
 	const list = [
-			{
-				name: '账号设置',
-				icon: '../../static/icon/me/setting.png'
-			},
-			{
-				name: '消息中心',
-				icon: '../../static/icon/me/message.png'
-			},
-			{
-				name: '收货地址',
-				icon: '../../static/icon/me/location.png'
-			},
-			{
-				name: '联系客服',
-				icon: '../../static/icon/me/service.png'
-			},
-			{
-				name: '我的优惠券',
-				icon: '../../static/icon/me/money.png'
-			},
-			{
-				name: '意见反馈',
-				icon: '../../static/icon/me/feedback.png'
-			}
+		{
+			name: '账号设置',
+			icon: '../../static/icon/me/setting.png'
+		},
+		{
+			name: '消息中心',
+			icon: '../../static/icon/me/message.png'
+		},
+		{
+			name: '收货地址',
+			icon: '../../static/icon/me/location.png'
+		},
+		{
+			name: '联系客服',
+			icon: '../../static/icon/me/service.png'
+		},
+		{
+			name: '我的优惠券',
+			icon: '../../static/icon/me/money.png'
+		},
+		{
+			name: '意见反馈',
+			icon: '../../static/icon/me/feedback.png'
+		}
 	]
 	funList1.value = list
 }
@@ -251,60 +270,68 @@ onShow(() => {
 </script>
 
 <style lang="scss" scoped>
-page{
+page {
 	width: 750rpx;
 	height: auto;
-	background :  linear-gradient(  0deg,rgba(240, 240, 240, 1.0) 67.000002%,  rgba(240, 224, 198, 1)100.000002%);
-		
-	.top{
+	background: linear-gradient(0deg, rgba(240, 240, 240, 1.0) 67.000002%, rgba(240, 224, 198, 1)100.000002%);
+
+	.top {
 		height: 150rpx;
 		display: flex;
 		margin: 150rpx 0 40rpx;
-		.avatar{
+
+		.avatar {
 			position: relative;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			.image{
+
+			.image {
 				width: 150rpx;
 				height: 150rpx;
 				border-radius: 100%;
 			}
-			.tabel{
+
+			.tabel {
 				position: absolute;
 				height: 36.54rpx;
-				border-radius:53.85rpx;
+				border-radius: 53.85rpx;
 				bottom: -20rpx;
 				text-align: center;
 				padding: 0 20rpx;
 			}
 		}
-		.denglu{
-			font-style:Inter-Medium ;
+
+		.denglu {
+			font-style: Inter-Medium;
 			font-size: 34rpx;
 			margin: 20rpx 0 10rpx;
 		}
-		.bianhao{
+
+		.bianhao {
 			color: #6D6D6D;
 			font-size: 22rpx;
 		}
 	}
-	
-	.middle{
+
+	.middle {
 		height: 140.38rpx;
 		border-radius: 11.54rpx;
-		.block{
-			display: flex; 
+
+		.block {
+			display: flex;
 			padding-top: 10rpx;
 			padding-left: 26rpx;
 			font-family: PingFang SC, PingFang SC;
-			.image{
+
+			.image {
 				width: 30rpx;
 				height: 30rpx;
 				margin-right: 10rpx;
 				margin-top: 30rpx;
 			}
-			.p1{
+
+			.p1 {
 				margin-top: 20rpx;
 				font-weight: 500;
 				font-size: 31rpx;
@@ -312,16 +339,18 @@ page{
 				line-height: 46rpx;
 				text-align: left;
 			}
-			.p2{
-			font-weight: 400;
-			font-size: 23rpx;
-			color: #FFDFC3;
-			line-height: 35rpx;
+
+			.p2 {
+				font-weight: 400;
+				font-size: 23rpx;
+				color: #FFDFC3;
+				line-height: 35rpx;
 			}
-			.p3{
+
+			.p3 {
 				width: 146rpx;
 				height: 56rpx;
-				background: linear-gradient( 96deg, #EDD3A9 0%, #E0B57E 100%);
+				background: linear-gradient(96deg, #EDD3A9 0%, #E0B57E 100%);
 				border-radius: 56rpx;
 				text-align: center;
 				font-family: PingFang SC, PingFang SC;
@@ -329,21 +358,22 @@ page{
 				font-size: 27rpx;
 				color: #835A2C;
 				padding-top: 12rpx;
-			position: absolute;
-			right: 50rpx;
-			top: 375rpx;
-				
+				position: absolute;
+				right: 50rpx;
+				top: 375rpx;
+
 			}
 		}
-	
+
 	}
-	.block1{
+
+	.block1 {
 		height: 232.69rpx;
 		background-color: #fff;
 		border-radius: 13.46rpx;
 		margin-top: 15rpx;
-		
-		.myorder{
+
+		.myorder {
 			font-family: Inter, Inter;
 			font-weight: 600;
 			font-size: 31rpx;
@@ -356,13 +386,14 @@ page{
 			padding-top: 10rpx;
 		}
 	}
-	.block2{
+
+	.block2 {
 		height: 438.46rpx;
 		background-color: #fff;
 		border-radius: 13.46rpx;
 		margin-top: 15rpx;
-		
-		.myorder{
+
+		.myorder {
 			font-family: Inter, Inter;
 			font-weight: 600;
 			font-size: 31rpx;
@@ -375,20 +406,21 @@ page{
 			padding-top: 10rpx;
 		}
 	}
-	
-	.function{
+
+	.function {
 		margin-top: 15rpx;
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
 
 	}
-	.tofunction{
+
+	.tofunction {
 		background-color: rgba(255, 255, 255, 1);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-	
-		.img{
+
+		.img {
 			width: 50rpx;
 			height: 50rpx;
 			text-align: center;
@@ -398,7 +430,7 @@ page{
 		}
 	}
 
-	.footer{
+	.footer {
 		width: 100%;
 		display: flex;
 		justify-content: space-around;
