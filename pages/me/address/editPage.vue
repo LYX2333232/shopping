@@ -37,7 +37,7 @@
     </TnListItem>
     <TnButton width="623" height="100" bg-color="#D8CCB5" text-color="#FFFFFF"
       :custom-style="{ position: 'fixed', bottom: '20px' }" shape="round" @click="toEdit(-1)">
-      保存使用地址
+      保存使用
     </TnButton>
   </view>
 </template>
@@ -48,7 +48,6 @@ import { onLoad } from '@dcloudio/uni-app'
 import Header from '@/components/header.vue'
 import TnListItem from '@/uni_modules/tuniaoui-vue3/components/list/src/list-item.vue'
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
-import TnRegionPicker from '@/uni_modules/tuniaoui-vue3/components/region-picker/src/region-picker.vue'
 import TnSwitch from '@/uni_modules/tuniaoui-vue3/components/switch/src/switch.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 

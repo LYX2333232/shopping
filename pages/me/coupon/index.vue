@@ -1,15 +1,21 @@
 <template>
   <Header title="优惠券页面"></Header>
   <view class="all">
-    <view class="card" v-for="(card, index) in cardList" :key="index">
+    <view class="card" v-for="(card, index) in  cardList " :key="index">
       <image :src="card.img" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
       <view class="main">
-        <view class="title">{{ card.title }}</view>
+        <view class="title" :style="card.status === 1 ? 'color:#FFC542' : 'color:#D4D1D4'">{{ card.title }}</view>
         <view>
-          <view class="price">￥{{ card.price }}</view>
+          <view class="price" :style="card.status === 1 ? 'color:#FFC542' : 'color:#D4D1D4'">￥{{ card.price }}</view>
           <view class="info">满{{ card.threshold }}可用 有效期：{{ card.start_time }}-{{ card.end_time }}</view>
         </view>
       </view>
+      <image v-if="card.status === 0" style="position:absolute;right:0;height:110%"
+        src="@/static/icon/index/coupon/expire.png" mode="heightFix" />
+      <image v-if="card.status === 1" style="position:absolute;right:0;height:110%"
+        src="@/static/icon/index/coupon/touse.png" mode="heightFix" />
+      <image v-if="card.status === 2" style="position:absolute;right:0;height:110%"
+        src="@/static/icon/index/coupon/used.png" mode="heightFix" />
     </view>
   </view>
 </template>
@@ -30,7 +36,7 @@ const getData = () => {
       threshold: 200,
       start_time: '8-23',
       end_time: '8-30',
-      status: 0//0已过期，1待使用
+      status: 0//0已过期，1待使用，2已使用
     },
     {
       img: 'https://source.unsplash.com/random',
@@ -58,6 +64,15 @@ const getData = () => {
       start_time: '8-23',
       end_time: '8-30',
       status: 1
+    },
+    {
+      img: 'https://source.unsplash.com/random',
+      title: '优惠券5',
+      price: 100,
+      threshold: 200,
+      start_time: '8-23',
+      end_time: '8-30',
+      status: 2
     }
   ]
   cardList.value = list
@@ -75,10 +90,10 @@ onShow(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #F7F7F7;
+  background: #F5F5F5;
 
   .card {
-    margin-bottom: 30rpx;
+    margin-bottom: 40rpx;
     width: 85%;
     display: flex;
     align-items: center;
