@@ -3,7 +3,8 @@
 
 		<view class="top">
 			<view class="avatar">
-				<image src="../../static/logo.png" mode="widthFix" class="image"></image>
+				<image :src="store.userInfo ? store.userInfo.avatar : '/static/icons/avatar.png'" mode="widthFix"
+					class="image"></image>
 				<view class="tabel"
 					:style="isBuyer ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);' : 'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
 					{{ isBuyer ? '个人买家' : '分销商' }}
@@ -65,7 +66,8 @@
 				</view>
 			</view>
 			<view class="function">
-				<view class="tofunction" v-for="(item, index) in funList0" @click="tap_item(index)">
+				<view class="tofunction" v-for="(item, index) in funList0" :key="'function0' + index"
+					@click="tap_item(index)">
 					<view class="img">
 						<img :src="item.icon" alt="" mode="aspectFill" />
 					</view>
@@ -90,7 +92,8 @@
 				</view>
 			</view>
 			<view class="function">
-				<view class="tofunction" v-for="(item, index) in funList" @click="tap_order(index)">
+				<view class="tofunction" v-for="(item, index) in funList" :key="'function1' + index"
+					@click="tap_order(index)">
 					<view class="img">
 						<img :src="item.icon" alt="" mode="aspectFill" />
 					</view>
@@ -109,7 +112,8 @@
 			</view>
 
 			<view class="function">
-				<view class="tofunction" v-for="(item, index) in funList1" @click="tap_application(index)">
+				<view class="tofunction" v-for="(item, index) in funList1" :key="'function2' + index"
+					@click="tap_application(index)">
 					<view class="img">
 						<img :src="item.icon" alt="" mode="aspectFill" />
 					</view>
@@ -136,13 +140,36 @@
 				</TnButton>
 			</view>
 		</TnPopup>
+		<TnPopup v-model="showPopup" open-direction="bottom">
+			<view class="user_popup">
+				<view class="title_border_text align_center">
+					获取用户昵称，头像
+				</view>
+				<view class="user_text">
+					获取用户头像、昵称，主要用于向用户提供具有辨识度的用户体验
+				</view>
+				<button class="up_avatar center" open-type="chooseAvatar" @chooseavatar="chooseavatar">
+					<image v-if="avatar_url" :src="avatar_url" mode=""></image>
+					<TnIcon v-else name="upload" size="70" color="#e4e9ec" />
+				</button>
+				<view class="user_name">
+					<input type="nickname" v-model="login_form.name" placeholder="请输入昵称" />
+				</view>
 
+				<button class="login center" :open-type="login_form.name && login_form.avatar ? 'getPhoneNumber' : ''"
+					@getphonenumber="getphonenumber"
+					:style="login_form.name && login_form.avatar ? 'background:#0066cc !important;color:#fff' : ''">
+					<text>登 录</text>
+				</button>
+			</view>
+		</TnPopup>
 
 	</view>
 </template>
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
+import { UserStore } from '@/store'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnForm from '@/uni_modules/tuniaoui-vue3/components/form/src/form.vue'
@@ -150,7 +177,7 @@ import TnFormItem from '@/uni_modules/tuniaoui-vue3/components/form/src/form-ite
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 
-const userInfo = ref({})
+const store = UserStore()
 
 const isBuyer = ref(false)
 
@@ -194,6 +221,16 @@ const funList1 = ref([])
 // 反馈的弹出窗
 const feedback = ref(false)
 
+// 反馈的内容
+const feedbackContent = ref('')
+
+// 是否登录
+const login = ref(0)
+const login_form = ref({
+	name: '',
+	avatar: ''
+})
+
 // 点击订单
 const tap_order = (index) => {
 	console.log(index)
@@ -236,11 +273,6 @@ const tap_application = (index) => {
 }
 
 const getData = () => {
-	const user = {
-		name: '个人买家',
-		num: '123456'
-	}
-	userInfo.value = user
 	const list = [
 		{
 			name: '账号设置',

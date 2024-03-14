@@ -2,6 +2,9 @@
   "dependencies": {
     "@tuniao/tn-icon": "^1.9.0",
     "@tuniao/tn-style": "^1.0.19",
-    "@tuniao/tnui-vue3-uniapp": "^1.0.20"
+    "@tuniao/tnui-vue3-uniapp": "^1.0.20",
+    "pinia": "^2.0.0-rc.10",
+    "typescript": "^5.4.2",
+    "vuex": "^4.1.0"
   }
 }
