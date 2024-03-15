@@ -10,11 +10,12 @@ export const UserStore = defineStore('cp-user', () => {
     const login = () => {
         uni.login({
             complete: (e) => {
-                request.post('/login', {
-                    code: e.code
-                }).then(res => {
-                    console.log(res)
-                })
+                console.log(e)
+                // request.post('/auth/login', {
+                //     code: e.code
+                // }).then(res => {
+                //     console.log(res)
+                // })
             }
         })
     }

@@ -78,15 +78,15 @@ const request = {
 				} else if (res.data.code == 200) {
 					// 请求回来的状态码为200则返回内容
 					resolved(res.data)
-				}  else {
+				} else {
 					// 用户未登录,弹出提示
 					uni.showModal({
 						// confirmColor: "#a4192e",
 						// confirmText: "请先登录",
 						title: '您未登录',
-						success(ts) { 
+						success(ts) {
 							if (ts.confirm) {
-								 UserStore().login()
+								UserStore().login()
 							}
 						}
 					})
@@ -175,9 +175,9 @@ const request = {
 						// confirmColor: "#a4192e",
 						// confirmText: "请先登录",
 						title: '您未登录',
-						success(ts) { 
+						success(ts) {
 							if (ts.confirm) {
-								 UserStore().login()
+								UserStore().login()
 							}
 						}
 					})

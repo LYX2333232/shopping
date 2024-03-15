@@ -3,27 +3,27 @@
 
 		<view class="top">
 			<view class="avatar">
-				<image :src="store.userInfo ? store.userInfo.avatar : '/static/icons/avatar.png'" mode="widthFix"
+				<image :src="store.userInfo ? store.userInfo.avatar : '@/static/icon/avatar.png'" mode="widthFix"
 					class="image"></image>
 				<view class="tabel"
 					:style="isBuyer ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);' : 'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
 					{{ isBuyer ? '个人买家' : '分销商' }}
 				</view>
 			</view>
-			<view style="margin-left:30rpx">
+			<view v-if="store.userInfo" style="margin-left:30rpx">
 				<view class="tn-flex-center-start">
-					<view class="denglu" v-if="login == 1">
-						点击授权登录
-					</view>
-					<view class="denglu" v-else>
-						{{ userInfo.name }}
+					<view class="denglu">
+						{{ store.userInfo.name }}
 					</view>
 					<TnIcon size="40" color="#6D6D6D" name="edit-write" @click="toedit"></TnIcon>
 				</view>
 
 				<view class="bianhao">
-					编号：{{ userInfo.num }}
+					编号：{{ store.userInfo.num }}
 				</view>
+			</view>
+			<view style="margin-left:30rpx" class="denglu" v-else @click="loginVisible = true">
+				点击授权登录
 			</view>
 		</view>
 
@@ -140,7 +140,7 @@
 				</TnButton>
 			</view>
 		</TnPopup>
-		<TnPopup v-model="showPopup" open-direction="bottom">
+		<TnPopup v-model="loginVisible" open-direction="bottom">
 			<view class="user_popup">
 				<view class="title_border_text align_center">
 					获取用户昵称，头像
@@ -148,8 +148,8 @@
 				<view class="user_text">
 					获取用户头像、昵称，主要用于向用户提供具有辨识度的用户体验
 				</view>
-				<button class="up_avatar center" open-type="chooseAvatar" @chooseavatar="chooseavatar">
-					<image v-if="avatar_url" :src="avatar_url" mode=""></image>
+				<button class="up_avatar" open-type="chooseAvatar" @chooseavatar="chooseavatar">
+					<image v-if="login_form.avatar" :src="login_form.avatar" mode=""></image>
 					<TnIcon v-else name="upload" size="70" color="#e4e9ec" />
 				</button>
 				<view class="user_name">
@@ -170,6 +170,7 @@
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { UserStore } from '@/store'
+import { uploadImage, Login } from '@/api/user/user'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnForm from '@/uni_modules/tuniaoui-vue3/components/form/src/form.vue'
@@ -224,11 +225,12 @@ const feedback = ref(false)
 // 反馈的内容
 const feedbackContent = ref('')
 
-// 是否登录
-const login = ref(0)
+// 登录弹窗
+const loginVisible = ref(false)
+
 const login_form = ref({
-	name: '',
-	avatar: ''
+	name: undefined,
+	avatar: undefined
 })
 
 // 点击订单
@@ -270,6 +272,40 @@ const tap_application = (index) => {
 	if (index === 5) {
 		feedback.value = true
 	}
+}
+
+const getphonenumber = (e) => {
+	console.log(e)
+	// 获取成功
+	if (e.detail.errMsg === 'getPhoneNumber:ok') {
+		// 登录
+		Login({
+			code: e.detail.code,
+			avatar: login_form.value.avatar,
+			name: login_form.value.name
+		}).then(res => {
+			console.log(res)
+			// 登录成功
+			if (res.code === 200) {
+				// 关闭弹窗
+				loginVisible.value = false
+				// 获取用户信息
+				// store.getUserInfo()
+			}
+		})
+	}
+}
+
+// 选择头像
+const chooseavatar = (e) => {
+	// 转换为base64
+	const base64 = uni.getFileSystemManager().readFileSync(e.detail.avatarUrl, 'base64')
+	// 添加前缀
+	login_form.value.avatar = 'data:image/png;base64,' + base64
+	// console.log(login_form.value.avatar)
+	uploadImage(login_form.value.avatar).then(res => {
+		console.log(res)
+	})
 }
 
 const getData = () => {
@@ -449,7 +485,6 @@ page {
 		margin-top: 15rpx;
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
-
 	}
 
 	.tofunction {
@@ -468,11 +503,68 @@ page {
 		}
 	}
 
+	.user_popup {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.title_border_text {
+			font-size: 33rpx;
+			font-weight: bold;
+			height: 80rpx;
+			margin-top: 10rpx;
+		}
+
+		.user_text {
+			font-size: 26rpx;
+			color: #999;
+		}
+
+		.up_avatar {
+			height: 150rpx;
+			width: 150rpx;
+			border: 4rpx solid #fff;
+			margin-top: 50rpx;
+			border-radius: 100rpx;
+			background: #f8f7f8;
+			box-shadow: 0 0 2.5rem rgba(0, 0, 0, .15);
+
+			image {
+				height: 150rpx;
+				width: 150rpx;
+				border-radius: 50%;
+				margin-left: -30rpx;
+			}
+		}
+
+		.user_name {
+			height: 80rpx;
+			margin-top: 50rpx;
+			border-radius: 10rpx;
+			background: #f8f7f8;
+
+			input {
+				width: 650rpx;
+				height: 100%;
+				margin: 0 auto;
+			}
+		}
+
+		.login {
+			height: 80rpx;
+			border-radius: 10rpx;
+			background: #e6e6e6;
+			margin-top: 70rpx;
+		}
+	}
+
 	.footer {
 		width: 100%;
 		display: flex;
 		justify-content: space-around;
 		align-items: center;
+
+
 	}
 }
 </style>
