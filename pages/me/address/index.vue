@@ -1,12 +1,12 @@
 <template>
   <Header title="收货地址" />
   <view class="all">
-    <view class="card" v-for="(item, index) in addressList" :key="index">
+    <view class="card" v-for="item in addressList" :key="item.id">
       <view class="left">
-        <text class="address">{{ item.address }}</text>
+        <text class="address">{{ JSON.parse(item.address).join('-') + ' ' + item.detail }}</text>
         <text class="info">{{ item.name }}<text style="margin-left: 30rpx">{{ item.phone }}</text> </text>
       </view>
-      <TnIcon name="edit-write" size="40" @click="toEdit(index)"></TnIcon>
+      <TnIcon name="edit-write" size="40" @click="toEdit(item.id)"></TnIcon>
     </view>
     <TnButton width="623" height="100" bg-color="#D8CCB5" text-color="#FFFFFF" :custom-style="{ marginTop: '50rpx' }"
       shape="round" @click="toEdit(-1)">
@@ -18,6 +18,7 @@
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
+import { get_address_list } from '@/api/address/address.js'
 import Header from '@/components/header.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
@@ -31,39 +32,43 @@ const toEdit = (index) => {
 }
 
 const getData = () => {
-  const list = [
-    {
-      address: '广东省广州市天河区天河路',
-      name: '张三',
-      phone: '13888888888'
-    },
-    {
-      address: '广东省广州市天河区天河路',
-      name: '李四',
-      phone: '13888888888'
-    },
-    {
-      address: '广东省广州市天河区天河路',
-      name: '王五',
-      phone: '13888888888'
-    },
-    {
-      address: '广东省广州市天河区天河路',
-      name: '赵六',
-      phone: '13888888888'
-    },
-    {
-      address: '广东省广州市天河区天河路',
-      name: '孙七',
-      phone: '13888888888'
-    },
-    {
-      address: '广东省广州市天河区天河路',
-      name: '周八',
-      phone: '13888888888'
-    }
-  ]
-  addressList.value = list
+  // const list = [
+  //   {
+  //     address: '广东省广州市天河区天河路',
+  //     name: '张三',
+  //     phone: '13888888888'
+  //   },
+  //   {
+  //     address: '广东省广州市天河区天河路',
+  //     name: '李四',
+  //     phone: '13888888888'
+  //   },
+  //   {
+  //     address: '广东省广州市天河区天河路',
+  //     name: '王五',
+  //     phone: '13888888888'
+  //   },
+  //   {
+  //     address: '广东省广州市天河区天河路',
+  //     name: '赵六',
+  //     phone: '13888888888'
+  //   },
+  //   {
+  //     address: '广东省广州市天河区天河路',
+  //     name: '孙七',
+  //     phone: '13888888888'
+  //   },
+  //   {
+  //     address: '广东省广州市天河区天河路',
+  //     name: '周八',
+  //     phone: '13888888888'
+  //   }
+  // ]
+  get_address_list().then(res => {
+    console.log(res)
+    addressList.value = res.data.data
+    console.log(addressList.value)
+  })
 }
 
 onShow(() => {
