@@ -30,10 +30,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onReachBottom } from '@dcloudio/uni-app'
 import shoppingCard from '@/components/shopping/shoppingCard.vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
-import { getCartList } from '@/api/cart/cart.js'
+import { get_cart_list } from '@/api/cart/cart'
+
+let page = 1
 
 const dataList = ref([])
 
@@ -93,125 +95,133 @@ const total = computed(() => {
 
 const getData = () => {
 	console.log('获取数据');
-	const list = [
-		{
-			business: '三只松鼠官方特卖',
-			items: [
-				{
-					name: '休闲芒果干大礼包，50g一包超值',
-					selections: [
-						{
-							type: '1袋',
-							price: 28.8
-						},
-						{
-							type: '2袋',
-							price: 56.8
-						},
-						{
-							type: '3袋',
-							price: 84.8
-						},
-						{
-							type: '4袋',
-							price: 112.8
-						}
-					],
-					img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-					select: 0,
-					number: 2,
-					order: true
-				},
-				{
-					name: '休闲芒果干大礼包，50g一包超值',
-					selections: [
-						{
-							type: '1袋',
-							price: 28.8
-						},
-						{
-							type: '2袋',
-							price: 56.8
-						},
-						{
-							type: '3袋',
-							price: 84.8
-						},
-						{
-							type: '4袋',
-							price: 112.8
-						}
-					],
-					img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-					select: 2,
-					number: 1,
-					order: false
-				}
-			]
-		},
-		{
-			business: '三只松鼠官方特卖',
-			items: [
-				{
-					name: '休闲芒果干大礼包，50g一包超值',
-					selections: [
-						{
-							type: '11111111111111111111111111袋',
-							price: 28.8
-						},
-						{
-							type: '2袋',
-							price: 56.8
-						},
-						{
-							type: '3袋',
-							price: 84.8
-						},
-						{
-							type: '4袋',
-							price: 112.8
-						}
-					],
-					img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-					select: 0,
-					number: 2,
-					order: false
-				},
-				{
-					name: '休闲芒果干大礼包，50g一包超值',
-					selections: [
-						{
-							type: '1袋',
-							price: 28.8
-						},
-						{
-							type: '2袋',
-							price: 56.8
-						},
-						{
-							type: '3袋',
-							price: 84.8
-						},
-						{
-							type: '4袋',
-							price: 112.8
-						}
-					],
-					img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-					select: 0,
-					number: 2,
-					order: false
-				}
-			]
-		}
-	]
-	getCartList(1).then(res => {
+	// const list = [
+	// 	{
+	// 		business: '三只松鼠官方特卖',
+	// 		items: [
+	// 			{
+	// 				name: '休闲芒果干大礼包，50g一包超值',
+	// 				selections: [
+	// 					{
+	// 						type: '1袋',
+	// 						price: 28.8
+	// 					},
+	// 					{
+	// 						type: '2袋',
+	// 						price: 56.8
+	// 					},
+	// 					{
+	// 						type: '3袋',
+	// 						price: 84.8
+	// 					},
+	// 					{
+	// 						type: '4袋',
+	// 						price: 112.8
+	// 					}
+	// 				],
+	// 				img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
+	// 				select: 0,
+	// 				number: 2,
+	// 				order: true
+	// 			},
+	// 			{
+	// 				name: '休闲芒果干大礼包，50g一包超值',
+	// 				selections: [
+	// 					{
+	// 						type: '1袋',
+	// 						price: 28.8
+	// 					},
+	// 					{
+	// 						type: '2袋',
+	// 						price: 56.8
+	// 					},
+	// 					{
+	// 						type: '3袋',
+	// 						price: 84.8
+	// 					},
+	// 					{
+	// 						type: '4袋',
+	// 						price: 112.8
+	// 					}
+	// 				],
+	// 				img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
+	// 				select: 2,
+	// 				number: 1,
+	// 				order: false
+	// 			}
+	// 		]
+	// 	},
+	// 	{
+	// 		business: '三只松鼠官方特卖',
+	// 		items: [
+	// 			{
+	// 				name: '休闲芒果干大礼包，50g一包超值',
+	// 				selections: [
+	// 					{
+	// 						type: '11111111111111111111111111袋',
+	// 						price: 28.8
+	// 					},
+	// 					{
+	// 						type: '2袋',
+	// 						price: 56.8
+	// 					},
+	// 					{
+	// 						type: '3袋',
+	// 						price: 84.8
+	// 					},
+	// 					{
+	// 						type: '4袋',
+	// 						price: 112.8
+	// 					}
+	// 				],
+	// 				img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
+	// 				select: 0,
+	// 				number: 2,
+	// 				order: false
+	// 			},
+	// 			{
+	// 				name: '休闲芒果干大礼包，50g一包超值',
+	// 				selections: [
+	// 					{
+	// 						type: '1袋',
+	// 						price: 28.8
+	// 					},
+	// 					{
+	// 						type: '2袋',
+	// 						price: 56.8
+	// 					},
+	// 					{
+	// 						type: '3袋',
+	// 						price: 84.8
+	// 					},
+	// 					{
+	// 						type: '4袋',
+	// 						price: 112.8
+	// 					}
+	// 				],
+	// 				img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
+	// 				select: 0,
+	// 				number: 2,
+	// 				order: false
+	// 			}
+	// 		]
+	// 	}
+	// ]
+	get_cart_list(1).then(res => {
 		console.log('res', res)
+		dataList.value = res.data.data
 	})
-	dataList.value = list
 }
 onShow(() => {
 	getData()
+})
+
+onReachBottom(() => {
+	page++
+	get_cart_list(page).then(res => {
+		console.log('res', res)
+		dataList.value = dataList.value.concat(res.data.data)
+	})
 })
 </script>
 

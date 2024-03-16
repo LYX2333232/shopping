@@ -23,12 +23,12 @@ const request = {
 		options.url = `${baseUrl}${options.url}`;
 		// 判断本地是否存在token，如果存在则带上请求头
 
-		// console.log(UserStore().auth.token);
+		// console.log(UserStore().auth.access_token);
 
 		options.header = {
 			'Accept': 'application/json',
 			'content-type': 'application/json',
-			'Authorization': UserStore().auth.token ? `Bearer ${UserStore().auth.token}` :
+			'Authorization': UserStore().auth.access_token ? `Bearer ${UserStore().auth.access_token}` :
 				'' // 这里是token(可自行修改)
 		};
 
@@ -124,7 +124,7 @@ const request = {
 		options.header = {
 			'Accept': 'application/json',
 			'content-type': 'application/json',
-			'Authorization': UserStore().auth.token ? `Bearer ${UserStore().auth.token}` : '', // 这里是token(可自行修改)
+			'Authorization': UserStore().auth.access_token ? `Bearer ${UserStore().auth.access_token}` : '', // 这里是token(可自行修改)
 
 		};
 		// let time = Math.floor(Date.now() / 1000);
@@ -214,7 +214,7 @@ const request = {
 		options.header = {
 			'Accept': 'application/json',
 			'content-type': 'application/json',
-			'Authorization': UserStore().auth.token ? `Bearer ${UserStore().auth.token}` : '', // 这里是token(可自行修改)
+			'Authorization': UserStore().auth.access_token ? `Bearer ${UserStore().auth.access_token}` : '', // 这里是token(可自行修改)
 
 		};
 		// let time = Math.floor(Date.now() / 1000);

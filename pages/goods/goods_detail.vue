@@ -45,7 +45,7 @@
 				<text>数量</text>
 				<view>
 					<uni-section title="基本用法" type="line" padding>
-						<uni-number-box @change="changeValue" :min="1" />
+						<uni-number-box v-model="cont" @change="changeValue" :min="1" />
 					</uni-section>
 				</view>
 			</view>
@@ -90,6 +90,7 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app';
 import { get_goods_detail } from '@/api/goods/goods'
+import { add_to_cart } from '@/api/cart/cart'
 import Header from '@/components/header.vue'
 import swiper from '../../uni_modules/nutui-uni/components/swiper/swiper.vue';
 
@@ -134,6 +135,9 @@ const size = ref([])
 
 const sizeIndex = ref(0)
 
+// 数量
+const cont = ref(1)
+
 const detailImg = [
 	'https://source.unsplash.com/random',
 	'https://source.unsplash.com/random',
@@ -174,7 +178,16 @@ function onClick(e) {
 };
 function buttonClick(e) {
 	console.log(e)
-	this.options[2].info++
+	// 加入购物车
+	if (e.index === 0) {
+		add_to_cart(size.value[sizeIndex.value].c_id, cont.value).then(res => {
+			console.log(res)
+			uni.showToast({
+				title: '加入购物车成功',
+				icon: 'none'
+			})
+		})
+	}
 }
 
 onLoad((options) => {

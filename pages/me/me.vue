@@ -3,7 +3,7 @@
 
 		<view class="top">
 			<view class="avatar">
-				<image :src="store.userInfo ? store.userInfo.avatar : '@/static/icon/avatar.png'" mode="widthFix"
+				<image :src="store.userInfo ? store.userInfo.avatar : '../../static/icon/avatar.png'" mode="widthFix"
 					class="image"></image>
 				<view class="tabel"
 					:style="isBuyer ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);' : 'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
@@ -19,7 +19,7 @@
 				</view>
 
 				<view class="bianhao">
-					编号：{{ store.userInfo.num }}
+					编号：{{ store.userInfo.uid }}
 				</view>
 			</view>
 			<view style="margin-left:30rpx" class="denglu" v-else @click="loginVisible = true">
@@ -205,10 +205,12 @@ let funList = [
 	{
 		name: '待付款',
 		icon: '../../static/icon/me/topay.png'
-	}, {
+	},
+	{
 		name: '待发货',
 		icon: '../../static/icon/me/wait.png'
-	}, {
+	},
+	{
 		name: '待收货',
 		icon: '../../static/icon/me/truck.png'
 	},
@@ -278,20 +280,24 @@ const getphonenumber = (e) => {
 	console.log(e)
 	// 获取成功
 	if (e.detail.errMsg === 'getPhoneNumber:ok') {
-		// 登录
-		Login({
-			code: e.detail.code,
-			avatar: login_form.value.avatar,
-			name: login_form.value.name
-		}).then(res => {
-			console.log(res)
-			// 登录成功
-			if (res.code === 200) {
-				// 关闭弹窗
-				loginVisible.value = false
-				// 获取用户信息
-				// store.getUserInfo()
-			}
+		uni.login({
+			success: (s) => {
+				// 登录
+				Login({
+					code: s.code,
+					avatar: login_form.value.avatar,
+					name: login_form.value.name
+				}).then(res => {
+					console.log(res)
+					// 登录成功
+					if (res.code === 200) {
+						// 关闭弹窗
+						loginVisible.value = false
+						// 获取用户信息
+						store.set_user_info(res.data)
+					}
+				})
+			},
 		})
 	}
 }
@@ -302,9 +308,9 @@ const chooseavatar = (e) => {
 	const base64 = uni.getFileSystemManager().readFileSync(e.detail.avatarUrl, 'base64')
 	// 添加前缀
 	// console.log(login_form.value.avatar)
-	uploadImage('data:image/png;base64,' + base64).then(res => {
+	login_form.value.avatar = 'data:image/png;base64,' + base64
+	uploadImage(login_form.value.avatar).then(res => {
 		console.log(res)
-		login_form.value.avatar = res.data
 	})
 }
 
