@@ -301,10 +301,10 @@ const chooseavatar = (e) => {
 	// 转换为base64
 	const base64 = uni.getFileSystemManager().readFileSync(e.detail.avatarUrl, 'base64')
 	// 添加前缀
-	login_form.value.avatar = 'data:image/png;base64,' + base64
 	// console.log(login_form.value.avatar)
-	uploadImage(login_form.value.avatar).then(res => {
+	uploadImage('data:image/png;base64,' + base64).then(res => {
 		console.log(res)
+		login_form.value.avatar = res.data
 	})
 }
 

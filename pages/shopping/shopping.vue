@@ -1,29 +1,31 @@
 <template>
-<view class="all">
-	<view style="display: flex; margin-left: 30rpx;">
-		<text style="font-size: 38rpx;font-weight: 600;">购物车</text>	
-		<view class="control">
-			管理
-		</view>	
+	<view class="all">
+		<view style="display: flex; margin-left: 30rpx;">
+			<text style="font-size: 38rpx;font-weight: 600;">购物车</text>
+			<view class="control">
+				管理
+			</view>
+		</view>
+
+		<shoppingCard v-for="(data, index) in dataList" :index="index" :data="data" @change="change"
+			@changeNum="changeNum" @changeSelect="changeSelect"></shoppingCard>
 	</view>
-	
-	<shoppingCard v-for="(data,index) in dataList" :index="index" :data="data" @change="change" @changeNum="changeNum" @changeSelect="changeSelect" ></shoppingCard>
-</view>
-	
-<view class="bottom">
- <view style="width: 90%;margin: 0 auto;display: flex;align-items: center;">
-	<TnCheckbox v-model="orderAll" :indeterminate="ordertSome" @change="changeOrderAll" checked-shape="circle" size="lg" active-color="#C7BAA5" ></TnCheckbox>
-	
-	<view class="text2">全选</view>
-	<view class="text3">总计</view>
-	<view class="text4">¥{{ total }} </view>
-	<view class="button" @click="tocaculate">
-		结算
+
+	<view class="bottom">
+		<view style="width: 90%;margin: 0 auto;display: flex;align-items: center;">
+			<TnCheckbox v-model="orderAll" :indeterminate="ordertSome" @change="changeOrderAll" checked-shape="circle"
+				size="lg" active-color="#C7BAA5"></TnCheckbox>
+
+			<view class="text2">全选</view>
+			<view class="text3">总计</view>
+			<view class="text4">¥{{ total }} </view>
+			<view class="button" @click="tocaculate">
+				结算
+			</view>
+		</view>
+
 	</view>
- </view>
-  
-</view>
-	
+
 </template>
 
 <script setup>
@@ -31,24 +33,25 @@ import { ref, computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import shoppingCard from '@/components/shopping/shoppingCard.vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
+import { getCartList } from '@/api/cart/cart.js'
 
 const dataList = ref([])
 
 // 改变选中状态
-const change = (e,i,j) => {
-	console.log('e',e,'i',i,'j',j);
+const change = (e, i, j) => {
+	console.log('e', e, 'i', i, 'j', j);
 	dataList.value[j].items[i].order = e
 }
 
 // 修改数量
-const changeNum = (e,i,j) => {
-	console.log('e',e,'i',i,'j',j);
+const changeNum = (e, i, j) => {
+	console.log('e', e, 'i', i, 'j', j);
 	dataList.value[j].items[i].number = e
 }
 
 // 修改选择
-const changeSelect = (e,i,j) => {
-	console.log('e',e,'i',i,'j',j);
+const changeSelect = (e, i, j) => {
+	console.log('e', e, 'i', i, 'j', j);
 	dataList.value[j].items[i].select = e
 }
 
@@ -80,7 +83,7 @@ const total = computed(() => {
 	let total = 0
 	dataList.value.forEach(item => {
 		item.items.forEach(item => {
-			if(item.order){
+			if (item.order) {
 				total += item.selections[item.select].price * item.number
 			}
 		})
@@ -93,7 +96,7 @@ const getData = () => {
 	const list = [
 		{
 			business: '三只松鼠官方特卖',
-			items:[
+			items: [
 				{
 					name: '休闲芒果干大礼包，50g一包超值',
 					selections: [
@@ -148,7 +151,7 @@ const getData = () => {
 		},
 		{
 			business: '三只松鼠官方特卖',
-			items:[
+			items: [
 				{
 					name: '休闲芒果干大礼包，50g一包超值',
 					selections: [
@@ -202,6 +205,9 @@ const getData = () => {
 			]
 		}
 	]
+	getCartList(1).then(res => {
+		console.log('res', res)
+	})
 	dataList.value = list
 }
 onShow(() => {
@@ -210,16 +216,16 @@ onShow(() => {
 </script>
 
 <style lang="scss" scoped>
-page{
+page {
 	background-color: rgba(247, 247, 247, 1);
 	padding-top: 100rpx;
 }
 
-.all{
+.all {
 	padding-bottom: 100rpx;
 }
 
-.control{
+.control {
 	width: 73rpx;
 	height: 38rpx;
 	background: #E2D6BF;
@@ -235,44 +241,49 @@ page{
 	margin-bottom: 20rpx;
 }
 
-.bottom{
+.bottom {
 	width: 750rpx;
 	height: 96rpx;
 	background: #FFFFFF;
-	position:fixed; bottom:0;
-.text2{
-	color: rgba(153, 153, 153, 1);
-	margin-left: 10rpx;
-}
-.text3{
-	margin-left: 90rpx;
-	width: 55rpx;
-	font-family: Inter, Inter;
-	font-weight: 400;
-	font-size: 27rpx;
-	color: #000000;
-}
-.text4{
-	width: 119rpx;
-	font-family: Inter, Inter;
-	font-weight: normal;
-	font-size: 38rpx;
-	color: #834820;
-	margin-left: 20rpx;
-}
-.button{
-	width: 258rpx;
-	height: 71rpx;
-	background: #C8B697;
-	border-radius: 10rpx;
-	font-weight: 500;
-	font-size: 31rpx;
-	color: #FFFFFF;
-	text-align: center;
-	margin-left: 20rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
+	position: fixed;
+	bottom: 0;
+
+	.text2 {
+		color: rgba(153, 153, 153, 1);
+		margin-left: 10rpx;
+	}
+
+	.text3 {
+		margin-left: 90rpx;
+		width: 55rpx;
+		font-family: Inter, Inter;
+		font-weight: 400;
+		font-size: 27rpx;
+		color: #000000;
+	}
+
+	.text4 {
+		width: 119rpx;
+		font-family: Inter, Inter;
+		font-weight: normal;
+		font-size: 38rpx;
+		color: #834820;
+		margin-left: 20rpx;
+	}
+
+	.button {
+		width: 258rpx;
+		height: 71rpx;
+		background: #C8B697;
+		border-radius: 10rpx;
+		font-weight: 500;
+		font-size: 31rpx;
+		color: #FFFFFF;
+		text-align: center;
+		margin-left: 20rpx;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
 </style>
