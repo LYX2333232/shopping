@@ -2,7 +2,7 @@
   <Header title="领券中心" />
   <image src="/static/icon/index/coupon/coupon.png" mode="widthFix" class="background" />
   <view class="all">
-    <view v-for="coupon in couponList" :key="coupon.id" class="card tn-flex-center-start">
+    <view v-for="coupon in couponList" :key="coupon.id" class="card tn-flex-center-start" @click="receive(coupon)">
       <image :src="coupon.path" style="width:140rpx;height:140rpx;margin:15rpx;" mode="scaleToFill" />
       <view class="main">
         <view class="title" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">{{
@@ -31,99 +31,26 @@ import { get_coupon_list, receive_coupon } from '@/api/coupon/coupon'
 
 const couponList = ref([])
 
+// 领取优惠券
+const receive = (coupon) => {
+  // 还有优惠券未领取
+  if (coupon.state === 0) {
+    receive_coupon(id).then(res => {
+      console.log(res)
+      if (res.code === 200) {
+        uni.showToast({
+          title: '领取成功',
+          icon: 'none'
+        })
+        getData()
+      }
+    })
+  }
+}
+
 // 获取优惠券列表
 const getData = () => {
   // 获取优惠券列表
-  // const list = [
-  //   {
-  //     id: 0,
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '水果干通用券',
-  //     price: 100,
-  //     threshold: 500,
-  //     start_time: '8.5',
-  //     end_time: '8.15',
-  //     have: true,
-  //     isSurplus: true
-  //   },
-  //   {
-  //     id: 1,
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '水果干通用券',
-  //     price: 100,
-  //     threshold: 500,
-  //     start_time: '8.5',
-  //     end_time: '8.15',
-  //     have: false,
-  //     isSurplus: false
-  //   },
-  //   {
-  //     id: 2,
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '水果干通用券',
-  //     price: 100,
-  //     threshold: 500,
-  //     start_time: '8.5',
-  //     end_time: '8.15',
-  //     have: true,
-  //     isSurplus: true
-  //   },
-  //   {
-  //     id: 3,
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '水果干通用券',
-  //     price: 100,
-  //     threshold: 500,
-  //     start_time: '8.5',
-  //     end_time: '8.15',
-  //     have: false,
-  //     isSurplus: false
-  //   },
-  //   {
-  //     id: 4,
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '水果干通用券',
-  //     price: 100,
-  //     threshold: 500,
-  //     start_time: '8.5',
-  //     end_time: '8.15',
-  //     have: true,
-  //     isSurplus: true
-  //   },
-  //   {
-  //     id: 5,
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '水果干通用券',
-  //     price: 100,
-  //     threshold: 500,
-  //     start_time: '8.5',
-  //     end_time: '8.15',
-  //     have: true,
-  //     isSurplus: true
-  //   },
-  //   {
-  //     id: 6,
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '水果干通用券',
-  //     price: 100,
-  //     threshold: 500,
-  //     start_time: '8.5',
-  //     end_time: '8.15',
-  //     have: false,
-  //     isSurplus: true
-  //   },
-  //   {
-  //     id: 7,
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '水果干通用券',
-  //     price: 100,
-  //     threshold: 500,
-  //     start_time: '8.5',
-  //     end_time: '8.15',
-  //     have: true,
-  //     isSurplus: true
-  //   }
-  // ]
   get_coupon_list(1).then(res => {
     console.log(res)
     couponList.value = res.data.data
