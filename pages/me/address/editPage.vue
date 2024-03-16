@@ -50,7 +50,7 @@ import TnListItem from '@/uni_modules/tuniaoui-vue3/components/list/src/list-ite
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 import TnSwitch from '@/uni_modules/tuniaoui-vue3/components/switch/src/switch.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
-import { add_address } from '@/api/address/address'
+import { add_address, get_address_detail } from '@/api/address/address'
 
 const title = ref('')
 
@@ -103,6 +103,14 @@ onLoad((options) => {
   } else {
     title.value = '编辑地址'
     id = parseInt(options.index)
+    get_address_detail(id).then(res => {
+      console.log(res)
+      name.value = res.data.name
+      phone.value = res.data.phone
+      region.value = JSON.parse(res.data.address)
+      detail.value = res.data.detail
+      isDefault.value = res.data.default === 1
+    })
   }
 })
 </script>

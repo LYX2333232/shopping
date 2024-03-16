@@ -6,7 +6,10 @@
         <text class="address">{{ JSON.parse(item.address).join('-') + ' ' + item.detail }}</text>
         <text class="info">{{ item.name }}<text style="margin-left: 30rpx">{{ item.phone }}</text> </text>
       </view>
-      <TnIcon name="edit-write" size="40" @click="toEdit(item.id)"></TnIcon>
+      <view style="display: flex;flex-direction: column;align-items: center;">
+        <TnIcon name="edit-write" size="40" @click="toEdit(item.id)"></TnIcon>
+        <TnIcon name="delete" size="40" type="danger" @click="deleteAddress(item.id)"></TnIcon>
+      </view>
     </view>
     <TnButton width="623" height="100" bg-color="#D8CCB5" text-color="#FFFFFF" :custom-style="{ marginTop: '50rpx' }"
       shape="round" @click="toEdit(-1)">
@@ -18,7 +21,7 @@
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
-import { get_address_list } from '@/api/address/address.js'
+import { get_address_list, delete_address } from '@/api/address/address.js'
 import Header from '@/components/header.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
@@ -28,6 +31,25 @@ const addressList = ref([])
 const toEdit = (index) => {
   uni.navigateTo({
     url: `/pages/me/address/editPage?index=${index}`
+  })
+}
+
+const deleteAddress = (id) => {
+  uni.showModal({
+    title: '提示',
+    content: '确定删除该地址吗？',
+    success: res => {
+      if (res.confirm) {
+        delete_address(id).then(res => {
+          console.log(res)
+          uni.showToast({
+            title: '删除成功',
+            icon: 'none'
+          })
+          getData()
+        })
+      }
+    }
   })
 }
 
