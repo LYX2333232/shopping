@@ -16,7 +16,7 @@
     <TnListItem width="750">
       <view class="tn-flex-center-start">
         <view class="label">选择地区</view>
-        <picker mode="region" :value="region" @change="change">
+        <picker mode="region" :value="region" @change="onRegionChange">
           <view class="tn-flex-center-start">
             {{ region.join('-') }}
           </view>
@@ -26,7 +26,7 @@
     <TnListItem width="750">
       <view class="tn-flex-center-start">
         <view class="label">详细地址</view>
-        <TnInput :border="false" type="text" placeholder="街道、楼牌号等" v-model="phone"></TnInput>
+        <TnInput :border="false" type="text" placeholder="街道、楼牌号等" v-model="detail"></TnInput>
       </view>
     </TnListItem>
     <TnListItem width="750">
@@ -36,7 +36,7 @@
       </view>
     </TnListItem>
     <TnButton width="623" height="100" bg-color="#D8CCB5" text-color="#FFFFFF"
-      :custom-style="{ position: 'fixed', bottom: '20px' }" shape="round" @click="toEdit(-1)">
+      :custom-style="{ position: 'fixed', bottom: '20px' }" shape="round" @click="save()">
       保存使用
     </TnButton>
   </view>
@@ -50,8 +50,11 @@ import TnListItem from '@/uni_modules/tuniaoui-vue3/components/list/src/list-ite
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 import TnSwitch from '@/uni_modules/tuniaoui-vue3/components/switch/src/switch.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import { add_address } from '@/api/address/address'
 
 const title = ref('')
+
+let id = undefined
 
 const name = ref('')
 
@@ -59,12 +62,38 @@ const phone = ref('')
 
 const region = ref(['北京市', '市辖区', '东城区'])
 
+const onRegionChange = (e) => {
+  // console.log(e)
+  region.value = e.detail.value
+}
+
+const detail = ref('')
+
 const isDefault = ref(false)
 
-const change = (e) => {
-  // console.log(region.value);
-  console.log('e', e)
-  region.value = e.detail.value
+const save = () => {
+  console.log('保存')
+  add_address({
+    id,
+    name: name.value,
+    phone: phone.value,
+    address: region.value,
+    detail: detail.value,
+    default: isDefault.value ? 1 : 0
+  }).then((res) => {
+    console.log(res)
+    if (res.code === 200) {
+      uni.showToast({
+        title: '保存成功',
+        icon: 'none'
+      })
+      setTimeout(() => {
+        uni.navigateBack({
+          delta: 1
+        })
+      }, 1000);
+    }
+  })
 }
 
 onLoad((options) => {
@@ -73,6 +102,7 @@ onLoad((options) => {
     title.value = '新增地址'
   } else {
     title.value = '编辑地址'
+    id = parseInt(options.index)
   }
 })
 </script>
@@ -89,14 +119,13 @@ onLoad((options) => {
   padding-top: 150rpx;
 
   .label {
-    background: pink;
     width: 150rpx;
     font-family: Inter, Inter;
     font-weight: 600;
     font-size: 35rpx;
     color: #292929;
     line-height: 32rpx;
-    text-align: left;
+    text-align: right;
     font-style: normal;
     text-transform: none;
   }
