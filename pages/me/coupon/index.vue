@@ -4,18 +4,18 @@
     <view class="card" v-for="(card, index) in cardList" :key="index">
       <image :src="card.img" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
       <view class="main">
-        <view class="title" :style="card.status !== 0 ? 'color:#FFC542' : 'color:#D4D1D4'">{{ card.title }}</view>
+        <view class="title" :style="card.state !== 0 ? 'color:#FFC542' : 'color:#D4D1D4'">{{ card.name }}</view>
         <view>
-          <view class="price" :style="card.state !== 0 ? 'color:#FFC542' : 'color:#D4D1D4'">￥{{ card.price }}</view>
+          <view class="price" :style="card.state !== 0 ? 'color:#FFC542' : 'color:#D4D1D4'">￥{{ card.reduce }}</view>
           <view class="info">满{{ card.full }}可用 有效期：{{ card.start }}-{{ card.end }}</view>
         </view>
       </view>
-      <image v-if="card.status === 0" style="position:absolute;right:0;height:110%"
+      <image v-if="card.state === 0" style="position:absolute;right:0;height:110%"
         src="@/static/icon/index/coupon/expire.png" mode="heightFix" />
-      <image v-if="card.status === 1" style="position:absolute;right:0;height:110%"
+      <image v-if="card.state === 1" style="position:absolute;right:0;height:110%"
         src="@/static/icon/index/coupon/touse.png" mode="heightFix" />
-      <image v-if="card.status === 2" style="position:absolute;right:0;height:110%"
-        src="@/static/icon/index/coupon/used.png" mode="heightFix" />
+      <!-- <image v-if="card.state === 2" style="position:absolute;right:0;height:110%"
+        src="@/static/icon/index/coupon/used.png" mode="heightFix" /> -->
     </view>
   </view>
 </template>

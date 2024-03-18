@@ -102,6 +102,11 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/shopping/selectAddress/index",
+			"style": {
+				"navigationStyle": "custom"			}
 		}
 	],
 	"globalStyle": {

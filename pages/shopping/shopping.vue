@@ -2,13 +2,22 @@
 	<view class="all">
 		<view style="display: flex; margin-left: 30rpx;">
 			<text style="font-size: 38rpx;font-weight: 600;">购物车</text>
-			<view class="control">
+			<view v-if="!edit" class="control" @click="changeEdit(true)">
 				管理
 			</view>
+			<view v-else class="control" @click="changeEdit(false)">
+				退出管理
+			</view>
+		</view>
+		<view style="margin-left: 30rpx;display:flex;" @click="addressChange">
+			<view class="address">
+				地址：{{ address.address }}
+			</view>
+			<TnIcon name="down"></TnIcon>
 		</view>
 
-		<shoppingCard v-for="(data, index) in dataList" :index="index" :data="data" @change="change"
-			@changeNum="changeNum" @changeSelect="changeSelect"></shoppingCard>
+		<shoppingCard v-for="(data, index) in dataList" :index="index" :data="data" :edit="edit" @del="del"
+			@change="change" @changeNum="changeNum"></shoppingCard>
 	</view>
 
 	<view class="bottom">
@@ -30,50 +39,59 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { onShow, onReachBottom } from '@dcloudio/uni-app'
+import { onShow, onLoad, onReachBottom } from '@dcloudio/uni-app'
 import shoppingCard from '@/components/shopping/shoppingCard.vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
-import { get_cart_list } from '@/api/cart/cart'
+import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import { get_cart_list, del_cart } from '@/api/cart/cart'
+import { get_default_address } from '@/api/address/address'
+import { AddressStore } from '@/store'
 
+const address = AddressStore()
 let page = 1
+
+const edit = ref(false)
+
+const changeEdit = (e) => {
+	console.log(e)
+	edit.value = e
+}
+
+const addressChange = () => {
+	uni.navigateTo({
+		url: '/pages/shopping/selectAddress/index'
+	})
+}
 
 const dataList = ref([])
 
 // 改变选中状态
 const change = (e, i, j) => {
-	console.log('e', e, 'i', i, 'j', j);
-	dataList.value[j].items[i].order = e
+	// console.log('e', e, 'i', i, 'j', j);
+	dataList.value[j].order = e
 }
 
 // 修改数量
 const changeNum = (e, i, j) => {
-	console.log('e', e, 'i', i, 'j', j);
-	dataList.value[j].items[i].number = e
-}
-
-// 修改选择
-const changeSelect = (e, i, j) => {
-	console.log('e', e, 'i', i, 'j', j);
-	dataList.value[j].items[i].select = e
+	// console.log('e', e, 'i', i, 'j', j);
+	dataList.value[j].cont = e
 }
 
 // 全选
 const orderAll = computed({
 	get: () => {
-		return dataList.value.every(item => item.items.every(item => item.order))
+		return dataList.value.every(item => item.order)
 	},
 	set: (val) => {
 		dataList.value.forEach(item => {
-			item.items.forEach(item => {
-				item.order = val
-			})
+			item.order = val
 		})
 	}
 })
 
 // 部分选中
 const ordertSome = computed(() => {
-	return dataList.value.some(item => item.items.some(item => item.order))
+	return dataList.value.some(item => item.order)
 })
 
 // 全选
@@ -84,143 +102,58 @@ const changeOrderAll = (e) => {
 const total = computed(() => {
 	let total = 0
 	dataList.value.forEach(item => {
-		item.items.forEach(item => {
-			if (item.order) {
-				total += item.selections[item.select].price * item.number
-			}
-		})
+		if (item.order) {
+			total += item.price * item.cont
+		}
 	})
 	return total
 })
 
+const del = (id) => {
+	console.log('删除', id)
+	del_cart(id).then(res => {
+		if (res.code === 200) {
+			uni.showToast({
+				title: '删除成功',
+				icon: 'none'
+			})
+			dataList.value = dataList.value.filter(item => item.id !== id)
+		}
+	})
+}
+
 const getData = () => {
-	console.log('获取数据');
-	// const list = [
-	// 	{
-	// 		business: '三只松鼠官方特卖',
-	// 		items: [
-	// 			{
-	// 				name: '休闲芒果干大礼包，50g一包超值',
-	// 				selections: [
-	// 					{
-	// 						type: '1袋',
-	// 						price: 28.8
-	// 					},
-	// 					{
-	// 						type: '2袋',
-	// 						price: 56.8
-	// 					},
-	// 					{
-	// 						type: '3袋',
-	// 						price: 84.8
-	// 					},
-	// 					{
-	// 						type: '4袋',
-	// 						price: 112.8
-	// 					}
-	// 				],
-	// 				img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-	// 				select: 0,
-	// 				number: 2,
-	// 				order: true
-	// 			},
-	// 			{
-	// 				name: '休闲芒果干大礼包，50g一包超值',
-	// 				selections: [
-	// 					{
-	// 						type: '1袋',
-	// 						price: 28.8
-	// 					},
-	// 					{
-	// 						type: '2袋',
-	// 						price: 56.8
-	// 					},
-	// 					{
-	// 						type: '3袋',
-	// 						price: 84.8
-	// 					},
-	// 					{
-	// 						type: '4袋',
-	// 						price: 112.8
-	// 					}
-	// 				],
-	// 				img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-	// 				select: 2,
-	// 				number: 1,
-	// 				order: false
-	// 			}
-	// 		]
-	// 	},
-	// 	{
-	// 		business: '三只松鼠官方特卖',
-	// 		items: [
-	// 			{
-	// 				name: '休闲芒果干大礼包，50g一包超值',
-	// 				selections: [
-	// 					{
-	// 						type: '11111111111111111111111111袋',
-	// 						price: 28.8
-	// 					},
-	// 					{
-	// 						type: '2袋',
-	// 						price: 56.8
-	// 					},
-	// 					{
-	// 						type: '3袋',
-	// 						price: 84.8
-	// 					},
-	// 					{
-	// 						type: '4袋',
-	// 						price: 112.8
-	// 					}
-	// 				],
-	// 				img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-	// 				select: 0,
-	// 				number: 2,
-	// 				order: false
-	// 			},
-	// 			{
-	// 				name: '休闲芒果干大礼包，50g一包超值',
-	// 				selections: [
-	// 					{
-	// 						type: '1袋',
-	// 						price: 28.8
-	// 					},
-	// 					{
-	// 						type: '2袋',
-	// 						price: 56.8
-	// 					},
-	// 					{
-	// 						type: '3袋',
-	// 						price: 84.8
-	// 					},
-	// 					{
-	// 						type: '4袋',
-	// 						price: 112.8
-	// 					}
-	// 				],
-	// 				img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-	// 				select: 0,
-	// 				number: 2,
-	// 				order: false
-	// 			}
-	// 		]
-	// 	}
-	// ]
 	get_cart_list(1).then(res => {
 		console.log('res', res)
-		dataList.value = res.data.data
+		dataList.value = res.data.data.map(item => {
+			return {
+				...item,
+				order: false
+			}
+		})
 	})
 }
 onShow(() => {
 	getData()
 })
 
+onLoad(() => {
+	console.log('onLoad')
+	get_default_address().then(res => {
+		address.setAddress(JSON.parse(res.data.address).join('-') + '-' + res.data.detail, res.data.id)
+	})
+})
+
 onReachBottom(() => {
 	page++
 	get_cart_list(page).then(res => {
 		console.log('res', res)
-		dataList.value = dataList.value.concat(res.data.data)
+		dataList.value = dataList.value.concat(res.data.data.map(item => {
+			return {
+				...item,
+				order: false
+			}
+		}))
 	})
 })
 </script>
@@ -232,11 +165,26 @@ page {
 }
 
 .all {
+	margin-top: 100rpx;
 	padding-bottom: 100rpx;
 }
 
+.address {
+	font-family: Inter, Inter;
+	font-weight: 400;
+	font-size: 23rpx;
+	color: #666666;
+	line-height: 35rpx;
+	text-align: left;
+	font-style: normal;
+	text-transform: none;
+	max-width: 200rpx;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .control {
-	width: 73rpx;
 	height: 38rpx;
 	background: #E2D6BF;
 	border-radius: 98rpx;
@@ -249,6 +197,7 @@ page {
 	margin-left: 20rpx;
 	margin-top: 8rpx;
 	margin-bottom: 20rpx;
+	padding: 3rpx 10rpx;
 }
 
 .bottom {

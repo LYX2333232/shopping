@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import request from '@/utils/request'
 
 export const UserStore = defineStore('cp-user', () => {
 
