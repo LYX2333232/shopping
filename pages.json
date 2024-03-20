@@ -120,6 +120,12 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/me/team/team",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {

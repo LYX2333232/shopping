@@ -243,6 +243,11 @@ const tap_item = (index) => {
 			url: '/pages/me/surplus/surplus',
 		})
 	}
+	if (index === 1) {
+		uni.navigateTo({
+			url: '/pages/me/team/team',
+		})
+	}
 }
 
 // 点击订单
