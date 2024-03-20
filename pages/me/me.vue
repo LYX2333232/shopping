@@ -235,6 +235,16 @@ const login_form = ref({
 	avatar: undefined
 })
 
+// 点击分销
+const tap_item = (index) => {
+	console.log(index)
+	if (index === 0) {
+		uni.navigateTo({
+			url: '/pages/me/surplus/surplus',
+		})
+	}
+}
+
 // 点击订单
 const tap_order = (index) => {
 	console.log(index)
