@@ -196,8 +196,8 @@ const funList0 = ref([
 		icon: '../../static/icon/me/sell.png'
 	},
 	{
-		name: '佣金记录',
-		icon: '../../static/icon/me/income.png'
+		name: '邀请好友',
+		icon: '../../static/icon/me/person.png'
 	}
 ])
 
@@ -251,6 +251,11 @@ const tap_item = (index) => {
 	if (index === 2) {
 		uni.navigateTo({
 			url: '/pages/me/record/record',
+		})
+	}
+	if (index === 3) {
+		uni.navigateTo({
+			url: '/pages/me/invite/invite',
 		})
 	}
 }
