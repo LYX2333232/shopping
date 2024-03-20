@@ -106,7 +106,14 @@
 		{
 			"path": "pages/shopping/selectAddress/index",
 			"style": {
-				"navigationStyle": "custom"			}
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/seckill/detail/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {

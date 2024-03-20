@@ -6,48 +6,32 @@
       <TnScrollList :indicator="false">
         <view class="item-container">
           <view class="main">
-            <image
-              :src="mainCard.img"
-              style="width: 300rpx;height: 300rpx;"
-              mode="scaleToFill"
-            />
+            <image :src="mainCard.img" style="width: 300rpx;height: 300rpx;" mode="scaleToFill" />
             <view class="tn-flex-center-start">
-              <image
-                :src="mainCard.subImg"
-                mode="scaleToFill"
-                style="width: 70rpx;height: 70rpx;margin: 15rpx;"
-              />
+              <image :src="mainCard.subImg" mode="scaleToFill" style="width: 70rpx;height: 70rpx;margin: 15rpx;" />
               <view class="mainText">
                 <view class="main_title">{{ mainCard.title }}</view>
                 <view class="main_price">
                   ￥ {{ mainCard.price }}
                 </view>
                 <view class="tn-flex-center-start">
-                    <TnLineProgress style="width: 150rpx;" :percent="mainCard.saled" active-color="#834820"/>
+                  <TnLineProgress style="width: 150rpx;" :percent="mainCard.saled" active-color="#834820" />
                   <view class="main_done">已抢{{ mainCard.saled }}%</view>
                 </view>
               </view>
             </view>
           </view>
-          <view v-for="(item,index) in subCard" :key="'subCard'+index" class="sub">
-              <image
-              :src="mainCard.img"
-              style="width: 240rpx;height: 240rpx;"
-              mode="scaleToFill"
-            />
+          <view v-for="(item, index) in subCard" :key="'subCard' + index" class="sub">
+            <image :src="mainCard.img" style="width: 240rpx;height: 240rpx;" mode="scaleToFill" />
             <view class="tn-flex-center-start">
-              <image
-                :src="mainCard.subImg"
-                mode="scaleToFill"
-                style="width: 60rpx;height: 60rpx;margin: 15rpx;"
-              />
+              <image :src="mainCard.subImg" mode="scaleToFill" style="width: 60rpx;height: 60rpx;margin: 15rpx;" />
               <view class="subText">
                 <view class="sub_title">{{ mainCard.title }}</view>
                 <view class="sub_price">
                   ￥ {{ mainCard.price }}
                 </view>
                 <view class="tn-flex-center-start">
-                    <TnLineProgress style="width: 120rpx;" :percent="mainCard.saled" active-color="#834820"/>
+                  <TnLineProgress style="width: 120rpx;" :percent="mainCard.saled" active-color="#834820" />
                   <view class="sub_done">已抢{{ mainCard.saled }}%</view>
                 </view>
               </view>
@@ -56,22 +40,18 @@
         </view>
       </TnScrollList>
     </view>
-    <view v-for="(item,index) in items" :key="'item'+index" class="item">
-      <image
-        :src="item.img"
-        mode="scaleToFill"
-        style="width:200rpx;height:160rpx"
-      />
+    <view v-for="(item, index) in items" :key="'item' + index" class="item">
+      <image :src="item.path" mode="scaleToFill" style="width:200rpx;height:160rpx" />
       <view class="right">
         <view class="item_name">{{ item.name }} </view>
         <view class="tn-flex-center-between" style="width: 400rpx">
           <view>
             <view class="tn-flex-center-start">
               <view class="item_price">
-                ￥ {{ item.price }}
+                ￥ {{ item.flash_price }}
               </view>
               <view class="item_old_price">
-                原价：{{ item.old_price }}
+                原价：{{ item.price }}
               </view>
             </view>
             <view class="last">
@@ -80,9 +60,9 @@
               件
             </view>
           </view>
-          <view>
-            <TnButton width="140" height="40" shape="round" bg-color="#C8B697" text-color="#FFFFFF">马上抢</TnButton>
-          </view>
+          <TnButton width="140" height="60" shape="round" bg-color="#C8B697" text-color="#FFFFFF"
+            @click="toBuy(item.id)">马上抢
+          </TnButton>
         </view>
       </view>
     </view>
@@ -96,16 +76,26 @@ import Header from '@/components/header.vue'
 import TnScrollList from '@/uni_modules/tuniaoui-vue3/components/scroll-list/src/scroll-list.vue'
 import TnLineProgress from '@/uni_modules/tuniaoui-vue3/components/line-progress/src/line-progress.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import { get_goods_list } from '@/api/index/seckill/seckill'
 
 const mainCard = ref({})
 const subCard = ref([])
+// 底部的数据
 const items = ref([])
+
+// 马上抢
+const toBuy = (id) => {
+  console.log('buy')
+  uni.navigateTo({
+    url: '/pages/index/seckill/detail/index?id=' + id
+  })
+}
 
 const getData = () => {
   // 获取数据
   const main = {
     img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-    subImg:'https://img.yzcdn.cn/vant/apple-2.jpg',
+    subImg: 'https://img.yzcdn.cn/vant/apple-2.jpg',
     title: '休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包',
     price: 100,
     saled: 50
@@ -113,7 +103,7 @@ const getData = () => {
   const sub = [
     {
       img: 'https://img.yzcdn.cn/vant/apple-2.jpg',
-      subImg:'https://img.yzcdn.cn/vant/apple-3.jpg',
+      subImg: 'https://img.yzcdn.cn/vant/apple-3.jpg',
       title: '休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包',
       price: 100,
       saled: 50
@@ -133,46 +123,49 @@ const getData = () => {
       saled: 50
     }
   ]
-  const item = [
-    {
-      img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-      name: '智利车厘子1000g（当季限定）',
-      price: 199,
-      old_price: 299,
-      last: 100
-    },
-    {
-      img: 'https://img.yzcdn.cn/vant/apple-2.jpg',
-      name: '智利车厘子1000g（当季限定）',
-      price: 199,
-      old_price: 299,
-      last: 100
-    },
-    {
-      img: 'https://img.yzcdn.cn/vant/apple-3.jpg',
-      name: '智利车厘子1000g（当季限定）',
-      price: 199,
-      old_price: 299,
-      last: 100
-    },
-    {
-      img: 'https://img.yzcdn.cn/vant/apple-4.jpg',
-      name: '智利车厘子1000g（当季限定）',
-      price: 199,
-      old_price: 299,
-      last: 100
-    },
-    {
-      img: 'https://img.yzcdn.cn/vant/apple-5.jpg',
-      name: '智利车厘子1000g（当季限定）',
-      price: 199,
-      old_price: 299,
-      last: 100
-    }
-  ]
+  // const item = [
+  //   {
+  //     img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
+  //     name: '智利车厘子1000g（当季限定）',
+  //     price: 199,
+  //     old_price: 299,
+  //     last: 100
+  //   },
+  //   {
+  //     img: 'https://img.yzcdn.cn/vant/apple-2.jpg',
+  //     name: '智利车厘子1000g（当季限定）',
+  //     price: 199,
+  //     old_price: 299,
+  //     last: 100
+  //   },
+  //   {
+  //     img: 'https://img.yzcdn.cn/vant/apple-3.jpg',
+  //     name: '智利车厘子1000g（当季限定）',
+  //     price: 199,
+  //     old_price: 299,
+  //     last: 100
+  //   },
+  //   {
+  //     img: 'https://img.yzcdn.cn/vant/apple-4.jpg',
+  //     name: '智利车厘子1000g（当季限定）',
+  //     price: 199,
+  //     old_price: 299,
+  //     last: 100
+  //   },
+  //   {
+  //     img: 'https://img.yzcdn.cn/vant/apple-5.jpg',
+  //     name: '智利车厘子1000g（当季限定）',
+  //     price: 199,
+  //     old_price: 299,
+  //     last: 100
+  //   }
+  // ]
+  get_goods_list().then(res => {
+    console.log(res)
+    items.value = res.data.data
+  })
   mainCard.value = main
   subCard.value = sub
-  items.value = item
 }
 
 onShow(() => {
@@ -181,26 +174,28 @@ onShow(() => {
 </script>
 
 <style lang="scss" scoped>
-.all{
+.all {
   position: relative;
   width: 100vw;
   min-height: 100vh;
-  background: #F7F7F7;
-  z-index: -2;
+  background: transparent;
+  z-index: 0;
 }
 
-.background{
-  position: absolute;
+.background {
+  position: fixed;
   top: 0;
   width: 100%;
   height: 400rpx;
   background-color: #F9E9CC;
   z-index: -1;
 }
-.top{
+
+.top {
   width: 100vw;
   padding: 200rpx 0 0;
   background: none;
+
   .item-container {
     position: relative;
     width: fit-content;
@@ -208,14 +203,17 @@ onShow(() => {
     align-items: center;
     flex-wrap: nowrap;
   }
-  .main{
+
+  .main {
     margin-left: 20rpx;
     width: 300rpx;
     background: #FFFFFF;
-    .mainText{
+
+    .mainText {
       width: 200rpx;
       text-align: left;
-      .main_title{
+
+      .main_title {
         font-family: Inter, Inter;
         font-weight: 500;
         font-size: 19rpx;
@@ -228,7 +226,8 @@ onShow(() => {
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-      .main_price{
+
+      .main_price {
         font-family: Inter, Inter;
         font-weight: normal;
         font-size: 19rpx;
@@ -238,7 +237,8 @@ onShow(() => {
         font-style: normal;
         text-transform: none;
       }
-      .main_done{
+
+      .main_done {
         font-family: Inter, Inter;
         font-weight: 500;
         font-size: 10rpx;
@@ -251,14 +251,16 @@ onShow(() => {
     }
   }
 
-  .sub{
+  .sub {
     margin-left: 20rpx;
     width: 240rpx;
     background: #FFFFFF;
-    .subText{
+
+    .subText {
       width: 180rpx;
       text-align: left;
-      .sub_title{
+
+      .sub_title {
         font-family: Inter, Inter;
         font-weight: 500;
         font-size: 15rpx;
@@ -271,7 +273,8 @@ onShow(() => {
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-      .sub_price{
+
+      .sub_price {
         font-family: Inter, Inter;
         font-weight: normal;
         font-size: 15rpx;
@@ -281,7 +284,8 @@ onShow(() => {
         font-style: normal;
         text-transform: none;
       }
-      .sub_done{
+
+      .sub_done {
         font-family: Inter, Inter;
         font-weight: 500;
         font-size: 6rpx;
@@ -295,18 +299,20 @@ onShow(() => {
   }
 }
 
-.item{
+.item {
   width: 90%;
-  margin: 0 auto;
+  margin: 20rpx auto;
   padding: 20rpx 0;
   display: flex;
-  .right{
+
+  .right {
     margin-left: 40rpx;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 160rpx;
-    .item_name{
+
+    .item_name {
       font-family: Inter, Inter;
       font-weight: 500;
       font-size: 27rpx;
@@ -316,7 +322,8 @@ onShow(() => {
       font-style: normal;
       text-transform: none;
     }
-    .item_price{
+
+    .item_price {
       font-family: Inter, Inter;
       font-weight: normal;
       font-size: 30rpx;
@@ -326,7 +333,8 @@ onShow(() => {
       font-style: normal;
       text-transform: none;
     }
-    .item_old_price{
+
+    .item_old_price {
       margin-left: 25rpx;
       font-family: Inter, Inter;
       font-weight: 400;
@@ -338,7 +346,8 @@ onShow(() => {
       text-transform: none;
       text-decoration: line-through;
     }
-    .last{
+
+    .last {
       font-family: Inter, Inter;
       font-weight: 800;
       font-size: 27rpx;

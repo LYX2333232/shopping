@@ -55,7 +55,8 @@
 		<view class="text1" style="width: 90%;margin: 0 auto;">
 			<text>商品详情</text>
 		</view>
-		<image v-for="image in detailImg" :src="image" mode="widthFix" style="width: 90%;margin: 10rpx 5%;" />
+		<!-- <image v-for="image in detailImg" :src="image" mode="widthFix" style="width: 90%;margin: 10rpx 5%;" /> -->
+		<view style="width: 90%;margin: 10rpx 5%;" v-html="content"></view>
 	</view>
 	<view class="comment">
 		<view class="text1" style="width: 90%;margin: 0 auto;">
@@ -92,7 +93,7 @@ import { onLoad } from '@dcloudio/uni-app';
 import { get_goods_detail } from '@/api/goods/goods'
 import { add_to_cart } from '@/api/cart/cart'
 import Header from '@/components/header.vue'
-import swiper from '../../uni_modules/nutui-uni/components/swiper/swiper.vue';
+import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue';
 
 const swiperImg = ref([])
 
@@ -144,6 +145,8 @@ const detailImg = [
 	'https://source.unsplash.com/random',
 	'https://source.unsplash.com/random'
 ];
+
+const content = ref('')
 
 const commentList = ref([
 	{
@@ -209,6 +212,8 @@ onLoad((options) => {
 
 		// 商品名称
 		name.value = res.data.name
+
+		content.value = res.data.content
 	})
 })
 </script>

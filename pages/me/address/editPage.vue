@@ -91,7 +91,7 @@ const save = () => {
         uni.navigateBack({
           delta: 1
         })
-      }, 1000);
+      }, 500);
     }
   })
 }
