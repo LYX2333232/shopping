@@ -248,6 +248,11 @@ const tap_item = (index) => {
 			url: '/pages/me/team/team',
 		})
 	}
+	if (index === 2) {
+		uni.navigateTo({
+			url: '/pages/me/record/record',
+		})
+	}
 }
 
 // 点击订单
