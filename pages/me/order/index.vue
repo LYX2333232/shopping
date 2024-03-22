@@ -56,10 +56,10 @@
           </view>
         </view>
       </view>
-      <view v-if="card.state !== 3" class="tn-flex-center-end tn-mt-lg">
+      <view v-if="card.state !== 2" class="tn-flex-center-end tn-mt-lg">
         <TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="250" height="60"
           :custom-style="{ marginRight: '10rpx' }" @click="back_page" shape="round">
-          {{ card.state === 1 ? '去付款' : card.state === 2 ? '催促发货' : card.state === 4 ? '申请售后' : '' }}
+          {{ card.state === 0 ? '去付款' : card.state === 1 ? '催促发货' : card.state === 4 ? '申请售后' : '' }}
         </TnButton>
       </view>
     </view>
@@ -98,6 +98,7 @@ let page = 1
 const getData = () => {
   get_order(1, tab.value, search_value).then(res => {
     orders.value = res.data.data
+    console.log(orders.value)
   })
   // 请求数据
   // const list = [

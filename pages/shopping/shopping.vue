@@ -124,14 +124,36 @@ const del = (id) => {
 }
 
 const tocaculate = () => {
-	for (good in dataList.value) {
+	console.log('结算')
+	for (var good of dataList.value) {
+		console.log('good', good)
 		if (good.order) {
 			new_order({
-				com_id: good.id,
+				com_id: good.item_id,
 				address_id: address.address_id,
 				com_cont: good.cont
 			}).then(res => {
 				console.log('res', res)
+				uni.requestPayment({
+					provider: 'wxpay',
+					timeStamp: res.data.timeStamp,
+					nonceStr: res.data.nonceStr,
+					package: res.data.package,
+					signType: res.data.signType,
+					paySign: res.data.paySign,
+					success: function (res) {
+						console.log('success', res)
+						if (res.errMsg === 'requestPayment:ok') {
+							uni.showToast({
+								title: '支付成功',
+								icon: 'none'
+							})
+						}
+					},
+					fail: function (err) {
+						console.log('fail', err)
+					}
+				})
 			})
 		}
 	}
