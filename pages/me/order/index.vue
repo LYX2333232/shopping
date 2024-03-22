@@ -14,7 +14,7 @@
 
     <view class="tabs">
       <view v-for="(item, index) in tabs" :key="index" class="tab"
-        :style="index === tab ? 'font-weight: 200;font-size: 45rpx;color: #000000;' : 'font-weight: 800;font-size: 30rpx;color: #717171;'"
+        :style="index === tab + 1 ? 'font-weight: 200;font-size: 45rpx;color: #000000;' : 'font-weight: 800;font-size: 30rpx;color: #717171;'"
         @click="switchTab(index)">
         {{ item }}
       </view>
@@ -68,7 +68,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import Header from '@/components/header.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
@@ -84,71 +84,30 @@ const search = (e) => {
 const tab = ref()
 const tabs = ref(['全部', '待付款', '待发货', '待收货', '退款/售后'])
 
+let page = 1
+
 const switchTab = (index) => {
-  tab.value = index
-  get_order(page, index, search_value).then(res => {
+  tab.value = index - 1
+  page = 1
+  const i = index === 0 ? undefined : index - 1
+  get_order(page, i, search_value).then(res => {
     orders.value = res.data.data
   })
 }
 
 const orders = ref([])
 
-let page = 1
-
-const getData = () => {
-  get_order(1, tab.value, search_value).then(res => {
-    orders.value = res.data.data
-    console.log(orders.value)
-  })
-  // 请求数据
-  // const list = [
-  //   {
-  //     title: '三只松鼠旗舰店',
-  //     img: 'https://source.unsplash.com/random',
-  //     good: '休闲芒果干大礼包，50g一包休闲芒果干大礼包，50g一包休闲芒果干大礼包，50g一包休闲芒果干大礼包，50g一包休闲芒果干大礼包，50g一包休闲芒果干大礼包，50g一包休闲芒果干大礼包，50g一包休闲芒果干大礼包，50g一包',
-  //     size: '50g',
-  //     number: 1,
-  //     price: 9.9,
-  //     tags: ['正品保障', '七天退换'],
-  //     state: '待付款'
-  //   },
-  //   {
-  //     title: '三只松鼠旗舰店',
-  //     img: 'https://source.unsplash.com/random',
-  //     good: '休闲芒果干大礼包，50g一包',
-  //     size: '50g',
-  //     number: 1,
-  //     price: 9.9,
-  //     tags: ['正品保障', '七天退换'],
-  //     state: '待发货'
-  //   },
-  //   {
-  //     title: '三只松鼠旗舰店',
-  //     img: 'https://source.unsplash.com/random',
-  //     good: '休闲芒果干大礼包，50g一包',
-  //     size: '50g',
-  //     number: 1,
-  //     price: 9.9,
-  //     tags: ['正品保障', '七天退换'],
-  //     state: '待收货'
-  //   },
-  //   {
-  //     title: '三只松鼠旗舰店',
-  //     img: 'https://source.unsplash.com/random',
-  //     good: '休闲芒果干大礼包，50g一包',
-  //     size: '50g',
-  //     number: 1,
-  //     price: 9.9,
-  //     tags: ['正品保障', '七天退换'],
-  //     state: '退款/售后'
-  //   }
-  // ]
-  // orders.value = list
-}
 
 onLoad((options) => {
   switchTab(parseInt(options.index) + 1)
-  getData()
+})
+
+onReachBottom(() => {
+  page++
+  const i = tab.value === -1 ? undefined : tab.value
+  get_order(page, i, search_value).then(res => {
+    orders.value = orders.value.concat(res.data.data)
+  })
 })
 </script>
 

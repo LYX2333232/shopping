@@ -30,6 +30,7 @@
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
+import { get_share } from '@/api/share/share.js'
 import Header from '@/components/header.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 
@@ -43,6 +44,11 @@ const getData = () => {
   avatar.value = 'https://source.unsplash.com/random?1'
   user.value = '123456789'
   QR.value = 'https://source.unsplash.com/random?2'
+  get_share().then(res => {
+    console.log(1)
+    console.log('res', res)
+  })
+  console.log('get_share')
 }
 
 onShow(() => {

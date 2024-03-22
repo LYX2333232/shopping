@@ -148,6 +148,12 @@ const tocaculate = () => {
 								title: '支付成功',
 								icon: 'none'
 							})
+							// 删除该商品
+							del_cart(good.id).then(res => {
+								if (res.code === 200) {
+									getData()
+								}
+							})
 						}
 					},
 					fail: function (err) {

@@ -16,37 +16,50 @@
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
+import { get_up_list } from '@/api/user/user.js'
 import Header from '@/components/header.vue'
 import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
-
-const tab_index = ref(0)
 
 const userList = ref([])
 
 const getData = () => {
-  const list = [
-    {
-      avatar: 'https://source.unsplash.com/random?1',
-      name: '张三',
+  // const list = [
+  //   {
+  //     avatar: 'https://source.unsplash.com/random?1',
+  //     name: '张三',
+  //     referee: true
+  //   },
+  //   {
+  //     avatar: 'https://source.unsplash.com/random?2',
+  //     name: '李四',
+  //     referee: false
+  //   },
+  //   {
+  //     avatar: 'https://source.unsplash.com/random?3',
+  //     name: '王五',
+  //     referee: false
+  //   },
+  //   {
+  //     avatar: 'https://source.unsplash.com/random?4',
+  //     name: '赵六',
+  //     referee: true
+  //   }
+  // ]
+  get_up_list().then(res => {
+    console.log(res)
+    userList.value.push({
+      ...res.data.up_user,
       referee: true
-    },
-    {
-      avatar: 'https://source.unsplash.com/random?2',
-      name: '李四',
-      referee: false
-    },
-    {
-      avatar: 'https://source.unsplash.com/random?3',
-      name: '王五',
-      referee: false
-    },
-    {
-      avatar: 'https://source.unsplash.com/random?4',
-      name: '赵六',
-      referee: true
-    }
-  ]
-  userList.value = list
+    })
+    // 数组拼接
+    userList.value = userList.value.concat(res.data.data.map(item => {
+      return {
+        ...item,
+        referee: false
+      }
+    }))
+  })
+  // userList.value = list
 }
 
 onShow(() => {

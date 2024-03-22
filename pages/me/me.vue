@@ -277,26 +277,20 @@ const tap_application = (index) => {
 			url: '/pages/me/account/index'
 		})
 	}
-	// 消息中心
-	if (index === 1) {
-		uni.navigateTo({
-			url: '/pages/me/message/index'
-		})
-	}
 	// 收货地址
-	if (index === 2) {
+	if (index === 1) {
 		uni.navigateTo({
 			url: '/pages/me/address/index'
 		})
 	}
 	// 我的优惠券
-	if (index === 4) {
+	if (index === 3) {
 		uni.navigateTo({
 			url: '/pages/me/coupon/index'
 		})
 	}
 	// 点击反馈
-	if (index === 5) {
+	if (index === 4) {
 		feedback.value = true
 	}
 }
@@ -344,10 +338,6 @@ const getData = () => {
 		{
 			name: '账号设置',
 			icon: '../../static/icon/me/setting.png'
-		},
-		{
-			name: '消息中心',
-			icon: '../../static/icon/me/message.png'
 		},
 		{
 			name: '收货地址',
