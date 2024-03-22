@@ -92,8 +92,9 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app';
 import { get_goods_detail } from '@/api/goods/goods'
 import { add_to_cart } from '@/api/cart/cart'
+import { new_order } from '@/api/order/order'
 import Header from '@/components/header.vue'
-import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue';
+import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
 
 const swiperImg = ref([])
 
@@ -122,11 +123,6 @@ let buttonGroup = [
 	{
 		text: '加入购物车',
 		backgroundColor: ' linear-gradient( 90deg, #F9E3C9 0%, #DDC8A4 63%, #DDC8A4 100%)',
-		color: '#fff'
-	},
-	{
-		text: '立即购买',
-		backgroundColor: '#C8B697',
 		color: '#fff'
 	}
 ];

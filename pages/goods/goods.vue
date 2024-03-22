@@ -141,6 +141,7 @@ const getInfoList = async () => {
 			res = await get_goods_list({ value: searchInfo.value, sell_order: 2 })
 		}
 	}
+	console.log('infoList', res)
 	infolist.value = res.data.data
 }
 

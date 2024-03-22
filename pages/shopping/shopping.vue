@@ -45,6 +45,7 @@ import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/chec
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import { get_cart_list, del_cart } from '@/api/cart/cart'
 import { get_default_address } from '@/api/address/address'
+import { new_order } from '@/api/order/order'
 import { AddressStore } from '@/store'
 
 const address = AddressStore()
@@ -120,6 +121,20 @@ const del = (id) => {
 			dataList.value = dataList.value.filter(item => item.id !== id)
 		}
 	})
+}
+
+const tocaculate = () => {
+	for (good in dataList.value) {
+		if (good.order) {
+			new_order({
+				com_id: good.id,
+				address_id: address.address_id,
+				com_cont: good.cont
+			}).then(res => {
+				console.log('res', res)
+			})
+		}
+	}
 }
 
 const getData = () => {
