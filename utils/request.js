@@ -30,7 +30,7 @@ const request = {
 			'content-type': 'application/json',
 			'Authorization': UserStore().auth.access_token ? `Bearer ${UserStore().auth.access_token}` :
 				'' // 这里是token(可自行修改)
-		};
+		}
 
 		// let time = Math.floor(Date.now() / 1000);
 		// let bytes = new Uint8Array(5);
@@ -126,7 +126,7 @@ const request = {
 			'content-type': 'application/json',
 			'Authorization': UserStore().auth.access_token ? `Bearer ${UserStore().auth.access_token}` : '', // 这里是token(可自行修改)
 
-		};
+		}
 		// let time = Math.floor(Date.now() / 1000);
 		// let bytes = new Uint8Array(5);
 

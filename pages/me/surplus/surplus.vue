@@ -18,23 +18,57 @@
       </view>
     </view>
     <button class="btn">立即提现</button>
+    <view class="title">提现记录</view>
+    <view class="card" v-for="record in recordList" :key="record.id">
+      <view>
+        <view class="name">提现至微信零钱</view>
+        <view class="time">{{ record.updated_at }}</view>
+      </view>
+      <view class="price">{{ record.price }}</view>
+    </view>
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { get_balance, get_record } from '@/api/surplus/surplus'
 import Header from '@/components/header.vue'
+import { onShow } from '@dcloudio/uni-app'
 
 // 保留两位小数
 const toFixed = (num) => {
   return num.toFixed(2)
 }
 
-const usable = ref(toFixed(0))
+const usable = ref(toFixed(1))
 
 const total = ref(toFixed(0))
 
 const frozen = ref(toFixed(0))
+
+const recordList = ref([
+  {
+    id: 1,
+    price: '1.00',
+    updated_at: '2024-03-16 08:09:29'
+  }
+])
+
+const getData = () => {
+  get_balance().then(res => {
+    usable.value = toFixed(res.data.balance)
+    total.value = res.data.cumulative
+    frozen.value = toFixed(res.data.freeze)
+  })
+  get_record().then(res => {
+    console.log(res.data)
+    recordList.value = res.data
+  })
+}
+
+onShow(() => {
+  getData()
+})
 
 </script>
 
@@ -46,6 +80,7 @@ const frozen = ref(toFixed(0))
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #F7F7F7;
 
   .main {
     width: 95%;
@@ -108,6 +143,65 @@ const frozen = ref(toFixed(0))
     color: #FFFFFF;
     margin-top: 60rpx;
     border-radius: 65rpx;
+  }
+
+  .title {
+    width: 100%;
+    border-top: 2rpx solid #999999;
+    margin-top: 55rpx;
+    padding: 40rpx 50rpx;
+    font-family: Inter, Inter;
+    font-weight: 400;
+    font-size: 35rpx;
+    color: #000000;
+    line-height: 36rpx;
+    text-align: left;
+    font-style: normal;
+    text-transform: none;
+  }
+
+  .card {
+    width: 100%;
+    background: #FFF;
+    margin-top: 10rpx;
+    padding: 30rpx 50rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .name {
+      font-family: Inter, Inter;
+      font-weight: 400;
+      font-size: 35rpx;
+      color: #000000;
+      line-height: 32rpx;
+      text-align: left;
+      font-style: normal;
+      text-transform: none;
+      margin-bottom: 20rpx;
+    }
+
+    .time {
+      font-family: Inter, Inter;
+      font-weight: 400;
+      font-size: 25rpx;
+      color: #9D9D9D;
+      line-height: 27rpx;
+      text-align: left;
+      font-style: normal;
+      text-transform: none;
+    }
+
+    .price {
+      font-family: Inter, Inter;
+      font-weight: bold;
+      font-size: 35rpx;
+      color: #000000;
+      line-height: 36rpx;
+      text-align: left;
+      font-style: normal;
+      text-transform: none;
+    }
   }
 }
 </style>

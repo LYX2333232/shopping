@@ -6,8 +6,9 @@
       <view class="bottom">
         <view class="left">
           <view class="user">
-            <image :src="avatar" mode="scaleToFill" style="width:60rpx;height:60rpx;border-radius: 50%;" />
-            <text>{{ user }}</text>
+            <image :src="user.userInfo.avatar" mode="scaleToFill"
+              style="width:60rpx;height:60rpx;border-radius: 50%;" />
+            <text>{{ user.userInfo.name }}</text>
           </view>
           <text class="text">邀请您加入小程序</text>
         </view>
@@ -31,24 +32,23 @@
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { get_share } from '@/api/share/share.js'
+import { UserStore } from '@/store'
 import Header from '@/components/header.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 
-const avatar = ref()
+const user = UserStore()
 
-const user = ref()
+let baseUrl = import.meta.env.VITE_API_BASE_URL
 
 const QR = ref()
 
 const getData = () => {
-  avatar.value = 'https://source.unsplash.com/random?1'
-  user.value = '123456789'
-  QR.value = 'https://source.unsplash.com/random?2'
-  get_share().then(res => {
-    console.log(1)
-    console.log('res', res)
-  })
-  console.log('get_share')
+  QR.value = baseUrl + '/share/qrcode'
+  // get_share().then(res => {
+  //   console.log('res', res)
+  //   // QR.value = res
+  //   // console.log(QR.value)
+  // })
 }
 
 onShow(() => {
