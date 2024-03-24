@@ -31,7 +31,7 @@
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
-import { get_share } from '@/api/share/share.js'
+import { get_share } from '@/api/share/share'
 import { UserStore } from '@/store'
 import Header from '@/components/header.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
@@ -43,12 +43,11 @@ let baseUrl = import.meta.env.VITE_API_BASE_URL
 const QR = ref()
 
 const getData = () => {
-  QR.value = baseUrl + '/share/qrcode'
-  // get_share().then(res => {
-  //   console.log('res', res)
-  //   // QR.value = res
-  //   // console.log(QR.value)
-  // })
+  get_share().then(res => {
+    console.log('res', res)
+    QR.value = res.data
+    // console.log(QR.value)
+  })
 }
 
 onShow(() => {

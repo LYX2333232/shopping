@@ -6,19 +6,19 @@
         <text>分销用户:</text>
         <image :src="item.avatar" mode="scaleToFill"
           style="margin-left: 10rpx;width: 50rpx; height: 50rpx; border-radius: 50%;" />
-        <text>{{ item.user }}</text>
+        <text>{{ item.user_name }}</text>
       </view>
       <view class="main">
         <image :src="item.path" mode="scaleToFill" style="width:160rpx; height:160rpx;border-radius: 15rpx;" />
         <view class="right">
           <text class="name">{{ item.name }}</text>
-          <text class="size">{{ item.size }}</text>
-          <text class="number">x{{ item.number }}</text>
+          <text class="size">{{ item.item_name }}</text>
+          <text class="number">x{{ item.cont }}</text>
           <view class="bottom">
             <view class="tags">
-              <text class="tag" v-for="(tag, index) in item.tags" :key="index">{{ tag }}</text>
+              <text class="tag" v-for="(tag, index) in item.labels" :key="index">{{ tag }}</text>
             </view>
-            <view class="price">已赚 ￥{{ item.price }}</view>
+            <view class="price">已赚 ￥{{ item.up_price }}</view>
           </view>
         </view>
       </view>
@@ -29,6 +29,7 @@
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
+import { get_userList } from '@/api/surplus/surplus'
 import Header from '@/components/header.vue'
 
 const recordList = ref([])
@@ -36,53 +37,56 @@ const recordList = ref([])
 // 获取销售记录
 const getData = () => {
   // TODO
-  const list = [
-    {
-      id: 1,
-      user: '张三',
-      avatar: 'https://source.unsplash.com/random?1',
-      path: 'https://source.unsplash.com/random?1',
-      name: '墨西哥牛油果',
-      size: '100g',
-      number: 1,
-      price: 100,
-      tags: ['新鲜', '热卖']
-    },
-    {
-      id: 2,
-      user: '李四',
-      avatar: 'https://source.unsplash.com/random?1',
-      path: 'https://source.unsplash.com/random?2',
-      name: '墨西哥牛油果',
-      size: '200g',
-      number: 2,
-      price: 200,
-      tags: ['新鲜', '热卖']
-    },
-    {
-      id: 3,
-      user: '王五',
-      avatar: 'https://source.unsplash.com/random?1',
-      path: 'https://source.unsplash.com/random?3',
-      name: '墨西哥牛油果',
-      size: '300g',
-      number: 3,
-      price: 300,
-      tags: ['新鲜', '热卖']
-    },
-    {
-      id: 4,
-      user: '赵六',
-      avatar: 'https://source.unsplash.com/random?1',
-      path: 'https://source.unsplash.com/random?4',
-      name: '墨西哥牛油果',
-      size: '400g',
-      number: 4,
-      price: 400,
-      tags: ['新鲜', '热卖']
-    }
-  ]
-  recordList.value = list
+  // const list = [
+  //   {
+  //     id: 1,
+  //     user: '张三',
+  //     avatar: 'https://source.unsplash.com/random?1',
+  //     path: 'https://source.unsplash.com/random?1',
+  //     name: '墨西哥牛油果',
+  //     size: '100g',
+  //     number: 1,
+  //     price: 100,
+  //     tags: ['新鲜', '热卖']
+  //   },
+  //   {
+  //     id: 2,
+  //     user: '李四',
+  //     avatar: 'https://source.unsplash.com/random?1',
+  //     path: 'https://source.unsplash.com/random?2',
+  //     name: '墨西哥牛油果',
+  //     size: '200g',
+  //     number: 2,
+  //     price: 200,
+  //     tags: ['新鲜', '热卖']
+  //   },
+  //   {
+  //     id: 3,
+  //     user: '王五',
+  //     avatar: 'https://source.unsplash.com/random?1',
+  //     path: 'https://source.unsplash.com/random?3',
+  //     name: '墨西哥牛油果',
+  //     size: '300g',
+  //     number: 3,
+  //     price: 300,
+  //     tags: ['新鲜', '热卖']
+  //   },
+  //   {
+  //     id: 4,
+  //     user: '赵六',
+  //     avatar: 'https://source.unsplash.com/random?1',
+  //     path: 'https://source.unsplash.com/random?4',
+  //     name: '墨西哥牛油果',
+  //     size: '400g',
+  //     number: 4,
+  //     price: 400,
+  //     tags: ['新鲜', '热卖']
+  //   }
+  // ]
+  get_userList().then(res => {
+    console.log(res)
+    recordList.value = res.data.data
+  })
 }
 
 onShow(() => {
@@ -166,8 +170,11 @@ onShow(() => {
             display: flex;
             align-items: center;
             justify-content: start;
+            flex-wrap: wrap;
+            max-width: 200rpx;
 
             .tag {
+              max-width: 200rpx;
               padding: 3rpx 10rpx;
               background: #FAEBD9;
               border-radius: 6rpx 6rpx 6rpx 6rpx;
@@ -180,6 +187,7 @@ onShow(() => {
               font-style: normal;
               text-transform: none;
               margin-right: 10rpx;
+              margin-bottom: 10rpx;
             }
           }
 

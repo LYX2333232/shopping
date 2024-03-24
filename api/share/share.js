@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 // let baseUrl = import.meta.env.VITE_API_BASE_URL
 
-export const get_share = () => request.get('/share/qrcode', {}, true, 'arraybuffer')
+export const get_share = () => request.get('/share/qrcode')
 // {
 //     return new Promise((resolve, reject) => {
 //         wx.request({

@@ -1,66 +1,69 @@
 <template>
 	<view v-if="!isSearching" style="background-color: #FEF0D6;">
-		<TnSwiper  :data="swiperData"  width="100%"  height="720" indicator indicator-type="dot" >
+		<TnSwiper :data="swiperData" width="100%" height="720" indicator indicator-type="dot">
 			<template #default="{ data }">
-				<view class="swiper-data" > 
+				<view class="swiper-data">
 					<image style="width: 750rpx;height: 780rpx;" :src="data" mode="aspectFill"></image>
 				</view>
 			</template>
-		</TnSwiper>	
+		</TnSwiper>
 	</view>
 
 	<view v-if="!isSearching" class="white_boxs">
 		<view style="width: 92%;margin: 0 auto;">
-			<view class=" tab" >
-				<view class="pic" >
-					<image src="../../static/logo.png" mode="" style=""></image>		
+			<view class=" tab">
+				<view class="pic">
+					<image src="../../static/logo.png" mode="" style=""></image>
 				</view>
 				<view style="width: 580rpx;height: 50rpx;">
-					<uni-section title="图标"  type="line" padding  >
-						<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" @iconClick="iconClick" suffixIcon="camera"  :styles="styles" @focus="inputFocus"></uni-easyinput>
+					<uni-section title="图标" type="line" padding>
+						<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" @iconClick="iconClick"
+							suffixIcon="camera" :styles="styles" @focus="inputFocus"></uni-easyinput>
 					</uni-section>
 				</view>
 			</view>
 			<view class="function">
-				<view class="tofunction" v-for="(item,index) in funList" @click="top_button(index)">
-					<view class="img" >
-						<img :src="item.icon" alt="" mode="aspectFill" />
+				<view class="tofunction" v-for="(item, index) in funList" @click="top_button(index)">
+					<view class="img">
+						<image :src="item.icon" alt="" mode="aspectFill" />
 					</view>
-					<view  style="font-size: 22rpx;">
-						{{item.name}}
+					<view style="font-size: 22rpx;">
+						{{ item.name }}
 					</view>
 				</view>
 			</view>
-			
+
 			<view class="show_words">
 				<view class="words_left">
-					{{words_left}}
+					{{ words_left }}
 				</view>
-				<view  style="width: 280rpx;text-align: right;border-bottom: 3rpx solid #eee7d7;">
-					<view class="words_right1">{{words_right1}}</view>
-					<view class="words_right2" style="">{{words_right2}}</view>
+				<view style="width: 280rpx;text-align: right;border-bottom: 3rpx solid #eee7d7;">
+					<view class="words_right1">{{ words_right1 }}</view>
+					<view class="words_right2" style="">{{ words_right2 }}</view>
 				</view>
 			</view>
 			<view class="area">
-				<TnWaterFall  :data="areaList"  width="100%">
+				<TnWaterFall :data="areaList" width="100%">
 					<template #left="{ item }">
 						<view class="toarea" @click="tap_item(item.id)">
-							<image :src="item.icon" mode="" style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>	
-							<view  class="name">
-								{{item.name}}
+							<image :src="item.icon" mode=""
+								style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>
+							<view class="name">
+								{{ item.name }}
 							</view>
-							<view  style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
+							<view style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
 								查看全部
 							</view>
 						</view>
 					</template>
 					<template #right="{ item }">
 						<view class="toarea" @click="tap_item(item.id)">
-							<image :src="item.icon" mode="" style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>	
-							<view  class="name" >
-								{{item.name}}
+							<image :src="item.icon" mode=""
+								style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>
+							<view class="name">
+								{{ item.name }}
 							</view>
-							<view  style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
+							<view style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
 								查看全部
 							</view>
 						</view>
@@ -72,10 +75,14 @@
 
 	<view v-if="isSearching" style="width:95%;margin: 180rpx auto 0;">
 		<view class="tn-flex-center-start">
-			<TnIcon name="left" size="50" color="#C7BAA7" @click="isSearching=false" :custom-style="{marginRight: '20rpx'}"></TnIcon>
-			<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" @iconClick="iconClick" suffixIcon="camera"  :styles="styles" @focus="inputFocus" @change="search">
+			<TnIcon name="left" size="50" color="#C7BAA7" @click="isSearching = false"
+				:custom-style="{ marginRight: '20rpx' }">
+			</TnIcon>
+			<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" @iconClick="iconClick"
+				suffixIcon="camera" :styles="styles" @focus="inputFocus" @change="search">
 				<template #right>
-					<TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="90" height="50" :custom-style="{marginRight: '10rpx'}" @click="search" shape="round">搜索</TnButton>
+					<TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="90" height="50"
+						:custom-style="{ marginRight: '10rpx' }" @click="search" shape="round">搜索</TnButton>
 				</template>
 			</uni-easyinput>
 		</view>
@@ -83,7 +90,8 @@
 			历史搜索
 		</view>
 		<view class="history_tag">
-			<TnTag v-for="(item,index) in historyList" :key="index" shape="round" bg-color="#E7E3E1" text-color="#949494" :custom-style="{ marginRight: '20rpx', marginTop: '30rpx'}">{{ item }}</TnTag>
+			<TnTag v-for="(item, index) in historyList" :key="index" shape="round" bg-color="#E7E3E1"
+				text-color="#949494" :custom-style="{ marginRight: '20rpx', marginTop: '30rpx' }">{{ item }}</TnTag>
 		</view>
 	</view>
 </template>
@@ -98,8 +106,8 @@ import { ref } from 'vue'
 import { onHide } from '@dcloudio/uni-app'
 
 
-let words_left="特产鲜果 有机蔬菜"
-let words_right1="sharing love"
+let words_left = "特产鲜果 有机蔬菜"
+let words_right1 = "sharing love"
 let words_right2 = "健康 x 营养 x 有机"
 
 // 判断是否为搜索页
@@ -115,50 +123,49 @@ const swiperData = [
 // 历史搜索数据
 const historyList = ref([])
 
-let funList=[
+let funList = [
 	{
 		name: '限时秒杀',
 		icon: '../../static/icon/index/miaosha.png'
-		},{
+	}, {
 		name: '今日开团',
 		icon: '../../static/icon/index/today.png'
-	},{
+	}, {
 		name: '领券中心',
 		icon: '../../static/icon/index/dashboard.png'
 	},
 ]
-let areaList=[
+let areaList = [
 	{
 		id: 0,
 		name: '生鲜食养',
-		icon: '../../static/logo.png'
+		icon: '../../static/icon/index/fresh.png'
 	},
 	{
 		id: 1,
 		name: '有机专区',
-		icon: '../../static/logo.png'
+		icon: '../../static/icon/index/organic.png'
 	},
 	{
 		id: 2,
 		name: '臻臻鲜果',
-		icon: '../../static/logo.png'
+		icon: '../../static/icon/index/fruit.png'
 	},
 	{
 		id: 3,
 		name: '美容养颜',
-		icon: '../../static/logo.png'
+		icon: '../../static/icon/index/Beauty.png'
 	}
 ]
 let value = ref('');
-let styles = ref({  
+let styles = ref({
 	color: 'rgba(182, 176, 167, 1)',
 	borderColor: 'rgba(182, 176, 167, 1)'
 })
 
 // 点击相机按钮
-function iconClick(type){
-	if(type=="suffix")	
-	{
+function iconClick(type) {
+	if (type == "suffix") {
 		console.log(type)
 	}
 }
@@ -227,60 +234,65 @@ onHide(() => {
 </script>
 
 <style lang="scss" scoped>
-
 .swiper-container {
 	width: 100%;
 	height: 320rpx;
+
 	.swiper-data {
-    width: 100%;
-    height: 100%;
-    border-radius: 30rpx;
-	
-		.image {		
+		width: 100%;
+		height: 100%;
+		border-radius: 30rpx;
+
+		.image {
 			width: 100%;
 			height: 100%;
 			border-radius: inherit;
 		}
 	}
 }
-.white_boxs{
-	height: 100vh;
+
+.white_boxs {
+	height: 70vh;
 	background-color: rgba(248, 248, 248, 1);
 	margin-top: -40rpx;
-	border-radius: 40rpx 40rpx  0 0;
+	border-radius: 40rpx 40rpx 0 0;
 	position: relative;
 	z-index: 999;
-		
-	.tab{
+
+	.tab {
 		height: 100rpx;
 		padding-top: 22rpx;
 		display: flex;
-		.pic{
+
+		.pic {
 			width: 32px;
 			height: 32px;
 			margin-right: 20rpx;
 			border-radius: 50rpx;
 		}
-			
+
 	}
-	.top{
+
+	.top {
 		display: flex;
 		flex-direction: row;
 	}
-	.function{
+
+	.function {
 		margin-top: 50rpx;
 		display: flex;
 		text-align: center;
 		justify-content: space-between;
 	}
-	.tofunction{
+
+	.tofunction {
 		box-shadow: 0rpx 0rpx 6rpx 0rpx rgba(67, 57, 41, 0.15);
 		background-color: rgba(255, 255, 255, 1);
 		border-radius: 6rpx;
 		width: 200rpx;
 		height: 160rpx;
-	
-		.img{
+
+		.img {
 			width: 60rpx;
 			height: 60rpx;
 			text-align: center;
@@ -289,28 +301,32 @@ onHide(() => {
 			margin-bottom: 25rpx;
 		}
 	}
-	.show_words{
+
+	.show_words {
 		display: flex;
 		justify-content: space-between;
 		margin-top: 25rpx;
-		.words_left{
+
+		.words_left {
 			width: 30%;
 			font-size: 20px;
 			color: rgba(223, 165, 42, 1);
 			font-family: Microsoft YaHei UI-Bold;
 			font-weight: 700;
 		}
-		
-		.words_right1{
+
+		.words_right1 {
 			overflow-wrap: break-word;
 			color: rgba(255, 197, 48, 1);
-			font-family: Modern Antiqua-Regular;;
+			font-family: Modern Antiqua-Regular;
+			;
 			font-size: 20px;
 			overflow-wrap: break-word;
 			font-weight: normal;
 			white-space: nowrap;
 		}
-		.words_right2{
+
+		.words_right2 {
 			overflow-wrap: break-word;
 			color: rgba(176, 176, 176, 1);
 			font-size: 12px;
@@ -320,12 +336,14 @@ onHide(() => {
 			line-height: 30px;
 		}
 	}
-	.area{
+
+	.area {
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap;
 		margin-top: 10rpx;
-		.toarea{
+
+		.toarea {
 			position: relative;
 			margin-top: 10rpx;
 			display: flex;
@@ -334,43 +352,48 @@ onHide(() => {
 			width: 340rpx;
 			height: 150rpx;
 			color: white;
-			.name{
+
+			.name {
 				font-size: 30rpx;
 				margin-top: 30rpx;
 				margin-bottom: 13rpx;
 				margin-left: 20rpx;
-				
+
 			}
 		}
 	}
-	.search{
+
+	.search {
 		display: flex;
 		width: 610rpx;
 		height: 72rpx;
 		margin-top: 20rpx;
-		
+
 		border-radius: 20rpx;
 		justify-content: space-between;
-		border:1.5px solid rgba(182, 176, 167, 1) ;
-		.pic1{
+		border: 1.5px solid rgba(182, 176, 167, 1);
+
+		.pic1 {
 			margin-left: 20rpx;
 			width: 40rpx;
 			height: 40rpx;
-			display:block; 
-			-webkit-align-self:center;
+			display: block;
+			-webkit-align-self: center;
 		}
-		.pic2{
+
+		.pic2 {
 			background-color: #a9abff;
 			width: 80rpx;
 			height: 80rpx;
 			margin-right: 20rpx;
-			display:block;
-			-webkit-align-self:center;
+			display: block;
+			-webkit-align-self: center;
 		}
 	}
-	
+
 }
-.history{
+
+.history {
 	margin-top: 30rpx;
 	font-family: Inter, Inter;
 	font-weight: 800;
@@ -381,10 +404,10 @@ onHide(() => {
 	text-transform: none;
 }
 
-.history_tag{
+.history_tag {
 	width: 90%;
 	display: gird;
-	grid-template-columns: repeat(auto-fit, minmax(100rpx,1fr));
+	grid-template-columns: repeat(auto-fit, minmax(100rpx, 1fr));
 	grid-gap: 20rpx;
 }
 </style>
