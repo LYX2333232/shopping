@@ -1,7 +1,7 @@
 <template>
 	<view class=" tab">
 		<view class="pic">
-			<image src="../../static/logo.png" mode="" style=""></image>
+			<image :src="user.userInfo.avatar" mode="" style=""></image>
 		</view>
 		<view style="width: 580rpx;height: 50rpx;">
 			<uni-section title="图标" type="line" padding>
@@ -78,8 +78,11 @@
 import { ref } from 'vue'
 import { onShow, onHide } from '@dcloudio/uni-app'
 import { get_type_list, get_goods_list } from '@/api/goods/goods'
+import { UserStore } from '@/store'
 
 const searchInfo = ref('')
+
+const user = UserStore()
 
 
 let styles = ref({

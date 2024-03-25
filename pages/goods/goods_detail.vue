@@ -64,15 +64,15 @@
 		</view>
 		<view class="card" v-for="(comment, index) in commentList" :key="index">
 			<view class="tn-flex-center-start tn-w-5-6">
-				<image :src="comment.avatar" mode="scaleToFill"
+				<image :src="comment.user.avatar" mode="scaleToFill"
 					style="width: 46rpx;height: 46rpx;border-radius: 50%;margin-right: 20rpx;" />
-				<text class="name">{{ comment.name }}</text>
+				<text class="name">{{ comment.user.name }}</text>
 			</view>
 			<view class="tn-flex-center-start tn-w-5-6 tn-m-lg">
-				{{ comment.comment }}
+				{{ comment.content }}
 			</view>
 			<view class="tn-flex-center-start tn-w-5-6">
-				<image v-for="(img, index) in comment.imgs" :key="index" :src="img" mode="aspectFill"
+				<image v-for="(img, index) in comment.paths" :key="index" :src="img" mode="aspectFill"
 					style="width: 200rpx;height: 200rpx;margin-right: 10rpx;" />
 			</view>
 		</view>
@@ -90,13 +90,15 @@
 <script setup>
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app';
-import { get_goods_detail } from '@/api/goods/goods'
+import { get_goods_detail, get_evaluation_list } from '@/api/goods/goods'
 import { add_to_cart } from '@/api/cart/cart'
 import { new_order } from '@/api/order/order'
 import Header from '@/components/header.vue'
 import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
 
 const swiperImg = ref([])
+
+const c_id = ref('')
 
 let sell = "150"
 const name = ref('')
@@ -135,12 +137,12 @@ const sizeIndex = ref(0)
 // 数量
 const cont = ref(1)
 
-const detailImg = [
-	'https://source.unsplash.com/random',
-	'https://source.unsplash.com/random',
-	'https://source.unsplash.com/random',
-	'https://source.unsplash.com/random'
-];
+// const detailImg = [
+// 	'https://source.unsplash.com/random',
+// 	'https://source.unsplash.com/random',
+// 	'https://source.unsplash.com/random',
+// 	'https://source.unsplash.com/random'
+// ];
 
 const content = ref('')
 
@@ -192,9 +194,10 @@ function buttonClick(e) {
 onLoad((options) => {
 	// console.log(options)
 	get_goods_detail({ id: options.id }).then(res => {
-		console.log(res)
 		// 轮播图
 		swiperImg.value = res.data.paths
+
+		c_id.value = res.data.id
 
 		// 规格
 		size.value = res.data.items.map((item, index) => {
@@ -210,6 +213,13 @@ onLoad((options) => {
 		name.value = res.data.name
 
 		content.value = res.data.content
+		get_evaluation_list(c_id, 1).then(e => {
+			commentList.value = e.data.data.map(item => {
+				// 将json转为数组
+				item.paths = JSON.parse(item.paths)
+				return item
+			})
+		})
 	})
 })
 </script>

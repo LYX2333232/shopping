@@ -13,12 +13,12 @@
 		<view style="width: 92%;margin: 0 auto;">
 			<view class=" tab">
 				<view class="pic">
-					<image src="../../static/logo.png" mode="" style=""></image>
+					<image :src="user.userInfo.avatar" mode="" style=""></image>
 				</view>
 				<view style="width: 580rpx;height: 50rpx;">
 					<uni-section title="图标" type="line" padding>
-						<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" @iconClick="iconClick"
-							suffixIcon="camera" :styles="styles" @focus="inputFocus"></uni-easyinput>
+						<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" :styles="styles"
+							@focus="inputFocus"></uni-easyinput>
 					</uni-section>
 				</view>
 			</view>
@@ -105,7 +105,9 @@ import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
 import { ref } from 'vue'
 import { onHide, onShow } from '@dcloudio/uni-app'
+import { UserStore } from '@/store'
 
+const user = UserStore()
 
 let words_left = "特产鲜果 有机蔬菜"
 let words_right1 = "sharing love"
