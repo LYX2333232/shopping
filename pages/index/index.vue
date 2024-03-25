@@ -78,8 +78,8 @@
 			<TnIcon name="left" size="50" color="#C7BAA7" @click="isSearching = false"
 				:custom-style="{ marginRight: '20rpx' }">
 			</TnIcon>
-			<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" @iconClick="iconClick"
-				suffixIcon="camera" :styles="styles" @focus="inputFocus" @change="search">
+			<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" :styles="styles"
+				@focus="inputFocus" @change="search">
 				<template #right>
 					<TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="90" height="50"
 						:custom-style="{ marginRight: '10rpx' }" @click="search" shape="round">搜索</TnButton>
@@ -91,7 +91,8 @@
 		</view>
 		<view class="history_tag">
 			<TnTag v-for="(item, index) in historyList" :key="index" shape="round" bg-color="#E7E3E1"
-				text-color="#949494" :custom-style="{ marginRight: '20rpx', marginTop: '30rpx' }">{{ item }}</TnTag>
+				text-color="#949494" :custom-style="{ marginRight: '20rpx', marginTop: '30rpx' }" @click="search(item)">
+				{{ item }}</TnTag>
 		</view>
 	</view>
 </template>
@@ -103,7 +104,7 @@ import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.v
 import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
 import { ref } from 'vue'
-import { onHide } from '@dcloudio/uni-app'
+import { onHide, onShow } from '@dcloudio/uni-app'
 
 
 let words_left = "特产鲜果 有机蔬菜"
@@ -163,13 +164,6 @@ let styles = ref({
 	borderColor: 'rgba(182, 176, 167, 1)'
 })
 
-// 点击相机按钮
-function iconClick(type) {
-	if (type == "suffix") {
-		console.log(type)
-	}
-}
-
 // 顶部的按钮
 const top_button = (index) => {
 	if (index == 0) {
@@ -196,25 +190,30 @@ const tap_item = (index) => {
 
 const getData = () => {
 	// 获取数据
-	const history = [
-		'芒果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'苹果干',
-		'车厘子'
-	]
-	historyList.value = history
+	// const history = [
+	// 	'芒果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'苹果干',
+	// 	'车厘子'
+	// ]
+	// historyList.value = history
+	if (!uni.getStorageSync('history')) {
+		uni.setStorageSync('history', [])
+	}
+	historyList.value = uni.getStorageSync('history')
+	console.log('history', historyList.value)
 }
 
 // 点击输入框
@@ -224,12 +223,35 @@ const inputFocus = () => {
 }
 
 // 进行搜索
-const search = () => {
-	console.log('search')
+const search = (searching = undefined) => {
+	if (searching) {
+		value.value = searching
+	}
+	uni.setStorageSync('searchInfo', value.value)
+	if (!Array.isArray(historyList.value)) {
+		historyList.value = []
+	}
+	if (historyList.value.includes(value.value))
+		historyList.value.splice(historyList.value.indexOf(value.value), 1)
+	// 保存搜索历史并把value作为第一项
+	historyList.value.unshift(value.value)
+	// 只保留5条历史记录
+	if (historyList.value.length > 5) {
+		historyList.value.pop()
+	}
+	uni.setStorageSync('history', historyList.value)
+	value.value = ''
+	uni.switchTab({
+		url: '/pages/goods/goods'
+	})
 }
 
 onHide(() => {
 	isSearching.value = false
+})
+
+onShow(() => {
+	getData()
 })
 </script>
 

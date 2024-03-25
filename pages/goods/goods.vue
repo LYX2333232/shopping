@@ -5,8 +5,8 @@
 		</view>
 		<view style="width: 580rpx;height: 50rpx;">
 			<uni-section title="图标" type="line" padding>
-				<uni-easyinput prefixIcon="search" v-model="searchInfo" placeholder="请输入商品关键词" @iconClick="iconClick"
-					suffixIcon="camera" :styles="styles" @change="getInfoList"></uni-easyinput>
+				<uni-easyinput prefixIcon="search" v-model="searchInfo" placeholder="请输入商品关键词" :styles="styles"
+					@change="getInfoList"></uni-easyinput>
 			</uni-section>
 		</view>
 	</view>
@@ -76,10 +76,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onHide } from '@dcloudio/uni-app'
 import { get_type_list, get_goods_list } from '@/api/goods/goods'
 
 const searchInfo = ref('')
+
 
 let styles = ref({
 	color: 'rgba(182, 176, 167, 1)',
@@ -117,6 +118,15 @@ const toDetail = (id) => {
 
 const getInfoList = async () => {
 	let res
+	const history = uni.getStorageSync('history')
+	if (searchInfo.value !== '') {
+		if (history.includes(searchInfo.value)) {
+			// 将该项放到第一位
+			history.splice(history.indexOf(searchInfo.value), 1)
+		}
+		history.unshift(searchInfo.value)
+		uni.setStorageSync('history', history)
+	}
 	if (upIndex.value === 0) {
 		res = await get_goods_list({ value: searchInfo.value })
 	}
@@ -157,8 +167,15 @@ const getData = () => {
 	getInfoList()
 }
 onShow(() => {
+	searchInfo.value = uni.getStorageSync('searchInfo') ?? ''
 	getData()
 })
+
+onHide(() => [
+	uni.setStorageSync(
+		'searchInfo', undefined
+	)
+])
 </script>
 
 <style lang="scss" scoped>
