@@ -126,15 +126,18 @@
 
 		</view>
 
-		<TnPopup v-model="feedback" bg-color="#FFFFFF" width="660" height="280">
+		<TnPopup v-model="feedback" bg-color="#FFFFFF" width="660" @close="cancelFeedback">
 			<view style="margin: 30rpx">
 				<TnForm>
-					<TnFormItem label="反馈内容" label-width="auto">
+					<TnFormItem label="手机号" label-width="180" prop="phone">
+						<TnInput type="number" :maxlength="11" v-model="phone" placeholder="手机号" />
+					</TnFormItem>
+					<TnFormItem label="反馈内容" label-width="180" prop="content">
 						<TnInput type="textarea" placeholder="请输入反馈内容" height="150" v-model="feedbackContent" />
 					</TnFormItem>
 				</TnForm>
 			</view>
-			<view class="footer">
+			<view class="footer" style="margin-bottom: 30rpx;">
 				<TnButton type="info" width="160" height="52" @click="cancelFeedback">取消</TnButton>
 				<TnButton bg-color="#C8B697" text-color="#FFFFFF" width="160" height="52" @click="submitFeedback">提交
 				</TnButton>
@@ -171,12 +174,14 @@ import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { UserStore } from '@/store'
 import { uploadImage, Login } from '@/api/user/user'
+import { post_feedback } from '@/api/feedback/feedback'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnForm from '@/uni_modules/tuniaoui-vue3/components/form/src/form.vue'
 import TnFormItem from '@/uni_modules/tuniaoui-vue3/components/form/src/form-item.vue'
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+
 
 const store = UserStore()
 
@@ -224,8 +229,10 @@ const funList1 = ref([])
 // 反馈的弹出窗
 const feedback = ref(false)
 
+const phone = ref()
+
 // 反馈的内容
-const feedbackContent = ref('')
+const feedbackContent = ref()
 
 // 登录弹窗
 const loginVisible = ref(false)
@@ -319,6 +326,25 @@ const getphonenumber = (e) => {
 			},
 		})
 	}
+}
+
+
+const cancelFeedback = () => {
+	feedback.value = false
+}
+
+const submitFeedback = () => {
+	post_feedback({
+		phone: phone.value,
+		content: feedbackContent.value
+	}).then(res => {
+		console.log(res)
+		if (res.code === 200) {
+			feedback.value = false
+			phone.value = ''
+			feedbackContent.value = ''
+		}
+	})
 }
 
 // 选择头像
