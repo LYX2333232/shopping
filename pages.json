@@ -11,27 +11,18 @@
 		{
 			"path": "pages/goods/goods",
 			"style": {
-				//"navigationBarTitleText": "小程序1"
-				//	"backgroundColor": "#F8F8F8"
-				//	"navigationBarBackgroundColor": "#c60522"
 				"navigationStyle": "custom"
 			}
 		},
 		{
 			"path": "pages/me/me",
 			"style": {
-				//"navigationBarTitleText": "小程序1"
-				//	"backgroundColor": "#F8F8F8"
-				//	"navigationBarBackgroundColor": "#c60522"
 				"navigationStyle": "custom"
 			}
 		},
 		{
 			"path": "pages/shopping/shopping",
 			"style": {
-				//"navigationBarTitleText": "小程序1"
-				//	"backgroundColor": "#F8F8F8"
-				//	"navigationBarBackgroundColor": "#c60522"
 				"navigationStyle": "custom"
 			}
 		},
@@ -159,6 +150,12 @@
 		},
 		{
 			"path": "pages/index/seckill/address/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/me/favorite/index",
 			"style": {
 				"navigationStyle": "custom"
 			}

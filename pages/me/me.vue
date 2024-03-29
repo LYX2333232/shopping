@@ -185,7 +185,7 @@ import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.v
 
 const store = UserStore()
 
-const isBuyer = ref(false)
+const isBuyer = ref(true)
 
 const funList0 = ref([
 	{
@@ -278,27 +278,26 @@ const tap_order = (index) => {
 // 点击我的应用的内容
 const tap_application = (index) => {
 	console.log(index)
-	// 账号设置
-	if (index === 0) {
-		uni.navigateTo({
-			url: '/pages/me/account/index'
-		})
-	}
 	// 收货地址
-	if (index === 1) {
+	if (index === 0) {
 		uni.navigateTo({
 			url: '/pages/me/address/index'
 		})
 	}
 	// 我的优惠券
-	if (index === 3) {
+	if (index === 2) {
 		uni.navigateTo({
 			url: '/pages/me/coupon/index'
 		})
 	}
 	// 点击反馈
-	if (index === 4) {
+	if (index === 3) {
 		feedback.value = true
+	}
+	if (index === 4) {
+		uni.navigateTo({
+			url: '/pages/me/favorite/index'
+		})
 	}
 }
 
@@ -362,10 +361,6 @@ const chooseavatar = (e) => {
 const getData = () => {
 	const list = [
 		{
-			name: '账号设置',
-			icon: '../../static/icon/me/setting.png'
-		},
-		{
 			name: '收货地址',
 			icon: '../../static/icon/me/location.png'
 		},
@@ -380,6 +375,10 @@ const getData = () => {
 		{
 			name: '意见反馈',
 			icon: '../../static/icon/me/feedback.png'
+		},
+		{
+			name: '收藏商品',
+			icon: '../../static/icon/me/star.png'
 		}
 	]
 	funList1.value = list
