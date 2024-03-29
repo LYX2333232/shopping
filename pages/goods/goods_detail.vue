@@ -21,7 +21,7 @@
 				{{ name }}
 			</view>
 			<view style="display: flex;">
-				<view class="type" v-for="(item, index) in typelist">
+				<view class="type" v-for="item in typelist">
 					{{ item }}
 				</view>
 			</view>
@@ -78,12 +78,7 @@
 		</view>
 	</view>
 
-	<view class="uni-container">
-		<view class="goods-carts">
-			<uni-goods-nav :options="options" :fill="true" :button-group="buttonGroup" @click="onClick"
-				@buttonClick="buttonClick" />
-		</view>
-	</view>
+	<GoodNav :id="c_id" :like="false" :normal="true" @buttonClick="buttonClick" />
 	<!-- 分享定义在组件goods-nav中 -->
 </template>
 
@@ -94,6 +89,7 @@ import { get_goods_detail, get_evaluation_list } from '@/api/goods/goods'
 import { add_to_cart } from '@/api/cart/cart'
 import Header from '@/components/header.vue'
 import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
+import GoodNav from '@/components/goodNav'
 
 const swiperImg = ref([])
 
@@ -101,32 +97,7 @@ const c_id = ref('')
 
 let sell = "150"
 const name = ref('')
-let options = [
-	{
-		icon: 'cart',
-		text: '购物车',
-		info: 0
-	},
-	{
-		icon: 'star',
-		text: '收藏',
-		info: 0,
-		infoColor: "#f5f5f5"
-	},
-	{
-		icon: 'redo',
-		text: '分享',
-		info: 0
-	}
-];
-let typelist = ['正品保障', '正品保障']
-let buttonGroup = [
-	{
-		text: '加入购物车',
-		backgroundColor: ' linear-gradient( 90deg, #F9E3C9 0%, #DDC8A4 63%, #DDC8A4 100%)',
-		color: '#fff'
-	}
-];
+const typelist = ref([])
 
 // 商品规格
 const size = ref([])
@@ -163,23 +134,23 @@ const commentList = ref([
 	}
 ])
 
-function onClick(e) {
-	if (e.index == 0) {
-		uni.switchTab({ url: '/pages/shopping/shopping' })
-	}
-};
-function buttonClick(e) {
-	console.log(e)
+function buttonClick() {
 	// 加入购物车
-	if (e.index === 0) {
-		add_to_cart(size.value[sizeIndex.value].c_id, cont.value).then(res => {
-			console.log(res)
+	add_to_cart(size.value[sizeIndex.value].c_id, cont.value).then(res => {
+		console.log(res)
+		if (res.code == 200)
 			uni.showToast({
 				title: '加入购物车成功',
 				icon: 'none'
 			})
-		})
-	}
+
+		else
+			uni.showToast({
+				title: res.msg,
+				icon: 'none'
+			})
+
+	})
 }
 
 onLoad((options) => {
@@ -203,6 +174,8 @@ onLoad((options) => {
 		// 商品名称
 		name.value = res.data.name
 
+		typelist.value = res.data.labels
+
 		content.value = res.data.content
 		get_evaluation_list(c_id, 1).then(e => {
 			commentList.value = e.data.data.map(item => {
@@ -213,6 +186,7 @@ onLoad((options) => {
 		})
 	})
 })
+
 </script>
 
 <style lang="scss" scoped>

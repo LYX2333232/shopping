@@ -79,12 +79,7 @@
     </view>
   </view>
 
-  <view class="uni-container">
-    <view class="goods-carts">
-      <uni-goods-nav :options="options" :fill="true" :button-group="buttonGroup" @click="onClick"
-        @buttonClick="buttonClick" />
-    </view>
-  </view>
+  <GoodNav :id="c_id" :like="true" :normal="false" @buttonClick="buttonClick" />
   <!-- 分享定义在组件goods-nav中 -->
 </template>
 
@@ -94,37 +89,13 @@ import { onLoad } from '@dcloudio/uni-app';
 import { get_goods_detail } from '@/api/index/seckill/seckill'
 import Header from '@/components/header.vue'
 import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue';
+import GoodNav from '@/components/goodNav'
 
 const swiperImg = ref([])
 
 let sell = "150"
 const name = ref('')
-let options = [
-  {
-    icon: 'cart',
-    text: '购物车',
-    info: 0
-  },
-  {
-    icon: 'star',
-    text: '收藏',
-    info: 0,
-    infoColor: "#f5f5f5"
-  },
-  {
-    icon: 'redo',
-    text: '分享',
-    info: 0
-  }
-];
-let typelist = ['正品保障', '正品保障']
-let buttonGroup = [
-  {
-    text: '立即购买',
-    backgroundColor: '#C8B697',
-    color: '#fff'
-  }
-];
+const typelist = ref([])
 
 // 商品规格
 const size = ref([])
@@ -164,11 +135,6 @@ const commentList = ref([
   }
 ])
 
-function onClick(e) {
-  if (e.index == 0) {
-    uni.switchTab({ url: '/pages/shopping/shopping' })
-  }
-};
 function buttonClick(e) {
   uni.navigateTo({
     url: '/pages/index/seckill/address/index?good=' + encodeURIComponent(JSON.stringify({
@@ -200,6 +166,8 @@ onLoad((options) => {
 
     // 商品名称
     name.value = res.data.name
+
+    typelist.value = res.data.labels
 
     // 商品详情
     content.value = res.data.content
