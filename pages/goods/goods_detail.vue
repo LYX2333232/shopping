@@ -92,7 +92,6 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app';
 import { get_goods_detail, get_evaluation_list } from '@/api/goods/goods'
 import { add_to_cart } from '@/api/cart/cart'
-import { new_order } from '@/api/order/order'
 import Header from '@/components/header.vue'
 import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
 
@@ -137,13 +136,6 @@ const sizeIndex = ref(0)
 // 数量
 const cont = ref(1)
 
-// const detailImg = [
-// 	'https://source.unsplash.com/random',
-// 	'https://source.unsplash.com/random',
-// 	'https://source.unsplash.com/random',
-// 	'https://source.unsplash.com/random'
-// ];
-
 const content = ref('')
 
 const commentList = ref([
@@ -172,10 +164,9 @@ const commentList = ref([
 ])
 
 function onClick(e) {
-	uni.showToast({
-		title: `点击${e.content.text}`,
-		icon: 'none'
-	})
+	if (e.index == 0) {
+		uni.switchTab({ url: '/pages/shopping/shopping' })
+	}
 };
 function buttonClick(e) {
 	console.log(e)

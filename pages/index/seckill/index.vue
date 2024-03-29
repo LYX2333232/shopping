@@ -2,7 +2,7 @@
   <Header title="限时秒杀" />
   <view class="all">
     <view class="background" />
-    <view class="top">
+    <!-- <view class="top">
       <TnScrollList :indicator="false">
         <view class="item-container">
           <view class="main">
@@ -39,7 +39,7 @@
           </view>
         </view>
       </TnScrollList>
-    </view>
+    </view> -->
     <view v-for="(item, index) in items" :key="'item' + index" class="item">
       <image :src="item.path" mode="scaleToFill" style="width:200rpx;height:160rpx" />
       <view class="right">
@@ -73,8 +73,6 @@
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import Header from '@/components/header.vue'
-import TnScrollList from '@/uni_modules/tuniaoui-vue3/components/scroll-list/src/scroll-list.vue'
-import TnLineProgress from '@/uni_modules/tuniaoui-vue3/components/line-progress/src/line-progress.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import { get_goods_list } from '@/api/index/seckill/seckill'
 
@@ -178,6 +176,7 @@ onShow(() => {
   position: relative;
   width: 100vw;
   min-height: 100vh;
+  padding: 200rpx 0 0;
   background: transparent;
   z-index: 0;
 }
@@ -186,14 +185,13 @@ onShow(() => {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 400rpx;
-  background-color: #F9E9CC;
+  height: 100vh;
+  background: linear-gradient(to bottom, #F9E9CC 0%, #FFFFFF 100%);
   z-index: -1;
 }
 
 .top {
   width: 100vw;
-  padding: 200rpx 0 0;
   background: none;
 
   .item-container {

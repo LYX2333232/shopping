@@ -92,7 +92,6 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app';
 import { get_goods_detail } from '@/api/index/seckill/seckill'
-import { add_to_cart } from '@/api/cart/cart'
 import Header from '@/components/header.vue'
 import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue';
 
@@ -121,11 +120,6 @@ let options = [
 let typelist = ['正品保障', '正品保障']
 let buttonGroup = [
   {
-    text: '加入购物车',
-    backgroundColor: ' linear-gradient( 90deg, #F9E3C9 0%, #DDC8A4 63%, #DDC8A4 100%)',
-    color: '#fff'
-  },
-  {
     text: '立即购买',
     backgroundColor: '#C8B697',
     color: '#fff'
@@ -135,6 +129,8 @@ let buttonGroup = [
 // 商品规格
 const size = ref([])
 
+let flash_com_id = undefined
+
 const sizeIndex = ref(0)
 
 // 数量
@@ -142,13 +138,6 @@ const cont = ref(1)
 
 // 商品详情
 const content = ref('')
-
-const detailImg = [
-  'https://source.unsplash.com/random',
-  'https://source.unsplash.com/random',
-  'https://source.unsplash.com/random',
-  'https://source.unsplash.com/random'
-];
 
 const commentList = ref([
   {
@@ -176,23 +165,20 @@ const commentList = ref([
 ])
 
 function onClick(e) {
-  uni.showToast({
-    title: `点击${e.content.text}`,
-    icon: 'none'
-  })
+  if (e.index == 0) {
+    uni.switchTab({ url: '/pages/shopping/shopping' })
+  }
 };
 function buttonClick(e) {
-  console.log(e)
-  // 加入购物车
-  if (e.index === 0) {
-    add_to_cart(size.value[sizeIndex.value].c_id, cont.value).then(res => {
-      console.log(res)
-      uni.showToast({
-        title: '加入购物车成功',
-        icon: 'none'
-      })
-    })
-  }
+  uni.navigateTo({
+    url: '/pages/index/seckill/address/index?good=' + encodeURIComponent(JSON.stringify({
+      id: 1,
+      name: name.value,
+      price: size.value[sizeIndex.value].price,
+      num: cont.value,
+      flash_com_id: flash_com_id
+    }))
+  })
 }
 
 onLoad((options) => {
@@ -217,6 +203,8 @@ onLoad((options) => {
 
     // 商品详情
     content.value = res.data.content
+
+    flash_com_id = res.data.flash_com_id
   })
 })
 </script>
