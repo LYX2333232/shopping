@@ -6,7 +6,7 @@
                 <text>购物车</text>
             </button>
             <button class="icon" @click="favorite">
-                <TnIcon name="like" size="50" :color="like ? 'red' : '#000'" />
+                <TnIcon name="like" size="50" :color="props.like === 1 ? 'tn-red' : '#000'" />
                 <text>收藏</text>
             </button>
             <button class="icon" open-type="share">
@@ -23,6 +23,7 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import { set_favorite } from '@/api/goods/goods'
 
 const props = defineProps({
     id: {
@@ -30,8 +31,8 @@ const props = defineProps({
         required: true
     },
     like: {
-        type: Boolean,
-        default: false
+        type: Number,
+        default: 0
     },
     normal: { //是否为普通商品，只有普通商品为加入购物车
         type: Boolean,
@@ -46,8 +47,24 @@ const toCart = () => {
     })
 }
 
+// 点击收藏
+const favorite = () => {
+    console.log('like', props.like)
+    uni.showLoading({
+        title: '加载中'
+    })
+    set_favorite(
+        props.id
+    ).then(res => {
+        if (res.code === 200) {
+            emits('changeLike')
+            uni.hideLoading({})
+        }
+    })
+}
 
-const emits = defineEmits(['buttonClick'])
+
+const emits = defineEmits(['buttonClick', 'changeLike'])
 
 const onButtonClick = () => {
     emits('buttonClick')

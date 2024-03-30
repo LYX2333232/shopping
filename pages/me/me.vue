@@ -28,29 +28,9 @@
 		</view>
 
 		<view v-if="isBuyer" class="middle">
-			<image src="../../static/logo.png" mode="aspectFill"
-				style="position: absolute; z-index: -999;width: 700rpx;height: 140.38rpx;border-radius: 11.54rpx;">
+			<image src="../../static/icon/me/affiliate.png" mode="aspectFill"
+				style="width: 700rpx;height: 140.38rpx;border-radius: 11.54rpx;">
 			</image>
-
-
-			<view class="block">
-				<view class="image">
-					<image src="../../static/icon/tabbar/1.png" mode=""></image>
-				</view>
-
-				<view class="p1">
-					立即加盟分销商
-				</view>
-			</view>
-			<view class="block">
-
-				<view class="p2">
-					多重好礼任你选，各种特权
-				</view>
-				<view class="p3" @click="tojoin">
-					立即加盟
-				</view>
-			</view>
 
 		</view>
 

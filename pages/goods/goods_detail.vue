@@ -26,7 +26,7 @@
 				</view>
 			</view>
 			<view class="block1">
-				已售 {{ sell }}+
+				已售 {{ sell }}
 			</view>
 		</view>
 	</view>
@@ -58,7 +58,7 @@
 		<!-- <image v-for="image in detailImg" :src="image" mode="widthFix" style="width: 90%;margin: 10rpx 5%;" /> -->
 		<view style="width: 90%;margin: 10rpx 5%;" v-html="content"></view>
 	</view>
-	<view class="comment">
+	<!-- <view class="comment">
 		<view class="text1" style="width: 90%;margin: 0 auto;">
 			<text>评论</text>
 		</view>
@@ -76,9 +76,9 @@
 					style="width: 200rpx;height: 200rpx;margin-right: 10rpx;" />
 			</view>
 		</view>
-	</view>
+	</view> -->
 
-	<GoodNav :id="c_id" :like="false" :normal="true" @buttonClick="buttonClick" />
+	<GoodNav :id="c_id" :like="like" :normal="true" @buttonClick="buttonClick" @changeLike="changeLike" />
 	<!-- 分享定义在组件goods-nav中 -->
 </template>
 
@@ -95,12 +95,12 @@ const swiperImg = ref([])
 
 const c_id = ref('')
 
-let sell = "150"
+const sell = ref(0)
 const name = ref('')
 const typelist = ref([])
 
 // 商品规格
-const size = ref([])
+const size = ref([{}])
 
 const sizeIndex = ref(0)
 
@@ -109,30 +109,37 @@ const cont = ref(1)
 
 const content = ref('')
 
-const commentList = ref([
-	{
-		avatar: 'https://source.unsplash.com/random',
-		name: '用户1',
-		star: 4,
-		comment: '商品不错',
-		imgs: [
-			'https://source.unsplash.com/random',
-			'https://source.unsplash.com/random',
-			'https://source.unsplash.com/random'
-		]
-	},
-	{
-		avatar: 'https://source.unsplash.com/random',
-		name: '用户2',
-		star: 5,
-		comment: '东西挺好',
-		imgs: [
-			'https://source.unsplash.com/random',
-			'https://source.unsplash.com/random',
-			'https://source.unsplash.com/random'
-		]
-	}
-])
+// const commentList = ref([
+// 	{
+// 		avatar: 'https://source.unsplash.com/random',
+// 		name: '用户1',
+// 		star: 4,
+// 		comment: '商品不错',
+// 		imgs: [
+// 			'https://source.unsplash.com/random',
+// 			'https://source.unsplash.com/random',
+// 			'https://source.unsplash.com/random'
+// 		]
+// 	},
+// 	{
+// 		avatar: 'https://source.unsplash.com/random',
+// 		name: '用户2',
+// 		star: 5,
+// 		comment: '东西挺好',
+// 		imgs: [
+// 			'https://source.unsplash.com/random',
+// 			'https://source.unsplash.com/random',
+// 			'https://source.unsplash.com/random'
+// 		]
+// 	}
+// ])
+
+const like = ref(0)
+
+const changeLike = () => {
+	like.value = 1 - like.value
+	console.log(like.value)
+}
 
 function buttonClick() {
 	// 加入购物车
@@ -156,6 +163,7 @@ function buttonClick() {
 onLoad((options) => {
 	// console.log(options)
 	get_goods_detail({ id: options.id }).then(res => {
+		console.log('详情', res)
 		// 轮播图
 		swiperImg.value = res.data.paths
 
@@ -177,13 +185,18 @@ onLoad((options) => {
 		typelist.value = res.data.labels
 
 		content.value = res.data.content
-		get_evaluation_list(c_id, 1).then(e => {
-			commentList.value = e.data.data.map(item => {
-				// 将json转为数组
-				item.paths = JSON.parse(item.paths)
-				return item
-			})
-		})
+
+		like.value = res.data.is_like
+
+		sell.value = res.data.volume
+
+		// get_evaluation_list(c_id, 1).then(e => {
+		// 	commentList.value = e.data.data.map(item => {
+		// 		// 将json转为数组
+		// 		item.paths = JSON.parse(item.paths)
+		// 		return item
+		// 	})
+		// })
 	})
 })
 

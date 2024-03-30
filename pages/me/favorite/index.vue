@@ -6,10 +6,10 @@
         mode="scaleToFill" />
       <view class="right">
         <view style="margin-bottom:50rpx;">
-          <view class="title">{{ item.title }} </view>
-          <view class="number">{{ item.number }}人已收藏 </view>
+          <view class="title">{{ item.name }} </view>
+          <view class="number">{{ item.collection_count }}人已收藏 </view>
         </view>
-        <view class="tn-flex-center-between">
+        <view class="tn-flex-center-between" style="width:380rpx;">
           <view>
             <TnTag :custom-style="{ marginRight: '10rpx' }" v-for="tag in item.tags" :key="tag.id" bg-color="#FAEBD9"
               text-color="#A79A77" width="100">
@@ -30,29 +30,34 @@ import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import Header from '@/components/header.vue'
 import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
+import { get_favorite_list } from '@/api/goods/goods'
 
 const list = ref([])
 
 const getData = () => {
-  const data = [
-    {
-      id: 1,
-      path: 'https://source.unsplash.com/random',
-      title: '【限时抢购】华为mate40pro 5G 8GB+256GB 5G手机',
-      number: 100,
-      tags: ['手机', '华为'],
-      price: 9999
-    },
-    {
-      id: 2,
-      path: 'https://source.unsplash.com/random',
-      title: '【限时抢购】华为mate40pro 5G 8GB+256GB 5G手机',
-      number: 100,
-      tags: ['手机', '华为'],
-      price: 9999
-    }
-  ]
-  list.value = data
+  // const data = [
+  //   {
+  //     id: 1,
+  //     path: 'https://source.unsplash.com/random',
+  //     title: '【限时抢购】华为mate40pro 5G 8GB+256GB 5G手机',
+  //     number: 100,
+  //     tags: ['手机', '华为'],
+  //     price: 9999
+  //   },
+  //   {
+  //     id: 2,
+  //     path: 'https://source.unsplash.com/random',
+  //     title: '【限时抢购】华为mate40pro 5G 8GB+256GB 5G手机',
+  //     number: 100,
+  //     tags: ['手机', '华为'],
+  //     price: 9999
+  //   }
+  // ]
+  get_favorite_list().then(res => {
+    console.log(res)
+    list.value = res.data.data
+  })
+  // list.value = data
 }
 
 onShow(() => {

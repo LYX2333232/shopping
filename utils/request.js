@@ -86,7 +86,8 @@ const request = {
 						title: '您未登录',
 						success(ts) {
 							if (ts.confirm) {
-								UserStore().login()
+								uni.switchTab({ url: '/pages/me/me' })
+								// UserStore().login()
 							}
 						}
 					})
@@ -177,7 +178,8 @@ const request = {
 						title: '您未登录',
 						success(ts) {
 							if (ts.confirm) {
-								UserStore().login()
+								uni.switchTab({ url: '/pages/me/me' })
+								// UserStore().login()
 							}
 						}
 					})
