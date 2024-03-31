@@ -11,11 +11,11 @@
         </view>
       </view>
       <image v-if="card.state === 0" style="position:absolute;right:0;height:110%"
-        src="@/static/icon/index/coupon/expire.png" mode="heightFix" />
+        src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sUFia07a8IfOLMMxk4ourxSVCMqEDSOgdKoOy3rcAO5FcqZtjFdSvtSQ/0?wx_fmt=png"
+        mode="heightFix" />
       <image v-if="card.state === 1" style="position:absolute;right:0;height:110%"
-        src="@/static/icon/index/coupon/touse.png" mode="heightFix" />
-      <!-- <image v-if="card.state === 2" style="position:absolute;right:0;height:110%"
-        src="@/static/icon/index/coupon/used.png" mode="heightFix" /> -->
+        src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIUR2By0G9qPtnGrstLg7Vwz62zre4uAWJtQfm4cD77g4goiaSg6BUnQ/0?wx_fmt=png"
+        mode="heightFix" />
     </view>
   </view>
 </template>

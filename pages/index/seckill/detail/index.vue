@@ -79,7 +79,7 @@
     </view>
   </view>
 
-  <GoodNav :id="c_id" :like="true" :normal="false" @buttonClick="buttonClick" />
+  <GoodNav :id="c_id" :time="time" :like="true" :normal="false" @buttonClick="buttonClick" />
   <!-- 分享定义在组件goods-nav中 -->
 </template>
 
@@ -106,6 +106,8 @@ const sizeIndex = ref(0)
 
 // 数量
 const cont = ref(1)
+
+const time = ref()
 
 // 商品详情
 const content = ref('')
@@ -173,6 +175,8 @@ onLoad((options) => {
     content.value = res.data.content
 
     flash_com_id = res.data.flash_com_id
+
+    time.value = (new Date(res.data.end_time) - new Date()) / 1000
   })
 })
 </script>

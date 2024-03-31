@@ -14,15 +14,20 @@
                 <text>分享</text>
             </button>
         </view>
-        <button style="border-radius: 100rpx;width: 300rpx;" :class="normal ? 'normal' : 'cart'"
-            @click="onButtonClick">{{ normal ?
+        <view style="display: flex;flex-direction: column;align-items: center;">
+            <TnCountDown v-if="props.time" :time="props.time" show-day separator-mode="cn" size="35"
+                text-color="tn-red" />
+            <button style="border-radius: 50rpx;width: 300rpx;font-size: 40rpx;margin: 0 20rpx;"
+                :class="normal ? 'normal' : 'cart'" @click="onButtonClick">{{ normal ?
                 '加入购物车' : '立即购买' }} </button>
+        </view>
     </view>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, computed } from 'vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import TnCountDown from '@/uni_modules/tuniaoui-vue3/components/count-down/src/count-down.vue'
 import { set_favorite } from '@/api/goods/goods'
 
 const props = defineProps({
@@ -37,6 +42,10 @@ const props = defineProps({
     normal: { //是否为普通商品，只有普通商品为加入购物车
         type: Boolean,
         default: false
+    },
+    time: {
+        type: Number,
+        default: undefined
     }
 })
 
@@ -69,7 +78,6 @@ const emits = defineEmits(['buttonClick', 'changeLike'])
 const onButtonClick = () => {
     emits('buttonClick')
 }
-
 </script>
 
 <style lang="scss" scoped>

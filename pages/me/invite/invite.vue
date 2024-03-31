@@ -2,7 +2,9 @@
   <Header title="邀请好友"></Header>
   <view class="all">
     <view class="main">
-      <image src="/static/invite.png" mode="widthFix" style="width: 100%" />
+      <image
+        src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s7y6DRPEs3WHhYwyY04NUoibjMzPu5eDNAEBibCYrqsmNhKUoicuZZ9mSw/0?wx_fmt=png"
+        mode="widthFix" style="width: 100%" />
       <view class="bottom">
         <view class="left">
           <view class="user">

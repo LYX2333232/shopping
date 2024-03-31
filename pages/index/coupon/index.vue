@@ -1,6 +1,8 @@
 <template>
   <Header title="领券中心" />
-  <image src="/static/icon/index/coupon/coupon.png" mode="widthFix" class="background" />
+  <image
+    src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s0brX12kDO0AhEKFROpqrdTYTJ1Im4N8BjSHN15rvt2cTmJhAgZJ8kw/0?wx_fmt=png"
+    mode="widthFix" class="background" />
   <view class="all">
     <view v-for="coupon in couponList" :key="coupon.id" class="card tn-flex-center-start" @click="receive(coupon)">
       <image :src="coupon.path" style="width:140rpx;height:140rpx;margin:15rpx;" mode="scaleToFill" />
@@ -17,7 +19,7 @@
         </view>
       </view>
       <image
-        :src="coupon.state === 1 ? '/static/icon/index/coupon/done.png' : coupon.state === 0 ? '/static/icon/index/coupon/todo.png' : '/static/icon/index/coupon/none.png'"
+        :src="coupon.state === 1 ? 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sPN43gkSgn4XhJ8ib3vZpficlzmgXSnLvcIJ8YvK1xibHfPOjjiaNCXH6iaA/0?wx_fmt=png' : coupon.state === 0 ? 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60syBFvpaTcxb9OsUtYiaN6seficm7qdEP1PQBQFbXtfZTjY2ojMj0Me0rA/0?wx_fmt=png' : 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60svNDORcQiaciasXbIZibLqMc5ibUtbIBe2tM0Am72rwEkmov24JjaaJQWyg/0?wx_fmt=png'"
         mode="heightFix" class="right" />
     </view>
   </view>

@@ -13,7 +13,9 @@
 		<view style="width: 92%;margin: 0 auto;">
 			<view class=" tab">
 				<view class="pic">
-					<image :src="user.userInfo.avatar" mode="" style=""></image>
+					<image
+						:src="user.userInfo ? user.userInfo.avatar : 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png'"
+						mode="" style=""></image>
 				</view>
 				<view style="width: 580rpx;height: 50rpx;">
 					<uni-section title="图标" type="line" padding>
@@ -129,35 +131,35 @@ const historyList = ref([])
 let funList = [
 	{
 		name: '限时秒杀',
-		icon: '../../static/icon/index/miaosha.png'
+		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60syLs1fACHZWQW3HGlicCWjxHocAllod7ceklU8PPCgWuyCzdicULVAjicg/0?wx_fmt=png'
 	}, {
 		name: '今日开团',
-		icon: '../../static/icon/index/today.png'
+		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s2E0Ey2Kg4KYhwWice4m1QuLwO2wa3u0zWCcucVmlibQrSbfm1o7BuANA/0?wx_fmt=png'
 	}, {
 		name: '领券中心',
-		icon: '../../static/icon/index/dashboard.png'
+		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60srm92zvWgCkNp5ruHn4AaRbRHavgKOsw1kWIARx9kIttxNYnvaIO5ww/0?wx_fmt=png'
 	},
 ]
 let areaList = [
 	{
 		id: 0,
 		name: '生鲜食养',
-		icon: '../../static/icon/index/fresh.png'
+		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png'
 	},
 	{
 		id: 1,
 		name: '有机专区',
-		icon: '../../static/icon/index/organic.png'
+		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sRLpUzyvIWGFG83tlVvjHmshjQJ4H1XjLhp5rhVkbTez9X6G9Af9icxQ/0?wx_fmt=png'
 	},
 	{
 		id: 2,
 		name: '臻臻鲜果',
-		icon: '../../static/icon/index/fruit.png'
+		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s7qZzOhLeibsXxQ4ZQ2iaic1CZ1IaiaJoTes1t9CoHHTJL7E5SLGkrV1L6g/0?wx_fmt=png'
 	},
 	{
 		id: 3,
 		name: '美容养颜',
-		icon: '../../static/icon/index/Beauty.png'
+		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sShq5UlxRPhOMibLxWGNmJmOdAXuWiaq09U1pp71FnfMSeh5wM7ibl96tg/0?wx_fmt=png'
 	}
 ]
 let value = ref('');

@@ -3,8 +3,9 @@
 
 		<view class="top">
 			<view class="avatar">
-				<image :src="store.userInfo ? store.userInfo.avatar : '../../static/icon/avatar.png'" mode="widthFix"
-					class="image"></image>
+				<image
+					:src="store.userInfo ? store.userInfo.avatar : 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png'"
+					mode="widthFix" class="image"></image>
 				<view class="tabel"
 					:style="isBuyer ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);' : 'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
 					{{ isBuyer ? '个人买家' : '分销商' }}
@@ -28,8 +29,9 @@
 		</view>
 
 		<view v-if="isBuyer" class="middle">
-			<image src="../../static/icon/me/affiliate.png" mode="aspectFill"
-				style="width: 700rpx;height: 140.38rpx;border-radius: 11.54rpx;">
+			<image
+				src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sSmjibpjv8Z5qibB903ribzg1FcHicDLicj8dvleS7ib7E2Ae9H1Me6kcJEdw/0?wx_fmt=png"
+				mode="aspectFill" style="width: 700rpx;height: 140.38rpx;border-radius: 11.54rpx;">
 			</image>
 
 		</view>
