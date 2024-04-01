@@ -159,6 +159,12 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/web/index",
+			"style": {
+				"navigationBarTitleText": "图片详情"
+			}
 		}
 	],
 	"globalStyle": {

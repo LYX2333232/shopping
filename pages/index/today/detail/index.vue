@@ -2,7 +2,7 @@
     <Header />
     <swiper indicator-dots autoplay circular>
         <swiper-item v-for="(item, index) in swiperImg" :key="'swiper' + index">
-            <image :src="item.path" mode="aspectFill" style="width: 100%;height: 575rpx;"></image>
+            <image :src="item.path" mode="aspectFill" style="width: 100%;" @click="toWeb(item.path)"></image>
         </swiper-item>
     </swiper>
 
@@ -46,25 +46,6 @@
         <!-- <image v-for="image in detailImg" :src="image" mode="widthFix" style="width: 90%;margin: 10rpx 5%;" /> -->
         <view style="width: 90%;margin: 10rpx 5%;" v-html="content"></view>
     </view>
-    <view class="comment">
-        <view class="text1" style="width: 90%;margin: 0 auto;">
-            <text>评论</text>
-        </view>
-        <view class="card" v-for="(comment, index) in commentList" :key="index">
-            <view class="tn-flex-center-start tn-w-5-6">
-                <image :src="comment.user.avatar" mode="scaleToFill"
-                    style="width: 46rpx;height: 46rpx;border-radius: 50%;margin-right: 20rpx;" />
-                <text class="name">{{ comment.user.name }}</text>
-            </view>
-            <view class="tn-flex-center-start tn-w-5-6 tn-m-lg">
-                {{ comment.content }}
-            </view>
-            <view class="tn-flex-center-start tn-w-5-6">
-                <image v-for="(img, index) in comment.paths" :key="index" :src="img" mode="aspectFill"
-                    style="width: 200rpx;height: 200rpx;margin-right: 10rpx;" />
-            </view>
-        </view>
-    </view>
 
     <GoodNav :id="c_id" :like="true" :normal="false" @buttonClick="buttonClick" />
     <!-- 分享定义在组件goods-nav中 -->
@@ -73,7 +54,6 @@
 <script setup>
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app';
-import { get_evaluation_list } from '@/api/goods/goods'
 import { get_today_detail } from '@/api/index/today/today'
 import Header from '@/components/header.vue'
 import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
@@ -95,14 +75,12 @@ const sizeIndex = ref(0)
 
 const content = ref('')
 
-const commentList = ref([])
+const toWeb = (url) => {
+    uni.navigateTo({
+        url: '/pages/web/index?src=' + url
+    })
+}
 
-function onClick(e) {
-    // 跳转购物车
-    if (e.index == 0) {
-        uni.switchTab({ url: '/pages/shopping/shopping' })
-    }
-};
 function buttonClick(e) {
     console.log(e)
     // 立即购买
@@ -144,14 +122,6 @@ onLoad((options) => {
         console.log('typelist', typelist.value)
 
         content.value = res.data.content
-        get_evaluation_list(c_id, 1).then(e => {
-            console.log('e', e)
-            commentList.value = e.data.data.map(item => {
-                // 将json转为数组
-                item.paths = JSON.parse(item.paths)
-                return item
-            })
-        })
     })
 })
 </script>

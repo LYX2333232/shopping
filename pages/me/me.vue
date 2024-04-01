@@ -141,8 +141,7 @@
 					<input type="nickname" v-model="login_form.name" placeholder="请输入昵称" />
 				</view>
 
-				<button class="login center" :open-type="login_form.name && login_form.avatar ? 'getPhoneNumber' : ''"
-					@getphonenumber="getphonenumber"
+				<button class="login center" @click="getphonenumber"
 					:style="login_form.name && login_form.avatar ? 'background:#0066cc !important;color:#fff' : ''">
 					<text>登 录</text>
 				</button>
@@ -285,28 +284,25 @@ const tap_application = (index) => {
 
 const getphonenumber = (e) => {
 	console.log(e)
-	// 获取成功
-	if (e.detail.errMsg === 'getPhoneNumber:ok') {
-		uni.login({
-			success: (s) => {
-				// 登录
-				Login({
-					code: s.code,
-					avatar: login_form.value.avatar,
-					name: login_form.value.name
-				}).then(res => {
-					console.log(res)
-					// 登录成功
-					if (res.code === 200) {
-						// 关闭弹窗
-						loginVisible.value = false
-						// 获取用户信息
-						store.set_user_info(res.data)
-					}
-				})
-			},
-		})
-	}
+	uni.login({
+		success: (s) => {
+			// 登录
+			Login({
+				code: s.code,
+				avatar: login_form.value.avatar,
+				name: login_form.value.name
+			}).then(res => {
+				console.log(res)
+				// 登录成功
+				if (res.code === 200) {
+					// 关闭弹窗
+					loginVisible.value = false
+					// 获取用户信息
+					store.set_user_info(res.data)
+				}
+			})
+		},
+	})
 }
 
 

@@ -2,7 +2,7 @@
   <Header />
   <swiper indicator-dots autoplay circular>
     <swiper-item v-for="(item, index) in swiperImg" :key="'swiper' + index">
-      <image :src="item.path" mode="aspectFill" style="width: 100%;height: 575rpx;"></image>
+      <image :src="item.path" mode="aspectFill" style="width: 100%;" @click="toWeb(item.path)"></image>
     </swiper-item>
   </swiper>
 
@@ -59,25 +59,6 @@
     <view style="width: 90%;margin: 10rpx 5%;" v-html="content">
     </view>
   </view>
-  <view class="comment">
-    <view class="text1" style="width: 90%;margin: 0 auto;">
-      <text>评论</text>
-    </view>
-    <view class="card" v-for="(comment, index) in commentList" :key="index">
-      <view class="tn-flex-center-start tn-w-5-6">
-        <image :src="comment.avatar" mode="scaleToFill"
-          style="width: 46rpx;height: 46rpx;border-radius: 50%;margin-right: 20rpx;" />
-        <text class="name">{{ comment.name }}</text>
-      </view>
-      <view class="tn-flex-center-start tn-w-5-6 tn-m-lg">
-        {{ comment.comment }}
-      </view>
-      <view class="tn-flex-center-start tn-w-5-6">
-        <image v-for="(img, index) in comment.imgs" :key="index" :src="img" mode="aspectFill"
-          style="width: 200rpx;height: 200rpx;margin-right: 10rpx;" />
-      </view>
-    </view>
-  </view>
 
   <GoodNav :id="c_id" :time="time" :like="true" :normal="false" @buttonClick="buttonClick" />
   <!-- 分享定义在组件goods-nav中 -->
@@ -112,30 +93,11 @@ const time = ref()
 // 商品详情
 const content = ref('')
 
-const commentList = ref([
-  {
-    avatar: 'https://source.unsplash.com/random',
-    name: '用户1',
-    star: 4,
-    comment: '商品不错',
-    imgs: [
-      'https://source.unsplash.com/random',
-      'https://source.unsplash.com/random',
-      'https://source.unsplash.com/random'
-    ]
-  },
-  {
-    avatar: 'https://source.unsplash.com/random',
-    name: '用户2',
-    star: 5,
-    comment: '东西挺好',
-    imgs: [
-      'https://source.unsplash.com/random',
-      'https://source.unsplash.com/random',
-      'https://source.unsplash.com/random'
-    ]
-  }
-])
+const toWeb = (e) => {
+  uni.navigateTo({
+    url: '/pages/web/index?src=' + e
+  })
+}
 
 function buttonClick(e) {
   uni.navigateTo({
