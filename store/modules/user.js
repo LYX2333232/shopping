@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import request from '@/utils/request'
 
 export const UserStore = defineStore('cp-user', () => {
 
@@ -12,6 +13,7 @@ export const UserStore = defineStore('cp-user', () => {
                 request.post('/auth/query_login', {
                     code: e.code
                 }).then(res => {
+                    console.log(res)
                     if (res.code == 200 && res.data !== 0) {
                         set_user_info(res.data)
                     }

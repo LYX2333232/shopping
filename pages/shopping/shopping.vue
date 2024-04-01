@@ -21,6 +21,10 @@
 	</view>
 
 	<view class="bottom">
+		<view style="width:90%;display: flex;justify-content: space-between;margin: 30rpx auto;">
+			<view>{{ '暂未优惠券' }} </view>
+			<text style="color: #C7BAA5;text-decoration: underline;" @click="openPopup">选择优惠券></text>
+		</view>
 		<view style="width: 90%;margin: 0 auto;display: flex;align-items: center;">
 			<TnCheckbox v-model="orderAll" :indeterminate="ordertSome" @change="changeOrderAll" checked-shape="circle"
 				size="lg" active-color="#C7BAA5"></TnCheckbox>
@@ -34,6 +38,23 @@
 		</view>
 
 	</view>
+	<TnPopup v-model="couponVisible" open-direction="bottom" height="60%">
+		<view class="popup">
+			<view class="card" v-for="(card, index) in couponList" :key="index">
+				<image :src="card.path" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
+				<view class="main">
+					<view class="title" style="color:#FFC542">{{ card.name }}
+					</view>
+					<view>
+						<view class="price" style="color:#FFC542">￥{{
+				card.reduce }}</view>
+						<view class="info">满{{ card.full }}可用 有效期：{{ card.start }}-{{ card.end }}</view>
+					</view>
+				</view>
+				<button style="height: 50rpx;background: #FFC542;color:white;font-size:20rpx">使用</button>
+			</view>
+		</view>
+	</TnPopup>
 
 </template>
 
@@ -43,6 +64,7 @@ import { onShow, onLoad, onReachBottom } from '@dcloudio/uni-app'
 import shoppingCard from '@/components/shopping/shoppingCard.vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import { get_cart_list, del_cart } from '@/api/cart/cart'
 import { get_default_address } from '@/api/address/address'
 import { new_order } from '@/api/order/order'
@@ -165,6 +187,58 @@ const tocaculate = () => {
 	}
 }
 
+const couponList = ref([])
+
+const couponVisible = ref(false)
+
+const openPopup = () => {
+	// 如果获取到优惠券
+	const list = [
+		{
+			path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
+			name: '满减优惠券',
+			full: '200',
+			reduce: '10',
+			start: '2021-01-01',
+			end: '2021-12-31',
+		},
+		{
+			path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
+			name: '满减优惠券',
+			full: '200',
+			reduce: '10',
+			start: '2021-01-01',
+			end: '2021-12-31',
+		},
+		{
+			path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
+			name: '满减优惠券',
+			full: '200',
+			reduce: '10',
+			start: '2021-01-01',
+			end: '2021-12-31',
+		},
+		{
+			path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
+			name: '满减优惠券',
+			full: '200',
+			reduce: '10',
+			start: '2021-01-01',
+			end: '2021-12-31',
+		}
+	]
+	couponList.value = list
+	if (true) {
+		couponVisible.value = true
+	}
+	else {
+		uni.showToast({
+			title: '暂无优惠券',
+			icon: 'none'
+		})
+	}
+}
+
 const getData = () => {
 	get_cart_list(1).then(res => {
 		console.log('res', res)
@@ -245,7 +319,6 @@ page {
 
 .bottom {
 	width: 750rpx;
-	height: 96rpx;
 	background: #FFFFFF;
 	position: fixed;
 	bottom: 0;
@@ -286,6 +359,68 @@ page {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+}
+
+.popup {
+	padding-top: 50rpx;
+	height: 100%;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: #F5F5F5;
+
+	.card {
+		margin-bottom: 40rpx;
+		width: 85%;
+		display: flex;
+		align-items: center;
+		position: relative;
+		background: #FFFFFF;
+		border-radius: 8rpx;
+		padding: 12rpx;
+
+		.main {
+			height: 142rpx;
+			margin-left: 20rpx;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+
+			.title {
+				font-family: Inter, Inter;
+				font-weight: 400;
+				font-size: 35rpx;
+				color: #FFC542;
+				line-height: 35rpx;
+				text-align: left;
+				font-style: normal;
+				text-transform: none;
+			}
+
+			.price {
+				font-family: Inter, Inter;
+				font-weight: 500;
+				font-size: 35rpx;
+				color: #FFC542;
+				line-height: 40rpx;
+				text-align: left;
+				font-style: normal;
+				text-transform: none;
+			}
+
+			.info {
+				font-family: Inter, Inter;
+				font-weight: 400;
+				font-size: 17rpx;
+				color: #999999;
+				line-height: 26rpx;
+				text-align: left;
+				font-style: normal;
+				text-transform: none;
+			}
+		}
 	}
 }
 </style>

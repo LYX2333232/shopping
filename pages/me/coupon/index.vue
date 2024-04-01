@@ -2,7 +2,7 @@
   <Header title="优惠券页面"></Header>
   <view class="all">
     <view class="card" v-for="(card, index) in cardList" :key="index">
-      <image :src="card.img" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
+      <image :src="card.path" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
       <view class="main">
         <view class="title" :style="card.state !== 0 ? 'color:#FFC542' : 'color:#D4D1D4'">{{ card.name }}</view>
         <view>

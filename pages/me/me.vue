@@ -284,13 +284,15 @@ const tap_application = (index) => {
 
 const getphonenumber = (e) => {
 	console.log(e)
+	const up_id = uni.getStorageSync('up_id')
 	uni.login({
 		success: (s) => {
 			// 登录
 			Login({
 				code: s.code,
 				avatar: login_form.value.avatar,
-				name: login_form.value.name
+				name: login_form.value.name,
+				up_id
 			}).then(res => {
 				console.log(res)
 				// 登录成功
@@ -331,8 +333,9 @@ const chooseavatar = (e) => {
 	// 添加前缀
 	// console.log(login_form.value.avatar)
 	login_form.value.avatar = 'data:image/png;base64,' + base64
-	uploadImage(login_form.value.avatar).then(res => {
+	uploadImage('data:image/png;base64,' + base64).then(res => {
 		console.log(res)
+		login_form.value.avatar = res.data
 	})
 }
 
