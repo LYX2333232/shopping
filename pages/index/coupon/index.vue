@@ -9,13 +9,23 @@
       <view class="main">
         <view class="title" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">{{
       coupon.name }}</view>
-        <view>
-          <view class="price" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">
-            ￥ {{ coupon.reduce }}
-          </view>
-          <view class="info">
-            满{{ coupon.full }}减{{ coupon.reduce }} 有效期：{{ coupon.start }} 至 {{ coupon.end }}
-          </view>
+        <view class="price" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">
+          <text v-if="coupon.type === 0 || coupon.type === 3">￥{{ coupon.number }}</text>
+          <text v-if="coupon.type === 1">￥{{ coupon.reduce }} </text>
+          <text v-if="coupon.type === 2">{{ '打' + coupon.number + '折' }}</text>
+          <!-- ￥ {{ coupon.reduce }} -->
+        </view>
+        <view class="info" v-if="coupon.type === 0">
+          无门槛立减{{ coupon.number }} 有效期：{{ coupon.start }} 至 {{ coupon.end }}
+        </view>
+        <view class="info" v-if="coupon.type === 1">
+          满{{ coupon.full }}减{{ coupon.reduce }} 有效期：{{ coupon.start }} 至 {{ coupon.end }}
+        </view>
+        <view class="info" v-if="coupon.type === 2">
+          打{{ coupon.number }}折 {{ coupon.start }} 至 {{ coupon.end }}
+        </view>
+        <view class="info" v-if="coupon.type === 3">
+          {{ coupon.com_type.name }}券 {{ coupon.start }} 至 {{ coupon.end }}
         </view>
       </view>
       <image

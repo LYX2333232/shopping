@@ -129,7 +129,7 @@ const total = computed(() => {
 			total += item.price * item.cont
 		}
 	})
-	return total
+	return total.toFixed(2)
 })
 
 const del = (id) => {
@@ -147,6 +147,16 @@ const del = (id) => {
 
 const tocaculate = () => {
 	console.log('结算')
+	if (!address.address_id) {
+		uni.showToast({
+			title: '请先选择地址',
+			icon: 'none',
+			duration: 1000
+		}).then(() => {
+			setTimeout(addressChange, 1000);
+		})
+		return
+	}
 	for (var good of dataList.value) {
 		console.log('good', good)
 		if (good.order) {
