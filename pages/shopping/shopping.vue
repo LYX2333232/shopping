@@ -22,7 +22,7 @@
 
 	<view class="bottom">
 		<view style="width:90%;display: flex;justify-content: space-between;margin: 30rpx auto;">
-			<view>{{ '暂未优惠券' }} </view>
+			<view>{{ select_coupon !== undefined ? select_coupon.name : '暂无优惠券' }} </view>
 			<text style="color: #C7BAA5;text-decoration: underline;" @click="openPopup">选择优惠券></text>
 		</view>
 		<view style="width: 90%;margin: 0 auto;display: flex;align-items: center;">
@@ -40,18 +40,32 @@
 	</view>
 	<TnPopup v-model="couponVisible" open-direction="bottom" height="60%">
 		<view class="popup">
-			<view class="card" v-for="(card, index) in couponList" :key="index">
-				<image :src="card.path" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
+			<view class="card" v-for="(coupon, index) in couponList" :key="index">
+				<image :src="coupon.path" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
 				<view class="main">
-					<view class="title" style="color:#FFC542">{{ card.name }}
+					<view class="title" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">{{
+				coupon.name }}</view>
+					<view class="price" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">
+						<text v-if="coupon.type === 0 || coupon.type === 3">￥{{ coupon.number }}</text>
+						<text v-if="coupon.type === 1">￥{{ coupon.reduce }} </text>
+						<text v-if="coupon.type === 2">{{ '打' + coupon.number + '折' }}</text>
+						<!-- ￥ {{ coupon.reduce }} -->
 					</view>
-					<view>
-						<view class="price" style="color:#FFC542">￥{{
-				card.reduce }}</view>
-						<view class="info">满{{ card.full }}可用 有效期：{{ card.start }}-{{ card.end }}</view>
+					<view class="info" v-if="coupon.type === 0">
+						无门槛立减{{ coupon.number }}
+					</view>
+					<view class="info" v-if="coupon.type === 1">
+						满{{ coupon.full }}减{{ coupon.reduce }}
+					</view>
+					<view class="info" v-if="coupon.type === 2">
+						打{{ coupon.number }}折
+					</view>
+					<view class="info" v-if="coupon.type === 3">
+						{{ coupon.couup.com_type.name }}券
 					</view>
 				</view>
-				<button style="height: 50rpx;background: #FFC542;color:white;font-size:20rpx">使用</button>
+				<button style="height: 50rpx;background: #C8B697;color:white;font-size:20rpx"
+					@click="select(coupon)">使用</button>
 			</view>
 		</view>
 	</TnPopup>
@@ -65,7 +79,7 @@ import shoppingCard from '@/components/shopping/shoppingCard.vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
-import { get_cart_list, del_cart } from '@/api/cart/cart'
+import { get_cart_list, del_cart, get_coupon } from '@/api/cart/cart'
 import { get_default_address } from '@/api/address/address'
 import { new_order } from '@/api/order/order'
 import { AddressStore } from '@/store'
@@ -90,8 +104,20 @@ const dataList = ref([])
 
 // 改变选中状态
 const change = (e, i, j) => {
-	// console.log('e', e, 'i', i, 'j', j);
+	if (e)
+		dataList.value.forEach((item, index) => {
+			if (index !== j) {
+				item.order = false
+			}
+		})
 	dataList.value[j].order = e
+	if (select_coupon.value) {
+		uni.showToast({
+			title: '请重新选择优惠券',
+			icon: 'none'
+		})
+	}
+	select_coupon.value = undefined
 }
 
 // 修改数量
@@ -163,7 +189,9 @@ const tocaculate = () => {
 			new_order({
 				com_id: good.item_id,
 				address_id: address.address_id,
-				com_cont: good.cont
+				com_cont: good.cont,
+				coupon_id: select_coupon ? select_coupon.id : undefined,
+				shopping_cart_id: good.id
 			}).then(res => {
 				console.log('res', res)
 				uni.requestPayment({
@@ -180,73 +208,92 @@ const tocaculate = () => {
 								title: '支付成功',
 								icon: 'none'
 							})
-							// 删除该商品
-							del_cart(good.id).then(res => {
-								if (res.code === 200) {
-									getData()
-								}
-							})
 						}
 					},
 					fail: function (err) {
 						console.log('fail', err)
 					}
 				})
+				// 删除该商品
+				dataList.value = dataList.value.filter(item => !item.order)
 			})
+			return
 		}
 	}
+}
+
+const select_coupon = ref(undefined)
+
+const select = (coupon) => {
+	select_coupon.value = coupon
+	couponVisible.value = false
 }
 
 const couponList = ref([])
 
 const couponVisible = ref(false)
 
+let coupon_page = 0
+
 const openPopup = () => {
 	// 如果获取到优惠券
-	const list = [
-		{
-			path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
-			name: '满减优惠券',
-			full: '200',
-			reduce: '10',
-			start: '2021-01-01',
-			end: '2021-12-31',
-		},
-		{
-			path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
-			name: '满减优惠券',
-			full: '200',
-			reduce: '10',
-			start: '2021-01-01',
-			end: '2021-12-31',
-		},
-		{
-			path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
-			name: '满减优惠券',
-			full: '200',
-			reduce: '10',
-			start: '2021-01-01',
-			end: '2021-12-31',
-		},
-		{
-			path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
-			name: '满减优惠券',
-			full: '200',
-			reduce: '10',
-			start: '2021-01-01',
-			end: '2021-12-31',
-		}
-	]
-	couponList.value = list
-	if (true) {
-		couponVisible.value = true
-	}
-	else {
+	// const list = [
+	// 	{
+	// 		path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
+	// 		name: '满减优惠券',
+	// 		full: '200',
+	// 		reduce: '10',
+	// 		start: '2021-01-01',
+	// 		end: '2021-12-31',
+	// 	},
+	// 	{
+	// 		path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
+	// 		name: '满减优惠券',
+	// 		full: '200',
+	// 		reduce: '10',
+	// 		start: '2021-01-01',
+	// 		end: '2021-12-31',
+	// 	},
+	// 	{
+	// 		path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
+	// 		name: '满减优惠券',
+	// 		full: '200',
+	// 		reduce: '10',
+	// 		start: '2021-01-01',
+	// 		end: '2021-12-31',
+	// 	},
+	// 	{
+	// 		path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
+	// 		name: '满减优惠券',
+	// 		full: '200',
+	// 		reduce: '10',
+	// 		start: '2021-01-01',
+	// 		end: '2021-12-31',
+	// 	}
+	// ]
+	const item = dataList.value.find(item => item.order)
+	if (!item) {
 		uni.showToast({
-			title: '暂无优惠券',
+			title: '先请选择商品',
 			icon: 'none'
 		})
+		return
+
 	}
+	coupon_page = 0
+	get_coupon(item.item_id, item.cont, coupon_page).then(res => {
+		console.log('res', res)
+		couponList.value = res.data.data
+		if (couponList.value.length > 0) {
+			couponVisible.value = true
+		}
+		else {
+			uni.showToast({
+				title: '暂无优惠券',
+				icon: 'none'
+			})
+		}
+	})
 }
 
 const getData = () => {
@@ -393,6 +440,7 @@ page {
 
 		.main {
 			height: 142rpx;
+			width: 300rpx;
 			margin-left: 20rpx;
 			display: flex;
 			flex-direction: column;

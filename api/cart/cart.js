@@ -5,3 +5,5 @@ export const add_to_cart = (c_id, cont) => request.post('/commodity/add_shopping
 export const get_cart_list = (page) => request.get('/commodity/shopping_cart', { page })
 
 export const del_cart = (id) => request.post('/commodity/delete_shopping_cart', { keys: [id] })
+
+export const get_coupon = (c_id, cont, page) => request.get('/coupon/available', { c_id, cont, page })

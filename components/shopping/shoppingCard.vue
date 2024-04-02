@@ -1,11 +1,12 @@
 <template>
   <view class="card">
-    <TnButton width="70" v-if="edit" type="danger" @click="del">
+    <TnButton width="90" v-if="edit" type="danger" @click="del">
       <div style="white-space:pre-line">
         删除
         商品
       </div>
     </TnButton>
+    <!-- <TnButton width="90" v-else bg-color="#C7BAA5" text-color="#fff" @click="buy">购买</TnButton> -->
     <TnCheckbox v-else v-model="data.order" @change="(e) => change(e, i)" active-color="#C7BAA5" checked-shape="circle"
       size="lg">
     </TnCheckbox>

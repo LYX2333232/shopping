@@ -47,7 +47,7 @@ const couponList = ref([])
 const receive = (coupon) => {
   // 还有优惠券未领取
   if (coupon.state === 0) {
-    receive_coupon(id).then(res => {
+    receive_coupon(coupon.id).then(res => {
       console.log(res)
       if (res.code === 200) {
         uni.showToast({

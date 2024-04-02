@@ -1,7 +1,7 @@
 <template>
   <Header title="我的收藏" />
   <view class="all">
-    <view class="item" v-for="item in   list  " :key="item.id">
+    <view class="item" v-for="item in list" :key="item.id">
       <image :src="item.path" style="height:100%;max-width:200rpx;border-radius:15rpx;margin-right:30rpx;"
         mode="scaleToFill" />
       <view class="right">

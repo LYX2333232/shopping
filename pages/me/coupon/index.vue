@@ -4,10 +4,25 @@
     <view class="card" v-for="(card, index) in cardList" :key="index">
       <image :src="card.path" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
       <view class="main">
-        <view class="title" :style="card.state !== 0 ? 'color:#FFC542' : 'color:#D4D1D4'">{{ card.name }}</view>
-        <view>
-          <view class="price" :style="card.state !== 0 ? 'color:#FFC542' : 'color:#D4D1D4'">￥{{ card.reduce }}</view>
-          <view class="info">满{{ card.full }}可用 有效期：{{ card.start }}-{{ card.end }}</view>
+        <view class="title" :style="card.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">{{
+      card.name }}</view>
+        <view class="price" :style="card.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">
+          <text v-if="card.type === 0 || card.type === 3">￥{{ card.number }}</text>
+          <text v-if="card.type === 1">￥{{ card.reduce }} </text>
+          <text v-if="card.type === 2">{{ '打' + card.number + '折' }}</text>
+          <!-- ￥ {{ card.reduce }} -->
+        </view>
+        <view class="info" v-if="card.type === 0">
+          无门槛立减{{ card.number }} 有效期：{{ card.start }} 至 {{ card.end }}
+        </view>
+        <view class="info" v-if="card.type === 1">
+          满{{ card.full }}减{{ card.reduce }} 有效期：{{ card.start }} 至 {{ card.end }}
+        </view>
+        <view class="info" v-if="card.type === 2">
+          打{{ card.number }}折 {{ card.start }} 至 {{ card.end }}
+        </view>
+        <view class="info" v-if="card.type === 3">
+          {{ card.couup.com_type.name }}券 {{ card.start }} 至 {{ card.end }}
         </view>
       </view>
       <image v-if="card.state === 0" style="position:absolute;right:0;height:110%"
@@ -15,7 +30,7 @@
         mode="heightFix" />
       <image v-if="card.state === 1" style="position:absolute;right:0;height:110%"
         src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIUR2By0G9qPtnGrstLg7Vwz62zre4uAWJtQfm4cD77g4goiaSg6BUnQ/0?wx_fmt=png"
-        mode="heightFix" />
+        mode="heightFix" @click="toCart" />
     </view>
   </view>
 </template>
@@ -30,54 +45,13 @@ const cardList = ref([])
 
 let page = 1
 
+const toCart = () => {
+  uni.switchTab({
+    url: '/pages/shopping/shopping'
+  })
+}
+
 const getData = () => {
-  // const list = [
-  //   {
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '优惠券1',
-  //     price: 100,
-  //     threshold: 200,
-  //     start_time: '8-23',
-  //     end_time: '8-30',
-  //     status: 0//0已过期，1待使用，2已使用
-  //   },
-  //   {
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '优惠券2',
-  //     price: 100,
-  //     threshold: 200,
-  //     start_time: '8-23',
-  //     end_time: '8-30',
-  //     status: 1
-  //   },
-  //   {
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '优惠券3',
-  //     price: 100,
-  //     threshold: 200,
-  //     start_time: '8-23',
-  //     end_time: '8-30',
-  //     status: 0
-  //   },
-  //   {
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '优惠券4',
-  //     price: 100,
-  //     threshold: 200,
-  //     start_time: '8-23',
-  //     end_time: '8-30',
-  //     status: 1
-  //   },
-  //   {
-  //     img: 'https://source.unsplash.com/random',
-  //     title: '优惠券5',
-  //     price: 100,
-  //     threshold: 200,
-  //     start_time: '8-23',
-  //     end_time: '8-30',
-  //     status: 2
-  //   }
-  // ]
   get_my_coupon(1).then(res => {
     console.log(res)
     cardList.value = res.data.data

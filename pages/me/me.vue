@@ -1,5 +1,5 @@
 <template>
-	<view style="width: 93%; margin: 0 auto;">
+	<view class="all">
 
 		<view class="top">
 			<view class="avatar">
@@ -31,7 +31,7 @@
 		<view v-if="isBuyer" class="middle">
 			<image
 				src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sSmjibpjv8Z5qibB903ribzg1FcHicDLicj8dvleS7ib7E2Ae9H1Me6kcJEdw/0?wx_fmt=png"
-				mode="aspectFill" style="width: 700rpx;height: 140.38rpx;border-radius: 11.54rpx;">
+				mode="aspectFill" style="width: 100%;height: 140rpx;border-radius: 11.54rpx;">
 			</image>
 
 		</view>
@@ -40,11 +40,6 @@
 			<view style="display: flex;justify-content: space-between;">
 				<view class="myorder">
 					分销中心
-				</view>
-				<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;" @click="toall">
-					全部订单
-					<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)"
-						style="margin-left: -5rpx;"></uni-icons>
 				</view>
 			</view>
 			<view class="function">
@@ -166,7 +161,7 @@ import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.v
 
 const store = UserStore()
 
-const isBuyer = ref(true)
+const isBuyer = ref(false)
 
 const funList0 = ref([
 	{
@@ -371,15 +366,21 @@ onShow(() => {
 </script>
 
 <style lang="scss" scoped>
-page {
+.all {
 	width: 750rpx;
-	height: auto;
-	background: linear-gradient(0deg, rgba(240, 240, 240, 1.0) 67.000002%, rgba(240, 224, 198, 1)100.000002%);
+	min-height: 100vh;
+	//background: linear-gradient(0deg, rgba(240, 240, 240, 1.0) 67.000002%, rgba(240, 224, 198, 1)100.000002%);
+	background: linear-gradient(180deg, #FAEBD9 0%, #F0E0C6 10%, #FBF0E2 20%, #F7F7F7 50%, #F7F7F7 100%);
+	padding-top: 100rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 
 	.top {
+		width: 90%;
 		height: 150rpx;
 		display: flex;
-		margin: 150rpx 0 40rpx;
+		margin: 0 0 40rpx;
 
 		.avatar {
 			position: relative;
@@ -416,6 +417,7 @@ page {
 	}
 
 	.middle {
+		width: 95%;
 		height: 140.38rpx;
 		border-radius: 11.54rpx;
 
@@ -469,6 +471,7 @@ page {
 	}
 
 	.block1 {
+		width: 95%;
 		height: 232.69rpx;
 		background-color: #fff;
 		border-radius: 13.46rpx;
@@ -489,6 +492,7 @@ page {
 	}
 
 	.block2 {
+		width: 95%;
 		height: 438.46rpx;
 		background-color: #fff;
 		border-radius: 13.46rpx;
@@ -590,8 +594,6 @@ page {
 		display: flex;
 		justify-content: space-around;
 		align-items: center;
-
-
 	}
 }
 </style>

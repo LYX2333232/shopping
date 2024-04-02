@@ -17,7 +17,7 @@
         </view>
       </view>
     </view>
-    <button class="btn">立即提现</button>
+    <button class="btn" @click="priceVisible = true">立即提现</button>
     <view class="title">提现记录</view>
     <view class="card" v-for="record in recordList" :key="record.id">
       <view>
@@ -27,13 +27,28 @@
       <view class="price">{{ record.price }}</view>
     </view>
   </view>
+  <TnPopup v-model="priceVisible">
+    <view style="width: 600rpx;height: 300rpx;padding: 20px;display: flex;flex-direction: column;align-items: center;">
+      <view style="display: flex;align-items: center;">
+        <view style="width: 150rpx;">提现金额</view>
+        <TnInput v-model="price" placeholder="请输入提现金额" type="number"></TnInput>
+      </view>
+      <view style="margin-top: 80rpx;width: 80%;display: flex;justify-content: space-between;">
+        <TnButton width="30%" height="50rpx" type="info" @click="cancel">取消</TnButton>
+        <TnButton width="30%" height="50rpx" type="success" @click="confirm">确定</TnButton>
+      </view>
+    </view>
+  </TnPopup>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { get_balance, get_record } from '@/api/surplus/surplus'
+import { get_balance, get_record, withdrawal } from '@/api/surplus/surplus'
 import Header from '@/components/header.vue'
 import { onShow } from '@dcloudio/uni-app'
+import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
+import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
+import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 
 // 保留两位小数
 const toFixed = (num) => {
@@ -46,6 +61,9 @@ const total = ref(toFixed(0))
 
 const frozen = ref(toFixed(0))
 
+const priceVisible = ref(false)
+const price = ref(undefined)
+
 const recordList = ref([
   {
     id: 1,
@@ -54,15 +72,56 @@ const recordList = ref([
   }
 ])
 
+const cancel = () => {
+  priceVisible.value = false
+  price.value = undefined
+}
+
+const confirm = () => {
+  if (price.value === undefined) {
+    uni.showToast({
+      title: '请输入提现金额',
+      icon: 'none'
+    })
+    return
+  }
+  if (price.value <= 0) {
+    uni.showToast({
+      title: '提现金额必须大于0',
+      icon: 'none'
+    })
+    return
+  }
+  else {
+    uni.showLoading({
+      title: '正在提交'
+    })
+    // 提交
+    withdrawal(price.value).then(res => {
+      console.log(res)
+      uni.hideLoading({
+        success: () => {
+          uni.showToast({
+            title: '提现成功',
+            icon: 'none'
+          })
+          getData()
+        }
+      })
+    })
+  }
+}
+
 const getData = () => {
   get_balance().then(res => {
+    console.log(res)
     usable.value = toFixed(res.data.balance)
     total.value = res.data.cumulative
     frozen.value = toFixed(res.data.freeze)
   })
   get_record().then(res => {
     console.log(res.data)
-    recordList.value = res.data
+    recordList.value = res.data.data
   })
 }
 
