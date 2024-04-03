@@ -8,7 +8,7 @@
           <view class="title">{{ item.name }}</view>
           <view class="tn-flex-center-between">
             <view style="display: flex;flex-direction: column;align-items: center;">
-              <view class="price">￥ {{ item.flash_price }}
+              <view class="price">￥ {{ item.teamwork_price }}
               </view>
               <view style="font-size: 24rpx; color: gray; text-decoration: line-through;">￥ {{ item.price }}</view>
               <TnTag shape="round" bg-color="#FAEBD9" text-color="#A19B8B">{{ item.count }}人成团 </TnTag>
@@ -29,7 +29,7 @@
           <view class="title">{{ item.name }}</view>
           <view class="tn-flex-center-between">
             <view style="display: flex;flex-direction: column;align-items: center;">
-              <view class="price">￥ {{ item.flash_price }}
+              <view class="price">￥ {{ item.teamwork_price }}
               </view>
               <view style="font-size: 24rpx; color: gray; text-decoration: line-through;">￥ {{ item.price }}</view>
               <TnTag shape="round" bg-color="#FAEBD9" text-color="#A19B8B">{{ item.count }}人成团 </TnTag>
@@ -84,7 +84,7 @@ onShow(() => {
   min-height: 100vh;
   background: #F7F7F7;
   margin-left: 20rpx;
-  padding-top: 120rpx;
+  padding-top: 150rpx;
 }
 
 .item {

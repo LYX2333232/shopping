@@ -1,8 +1,9 @@
 <template>
 	<Header />
-	<swiper indicator-dots autoplay circular>
+	<swiper indicator-dots autoplay circular style="height:500rpx;">
 		<swiper-item v-for="(item, index) in swiperImg" :key="'swiper' + index">
-			<image :src="item.path" mode="aspectFill" style="width: 100%;" @click="toWeb(item.path)"></image>
+			<image :src="item.path" mode="aspectFill" style="width: 100%;height: 500rpx;" @click="toWeb(item.path)">
+			</image>
 		</swiper-item>
 	</swiper>
 
@@ -239,7 +240,7 @@ page {
 .moredetail {
 	background-color: #fff;
 	margin: 20rpx 0 20rpx;
-	padding-top: 20rpx;
+	padding-bottom: 200rpx;
 
 	.text1 {
 		font-family: Inter, Inter;

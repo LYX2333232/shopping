@@ -1,8 +1,9 @@
 <template>
     <Header />
-    <swiper indicator-dots autoplay circular>
+    <swiper indicator-dots autoplay circular style="height:500rpx;">
         <swiper-item v-for="(item, index) in swiperImg" :key="'swiper' + index">
-            <image :src="item.path" mode="aspectFill" style="width: 100%;" @click="toWeb(item.path)"></image>
+            <image :src="item.path" mode="aspectFill" style="width: 100%;height: 500rpx;" @click="toWeb(item.path)">
+            </image>
         </swiper-item>
     </swiper>
 
@@ -37,6 +38,14 @@
                         selectedColor="rgba(202, 199, 193, 1)"></uni-data-checkbox>
                 </view>
             </uni-section>
+            <view style="display: flex;justify-content: space-between;">
+                <text>数量</text>
+                <view>
+                    <uni-section title="基本用法" type="line" padding>
+                        <uni-number-box v-model="cont" @change="changeValue" :min="1" />
+                    </uni-section>
+                </view>
+            </view>
         </view>
     </view>
     <view class="moredetail">
@@ -207,7 +216,7 @@ page {
 .moredetail {
     background-color: #fff;
     margin: 20rpx 0 20rpx;
-    padding-top: 20rpx;
+    padding-bottom: 200rpx;
 
     .text1 {
         font-family: Inter, Inter;

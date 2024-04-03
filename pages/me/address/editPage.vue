@@ -124,7 +124,7 @@ onLoad((options) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 150rpx;
+  padding-top: 200rpx;
 
   .label {
     width: 150rpx;

@@ -1,9 +1,9 @@
 <template>
   <Header title="领券中心" />
-  <image
-    src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s0brX12kDO0AhEKFROpqrdTYTJ1Im4N8BjSHN15rvt2cTmJhAgZJ8kw/0?wx_fmt=png"
-    mode="widthFix" class="background" />
   <view class="all">
+    <image
+      src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s0brX12kDO0AhEKFROpqrdTYTJ1Im4N8BjSHN15rvt2cTmJhAgZJ8kw/0?wx_fmt=png"
+      mode="widthFix" class="background" />
     <view v-for="coupon in couponList" :key="coupon.id" class="card tn-flex-center-start" @click="receive(coupon)">
       <image :src="coupon.path" style="width:140rpx;height:140rpx;margin:15rpx;" mode="scaleToFill" />
       <view class="main">
@@ -98,8 +98,8 @@ onReachBottom(() => {
 }
 
 .all {
-  margin-top: -10rpx;
-  min-height: 700rpx;
+  width: 100%;
+  min-height: 100vh;
   background: #F59854;
   display: flex;
   flex-direction: column;

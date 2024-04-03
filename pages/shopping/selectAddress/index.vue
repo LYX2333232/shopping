@@ -2,7 +2,7 @@
   <Header title="收货地址" />
   <view class="all">
     <view @click="selectAddress" class="card" v-for="item in addressList" :key="item.id">
-      <TnButton width="80" height="80" bg-color="#D8CCB5" text-color="#FFFFFF" @click="selectAddress(item)">
+      <TnButton width="100" height="80" bg-color="#D8CCB5" text-color="#FFFFFF" @click="selectAddress(item)">
         <div style="white-space:pre-line">
           选择
           地址
@@ -90,7 +90,7 @@ onShow(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 150rpx 0 20rpx;
+  padding: 180rpx 0 20rpx;
 
   .card {
     width: 95%;

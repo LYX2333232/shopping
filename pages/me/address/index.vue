@@ -106,7 +106,7 @@ onShow(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 150rpx 0 20rpx;
+  padding: 180rpx 0 20rpx;
 
   .card {
     width: 95%;
