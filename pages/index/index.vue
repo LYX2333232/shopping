@@ -3,7 +3,7 @@
 		<TnSwiper :data="swiperData" width="100%" height="720" indicator indicator-type="dot">
 			<template #default="{ data }">
 				<view class="swiper-data">
-					<image style="width: 750rpx;height: 780rpx;" :src="data" mode="aspectFill"></image>
+					<image style="width: 750rpx;height: 780rpx;" :src="data.path" mode="aspectFill"></image>
 				</view>
 			</template>
 		</TnSwiper>
@@ -48,7 +48,7 @@
 				<TnWaterFall :data="areaList" width="100%">
 					<template #left="{ item }">
 						<view class="toarea" @click="tap_item(item.id)">
-							<image :src="item.icon" mode=""
+							<image :src="item.path" mode=""
 								style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>
 							<view class="name">
 								{{ item.name }}
@@ -60,7 +60,7 @@
 					</template>
 					<template #right="{ item }">
 						<view class="toarea" @click="tap_item(item.id)">
-							<image :src="item.icon" mode=""
+							<image :src="item.path" mode=""
 								style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>
 							<view class="name">
 								{{ item.name }}
@@ -108,6 +108,7 @@ import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/w
 import { ref } from 'vue'
 import { onHide, onShow } from '@dcloudio/uni-app'
 import { UserStore } from '@/store'
+import { get_home } from '@/api/index'
 
 const user = UserStore()
 
@@ -117,13 +118,8 @@ let words_right2 = "健康 x 营养 x 有机"
 
 // 判断是否为搜索页
 const isSearching = ref(false)
-const currentSwiperIndex = ref(0)
 // 轮播图数据
-const swiperData = [
-	'https://source.unsplash.com/random',
-	'https://source.unsplash.com/random',
-	'https://source.unsplash.com/random'
-]
+const swiperData = ref([])
 
 // 历史搜索数据
 const historyList = ref([])
@@ -140,7 +136,7 @@ let funList = [
 		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60srm92zvWgCkNp5ruHn4AaRbRHavgKOsw1kWIARx9kIttxNYnvaIO5ww/0?wx_fmt=png'
 	},
 ]
-let areaList = [
+const areaList = ref([
 	{
 		id: 0,
 		name: '生鲜食养',
@@ -161,7 +157,7 @@ let areaList = [
 		name: '美容养颜',
 		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sShq5UlxRPhOMibLxWGNmJmOdAXuWiaq09U1pp71FnfMSeh5wM7ibl96tg/0?wx_fmt=png'
 	}
-]
+])
 let value = ref('');
 let styles = ref({
 	color: 'rgba(182, 176, 167, 1)',
@@ -190,29 +186,19 @@ const top_button = (index) => {
 // 底部的图片按钮
 const tap_item = (index) => {
 	console.log(index)
+	uni.switchTab({
+		url: '/pages/goods/goods?',
+	})
+	uni.setStorageSync('t_id', index)
 }
 
 const getData = () => {
-	// 获取数据
-	// const history = [
-	// 	'芒果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'苹果干',
-	// 	'车厘子'
-	// ]
-	// historyList.value = history
+	get_home().then(res => {
+		console.log(res)
+		swiperData.value = res.data.swiper
+		areaList.value = res.data.news
+		console.log('areaList', areaList.value)
+	})
 	if (!uni.getStorageSync('history')) {
 		uni.setStorageSync('history', [])
 	}
@@ -377,7 +363,7 @@ onShow(() => {
 			justify-content: center;
 			width: 340rpx;
 			height: 150rpx;
-			color: white;
+			color: black;
 
 			.name {
 				font-size: 30rpx;

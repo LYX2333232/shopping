@@ -1,6 +1,10 @@
 import request from "@/utils/request";
 
-export const get_type_list = () => request.get('/commodity/commodity_type_list')
+export const get_type_list = (t_id) => {
+    const data = {}
+    if (t_id) data.t_id = t_id
+    return request.get('/commodity/commodity_type_list', data)
+}
 
 export const get_goods_list = (data) => request.get('/commodity/list', data)
 

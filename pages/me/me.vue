@@ -7,8 +7,8 @@
 					:src="store.userInfo ? store.userInfo.avatar : 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png'"
 					mode="widthFix" class="image"></image>
 				<view class="tabel"
-					:style="isBuyer ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);' : 'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
-					{{ isBuyer ? '个人买家' : '分销商' }}
+					:style="!store.userInfo.is_up ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);' : 'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
+					{{ !store.userInfo.is_up ? '个人买家' : '分销商' }}
 				</view>
 			</view>
 			<view v-if="store.userInfo" style="margin-left:30rpx">
@@ -28,7 +28,7 @@
 			</view>
 		</view>
 
-		<view v-if="isBuyer" class="middle">
+		<view v-if="!store.userInfo.is_up" class="middle" @click="addUsVisible = true">
 			<image
 				src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sSmjibpjv8Z5qibB903ribzg1FcHicDLicj8dvleS7ib7E2Ae9H1Me6kcJEdw/0?wx_fmt=png"
 				mode="aspectFill" style="width: 100%;height: 140rpx;border-radius: 11.54rpx;">
@@ -142,6 +142,26 @@
 				</button>
 			</view>
 		</TnPopup>
+		<TnPopup v-model="addUsVisible" width="600">
+			<view style="width: 100%;display: flex;flex-direction:column;align-items:center;padding: 50rpx;">
+				<view class="title">{{ add_us_title }}</view>
+				<view class="content">{{ add_us_content }}</view>
+				<TnForm :model="add_us_form" :rules="add_us_rules">
+					<TnFormItem label="手机号" prop="phone">
+						<TnInput type="number" placeholder="请输入手机号" v-model="add_us_form.phone" :maxlength="11">
+						</TnInput>
+					</TnFormItem>
+					<TnFormItem prop="agree">
+						<TnCheckbox checked-shape="circle" active-color="#C8B697"
+							:custom-style="{ width: '500rpx', margin: '40rpx 0', color: '#C8B697' }"
+							v-model="add_us_form.agree">
+							我同意相关服务条款</TnCheckbox>
+					</TnFormItem>
+				</TnForm>
+				<button style="background:#C8B697;color: #fff;height: 80rpx;width: 500rpx;border-radius: 40rpx;"
+					class="tn-flex-center-center" @click="addUs">申请加盟</button>
+			</view>
+		</TnPopup>
 
 	</view>
 </template>
@@ -149,7 +169,7 @@
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { UserStore } from '@/store'
-import { uploadImage, Login } from '@/api/user/user'
+import { uploadImage, Login, add_us } from '@/api/user/user'
 import { post_feedback } from '@/api/feedback/feedback'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
@@ -157,11 +177,10 @@ import TnForm from '@/uni_modules/tuniaoui-vue3/components/form/src/form.vue'
 import TnFormItem from '@/uni_modules/tuniaoui-vue3/components/form/src/form-item.vue'
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 
 
 const store = UserStore()
-
-const isBuyer = ref(false)
 
 const funList0 = ref([
 	{
@@ -331,6 +350,59 @@ const chooseavatar = (e) => {
 	uploadImage('data:image/png;base64,' + base64).then(res => {
 		console.log(res)
 		login_form.value.avatar = res.data
+	})
+}
+
+const addUsVisible = ref(false)
+const add_us_title = ref('分销规则')
+const add_us_content = ref('分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是')
+const add_us_form = ref({
+	phone: undefined,
+	agree: false
+})
+const add_us_rules = ref({
+	phone: [
+		{ required: true, message: '请输入手机号', trigger: 'blur' },
+		{ pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误', trigger: 'blur' }
+	]
+})
+
+const addUs = () => {
+	const pattern = /^1[3-9]\d{9}$/
+	console.log(add_us_form.value)
+	if (add_us_form.value.phone.toString().length !== 11 || !pattern.test(add_us_form.value.phone)) {
+		uni.showModal({
+			title: '提示',
+			content: '请输入正确的手机号码',
+			showCancel: false
+		})
+		return
+	}
+	if (!add_us_form.value.agree) {
+		uni.showModal({
+			title: '提示',
+			content: '请同意相关服务条款',
+			showCancel: false
+		})
+		return
+	}
+	add_us({
+		phone: add_us_form.value.phone
+	}).then(res => {
+		console.log(res)
+		if (res.code === 200) {
+			uni.showToast({
+				title: '提示',
+				content: '申请成功'
+			})
+			addUsVisible.value = false
+		}
+		else {
+			uni.showToast({
+				title: '提示',
+				content: res.msg
+			})
+		}
 	})
 }
 
@@ -587,6 +659,29 @@ onShow(() => {
 			background: #e6e6e6;
 			margin-top: 70rpx;
 		}
+	}
+
+	.title {
+		font-family: PingFang SC, PingFang SC;
+		font-weight: 500;
+		font-size: 38rpx;
+		color: #474747;
+		line-height: 45rpx;
+		text-align: left;
+		font-style: normal;
+		text-transform: none;
+	}
+
+	.content {
+		font-family: Inter, Inter;
+		font-weight: 400;
+		font-size: 27rpx;
+		color: #474747;
+		line-height: 32rpx;
+		text-align: left;
+		font-style: normal;
+		text-transform: none;
+		margin: 30rpx 0;
 	}
 
 	.footer {

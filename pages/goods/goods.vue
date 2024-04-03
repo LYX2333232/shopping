@@ -80,6 +80,8 @@ import { onShow, onHide } from '@dcloudio/uni-app'
 import { get_type_list, get_goods_list } from '@/api/goods/goods'
 import { UserStore } from '@/store'
 
+let t_id = undefined
+
 const searchInfo = ref('')
 
 const user = UserStore()
@@ -89,11 +91,6 @@ let styles = ref({
 	color: 'rgba(182, 176, 167, 1)',
 	borderColor: 'rgba(182, 176, 167, 1)'
 })
-function iconClick(type) {
-	if (type == 'suffix') {
-		console.log(type)
-	}
-}
 
 // 选中的list的index
 const selectIndex = ref(0)
@@ -161,24 +158,27 @@ const getInfoList = async () => {
 const getData = () => {
 
 	// 获取分类列表
-	get_type_list().then(res => {
+	get_type_list(t_id).then(res => {
 		console.log('res', res)
 		selectlist.value = res.data
+
+		// 初始化数据
+		getInfoList()
 	})
 
-	// 初始化数据
-	getInfoList()
 }
 onShow(() => {
 	searchInfo.value = uni.getStorageSync('searchInfo') ?? ''
+	t_id = uni.getStorageSync('t_id') ?? undefined
+	selectIndex.value = 0
+
 	getData()
 })
 
-onHide(() => [
-	uni.setStorageSync(
-		'searchInfo', undefined
-	)
-])
+onHide(() => {
+	uni.setStorageSync('searchInfo', undefined)
+	uni.setStorageSync('t_id', undefined)
+})
 </script>
 
 <style lang="scss" scoped>

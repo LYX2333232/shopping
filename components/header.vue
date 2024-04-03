@@ -2,23 +2,23 @@
 	<view class="big_out">
 		<!-- 左上角返回按钮 -->
 		<!-- 这里为什么要加4px，是因为这个左箭头<的高度为16rpx需要下降一半，就是8rpx=4px,可以自己试一下，我这里没有问题 -->
-		<view class="back"  :style="'margin-top:'+ (titletop+4)+'px'"  @click="back_page"> 
+		<view class="back" :style="'margin-top:' + (titletop + 4) + 'px'" @click="back_page">
 			<view class="back_img">
 			</view>
 			<view class="back_text">
 				<slot>
-					{{backtext}}
+					{{ backtext }}
 				</slot>
 			</view>
 		</view>
 		<view class="title">
 			<slot>
-				{{title}}
+				{{ title }}
 			</slot>
 		</view>
 	</view>
 </template>
- 
+
 <script>
 export default {
 	name: "backPages",
@@ -35,7 +35,7 @@ export default {
 	},
 	methods: {
 		//利用胶囊按钮定位宽高
-		
+
 
 		//直接返回上一级
 		back_page() {
@@ -55,7 +55,7 @@ export default {
 	}
 }
 </script>
- 
+
 <style scoped>
 .big_out {
 	position: fixed;
@@ -65,15 +65,17 @@ export default {
 	align-items: center;
 	z-index: 999;
 	/* background-color: red; */
-	margin-top: 60rpx;
+	margin-top: 100rpx;
 	background: transparent;
 }
+
 .back {
 	position: absolute;
 	left: 0;
 	height: 50rpx;
 	width: 120rpx;
 }
+
 .back_img {
 	/* 用border值来控制箭头粗细 */
 	border: 3px solid black;
@@ -86,11 +88,12 @@ export default {
 	-webkit-transform: rotate(135deg);
 	margin-left: 30rpx;
 }
+
 .back_text {
 	float: right;
 }
 
-.title{
+.title {
 	font-family: FZYaoTi, FZYaoTi;
 	font-weight: 400;
 	font-size: 46rpx;
