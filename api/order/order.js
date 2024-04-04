@@ -9,3 +9,7 @@ export const get_order = (page, type) => {
 }
 
 export const repay_order = (id) => request.post('/order/update_pay_order', { id })
+
+export const post_refund = (id, reason) => request.post('/order/order_refund', { id, reason })
+
+export const post_receive = (id) => request.post('/order/receiving_goods', { id })

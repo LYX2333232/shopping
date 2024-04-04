@@ -386,9 +386,7 @@ const addUs = () => {
 		})
 		return
 	}
-	add_us({
-		phone: add_us_form.value.phone
-	}).then(res => {
+	add_us(add_us_form.value.phone).then(res => {
 		console.log(res)
 		if (res.code === 200) {
 			uni.showToast({
