@@ -75,7 +75,7 @@ import GoodNav from '@/components/goodNav'
 
 const swiperImg = ref([])
 
-let sell = "150"
+let sell = ref("150")
 const name = ref('')
 const typelist = ref([])
 
@@ -131,6 +131,8 @@ onLoad((options) => {
 
     // 商品名称
     name.value = res.data.name
+
+    sell.value = res.data.count
 
     typelist.value = res.data.labels
 

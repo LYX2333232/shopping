@@ -3,7 +3,7 @@
   <view class="all">
     <view class="tabs">
       <view v-for="(item, index) in tabs" :key="index" class="tab"
-        :style="index === tab + 1 ? 'font-weight: 200;font-size: 45rpx;color: #000000;' : 'font-weight: 800;font-size: 30rpx;color: #717171;'"
+        :style="index === tab + 1 ? 'font-weight: 200;font-size: 45rpx;color: #000000;width: 200rpx' : 'font-weight: 800;font-size: 30rpx;color: #717171;width:150rpx;'"
         @click="switchTab(index)">
         {{ item }}
       </view>
@@ -18,7 +18,8 @@
         <text class="right">
           {{ card.state === 0 ? '待付款' : card.state === 1 ? '待发货' : card.state === 2 ? '待收货' : card.state === 3 ? '已完成'
         :
-        card.state === 4 ? '待退货' : card.state === 5 ? '拒绝退款' : card.state === 6 ? '已退款' : '' }}
+        card.state === 4 ? '待退货' : card.state === 5 ? '拒绝退款' : card.state === 6 ? '已退款' : card.state === 7 ? '拼团中' :
+          card.state === 8 ? '取消拼团' : '' }}
         </text>
       </view>
       <view class="tn-flex-center-between">
@@ -46,7 +47,7 @@
           </view>
         </view>
       </view>
-      <view v-if="[0, 2, 3, 5].includes(card.state)" class="tn-flex-center-end tn-mt-lg">
+      <view v-if="[0, 2, 3, 5, 7, 8].includes(card.state)" class="tn-flex-center-end tn-mt-lg">
         <TnButton v-if="card.state === 5" bg-color="#C7BAA7" text-color="#FFFFFF" width="250" height="60"
           :custom-style="{ marginRight: '30rpx' }" @click="re_apply(card)" shape="round">
           再次申请
@@ -54,7 +55,7 @@
         <TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="250" height="60"
           :custom-style="{ marginRight: '10rpx' }" @click="order_click(card)" shape="round">
           {{ card.state === 0 ? '去付款' : card.state === 2 ? '确认收货' : card.state === 3 ? '申请退款' : card.state === 5 ?
-        '拒绝原因' : '' }}
+        '拒绝原因' : card.state === 7 ? '取消拼团' : card.state === 8 ? '再次拼团' : '' }}
         </TnButton>
       </view>
     </view>
@@ -91,7 +92,7 @@ import { get_order, repay_order, post_refund, post_receive } from '@/api/order/o
 
 
 const tab = ref()
-const tabs = ref(['全部', '待付款', '待发货', '待收货', '已完成', '待退货', '拒绝退款', '已退款'])
+const tabs = ref(['全部', '待付款', '待发货', '待收货', '已完成', '待退货', '拒绝退款', '已退款', '拼团中', '取消拼团'])
 
 let page = 1
 
@@ -213,6 +214,36 @@ const order_click = (card) => {
       }
     })
   }
+  // 取消拼团
+  if (card.state === 7) {
+    uni.showModal({
+      title: '取消拼团',
+      content: '是否取消拼团',
+      success: function (res) {
+        if (res.confirm) {
+          console.log('用户点击确定')
+          switchTab(tab.value + 1)
+        } else if (res.cancel) {
+          console.log('用户点击取消');
+        }
+      }
+    })
+  }
+  // 再次拼团
+  if (card.state === 8) {
+    uni.showModal({
+      title: '再次拼团',
+      content: '是否再次拼团',
+      success: function (res) {
+        if (res.confirm) {
+          console.log('用户点击确定')
+          switchTab(tab.value + 1)
+        } else if (res.cancel) {
+          console.log('用户点击取消');
+        }
+      }
+    })
+  }
 }
 
 onLoad((options) => {
@@ -236,7 +267,7 @@ onReachBottom(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 100rpx;
+  padding-top: 150rpx;
 }
 
 .top {
@@ -247,10 +278,16 @@ onReachBottom(() => {
 }
 
 .tabs {
+  position: relative;
+  width: 100vw;
   display: flex;
+  flex-wrap: nowrap;
+  overflow: auto;
 }
 
 .tab {
+  flex-grow: 1;
+  flex-shrink: 0;
   font-family: Inter, Inter;
   line-height: 46rpx;
   text-align: center;

@@ -74,7 +74,7 @@ const c_id = ref('')
 
 let teamwork_com_id = undefined
 
-let sell = "150"
+let sell = ref("150")
 const name = ref('')
 const typelist = ref(['正品保障', '正品保障'])
 // 商品规格
@@ -83,6 +83,8 @@ const size = ref([])
 const sizeIndex = ref(0)
 
 const content = ref('')
+
+const cont = ref(1)
 
 const toWeb = (url) => {
     uni.navigateTo({
@@ -98,7 +100,7 @@ function buttonClick(e) {
             id: 1,
             name: name.value,
             price: size.value[sizeIndex.value].price,
-            num: 1,
+            num: cont.value,
             teamwork_com_id: teamwork_com_id
         }))
     })
@@ -113,14 +115,18 @@ onLoad((options) => {
 
         c_id.value = res.data.id
 
+        sell.value = res.data.seng_count
+
         teamwork_com_id = res.data.teamwork_com_id
 
         // 规格
-        size.value = [{
-            ...res.data.item,
-            text: res.data.item.name,
-            value: 0
-        }]
+        size.value = [
+            {
+                ...res.data.item,
+                text: res.data.item.name,
+                value: 0
+            }
+        ]
         sizeIndex.value = 0
 
         // 商品名称
