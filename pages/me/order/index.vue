@@ -19,8 +19,11 @@
           {{ card.state === 0 ? '待付款' : card.state === 1 ? '待发货' : card.state === 2 ? '待收货' : card.state === 3 ? '已完成'
         :
         card.state === 4 ? '待退货' : card.state === 5 ? '拒绝退款' : card.state === 6 ? '已退款' : card.state === 7 ? '拼团中' :
-          card.state === 8 ? '取消拼团' : '' }}
+          card.state === 8 ? '取消拼团' : card.state === 9 ? '拼团失败' : '' }}
         </text>
+      </view>
+      <view v-if="card.state === 2">
+        订单号：{{ card.transport_number }}
       </view>
       <view class="tn-flex-center-between">
         <image :src="card.path" mode="scaleToFill" style="width:160rpx;height:160rpx;border-radius: 15rpx;" />
@@ -55,7 +58,7 @@
         <TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="250" height="60"
           :custom-style="{ marginRight: '10rpx' }" @click="order_click(card)" shape="round">
           {{ card.state === 0 ? '去付款' : card.state === 2 ? '确认收货' : card.state === 3 ? '申请退款' : card.state === 5 ?
-        '拒绝原因' : card.state === 7 ? '取消拼团' : card.state === 8 ? '再次拼团' : '' }}
+        '拒绝原因' : card.state === 7 ? '取消拼团' : card.state === 8 || card.state === 9 ? '再次拼团' : '' }}
         </TnButton>
       </view>
     </view>
@@ -88,11 +91,12 @@ import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
-import { get_order, repay_order, post_refund, post_receive } from '@/api/order/order'
+import { get_order, repay_order, post_refund, post_receive, close_teamwork } from '@/api/order/order'
+import { get_today_detail } from '@/api/index/today/today'
 
 
 const tab = ref()
-const tabs = ref(['全部', '待付款', '待发货', '待收货', '已完成', '待退货', '拒绝退款', '已退款', '拼团中', '取消拼团'])
+const tabs = ref(['全部', '待付款', '待发货', '待收货', '已完成', '待退货', '拒绝退款', '已退款', '拼团中', '取消拼团', '拼团失败'])
 
 let page = 1
 
@@ -176,9 +180,6 @@ const order_click = (card) => {
         },
       })
     })
-    // uni.navigateTo({  
-    //   url: '/pages/me/order/pay/index?order_id=' + card.id
-    // })
   }
   // 确认收货
   if (card.state === 2) {
@@ -187,13 +188,10 @@ const order_click = (card) => {
       content: '是否确认收货',
       success: function (res) {
         if (res.confirm) {
-          console.log('用户点击确定')
           post_receive(card.id).then(res => {
             switchTab(tab.value + 1)
           })
-        } else if (res.cancel) {
-          console.log('用户点击取消');
-        }
+        } 
       }
     })
   }
@@ -207,11 +205,6 @@ const order_click = (card) => {
       title: '拒绝原因',
       content: card.refuse,
       showCancel: false,
-      success: function (res) {
-        if (res.confirm) {
-          console.log('用户点击确定');
-        }
-      }
     })
   }
   // 取消拼团
@@ -221,25 +214,32 @@ const order_click = (card) => {
       content: '是否取消拼团',
       success: function (res) {
         if (res.confirm) {
-          console.log('用户点击确定')
-          switchTab(tab.value + 1)
-        } else if (res.cancel) {
-          console.log('用户点击取消');
+          close_teamwork(card.activity_id).then(res => {
+            switchTab(tab.value + 1)
+          })
         }
       }
     })
   }
   // 再次拼团
-  if (card.state === 8) {
+  if (card.state === 8 || card.state === 9) {
     uni.showModal({
       title: '再次拼团',
       content: '是否再次拼团',
       success: function (res) {
         if (res.confirm) {
-          console.log('用户点击确定')
+          get_today_detail(card.id).then(res => {
+            if (res.code === 200)
+              uni.navigateTo({
+                url: '/pages/index/today/detail/index?id=' + card.id
+              })
+            else
+              uni.showToast({
+                title: res.message,
+                icon: 'none'
+              })
+          })
           switchTab(tab.value + 1)
-        } else if (res.cancel) {
-          console.log('用户点击取消');
         }
       }
     })
@@ -253,7 +253,7 @@ onLoad((options) => {
 onReachBottom(() => {
   page++
   const i = tab.value === -1 ? undefined : tab.value
-  get_order(page, i, search_value).then(res => {
+  get_order(page, i).then(res => {
     orders.value = orders.value.concat(res.data.data)
   })
 })
