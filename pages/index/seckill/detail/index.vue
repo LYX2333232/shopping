@@ -137,7 +137,7 @@ onLoad((options) => {
     typelist.value = res.data.labels
 
     // 商品详情
-    content.value = res.data.content
+    content.value = res.data.content.replace(/(<img [^>]*)(style="[^"]*")?/gi, '$1 style="width:100%;"')
 
     flash_com_id = res.data.flash_com_id
 

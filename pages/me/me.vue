@@ -70,8 +70,8 @@
 			<view class="function">
 				<view class="tofunction" v-for="(item, index) in funList" :key="'function1' + index"
 					@click="tap_order(index)">
-					<TnBadge :value="99" type="danger" />
 					<view class="img">
+						<TnBadge :value="100" :max="99" type="danger" size="40" />
 						<img :src="item.icon" alt="" mode="aspectFill" />
 					</view>
 					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
@@ -97,7 +97,6 @@
 					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
 						{{ item.name }}
 					</view>
-
 				</view>
 			</view>
 
@@ -591,13 +590,13 @@ onShow(() => {
 	}
 
 	.tofunction {
-		position: relative;
 		background-color: rgba(255, 255, 255, 1);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 
 		.img {
+			position: relative;
 			width: 50rpx;
 			height: 50rpx;
 			text-align: center;

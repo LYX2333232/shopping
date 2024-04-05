@@ -56,7 +56,7 @@
 		<view class="text1" style="width: 90%;margin: 0 auto;">
 			<text>商品详情</text>
 		</view>
-		<view style="width: 600rpx;margin: 10rpx 5%;" v-html="content"></view>
+		<view style="width: 90%;margin: 10rpx 5%;" v-html="content"></view>
 	</view>
 
 	<GoodNav :id="c_id" :like="like" :normal="true" @buttonClick="buttonClick" @changeLike="changeLike" />
@@ -141,10 +141,7 @@ onLoad((options) => {
 
 		typelist.value = res.data.labels
 
-		console.log('content', res.data.content)
-
-		content.value = res.data.content.replace(/< img ([^>]*)width="[^"]+"([^>]*)>/gi, '< img style="width:100% !important;height:auto !important">')
-		console.log('content', content.value)
+		content.value = res.data.content.replace(/(<img [^>]*)(style="[^"]*")?/gi, '$1 style="width:100%;"')
 
 		like.value = res.data.is_like
 

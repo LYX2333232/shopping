@@ -136,7 +136,7 @@ onLoad((options) => {
 
         console.log('typelist', typelist.value)
 
-        content.value = res.data.content
+        content.value = res.data.content.replace(/(<img [^>]*)(style="[^"]*")?/gi, '$1 style="width:100%;"')
     })
 })
 </script>
