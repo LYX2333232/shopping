@@ -45,32 +45,16 @@
 				</view>
 			</view>
 			<view class="area">
-				<TnWaterFall :data="areaList" width="100%">
-					<template #left="{ item }">
-						<view class="toarea" @click="tap_item(item.id)">
-							<image :src="item.path" mode=""
-								style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>
-							<view class="name">
-								{{ item.name }}
-							</view>
-							<view style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
-								查看全部
-							</view>
-						</view>
-					</template>
-					<template #right="{ item }">
-						<view class="toarea" @click="tap_item(item.id)">
-							<image :src="item.path" mode=""
-								style="position: absolute; z-index: -999;width: 100%;height: 100%;"></image>
-							<view class="name">
-								{{ item.name }}
-							</view>
-							<view style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
-								查看全部
-							</view>
-						</view>
-					</template>
-				</TnWaterFall>
+				<view class="toarea" v-for="item in areaList" @click="tap_item(item.id)">
+					<image :src="item.path" mode="" style="position: absolute; z-index: -999;width: 100%;height: 100%;">
+					</image>
+					<view class="name">
+						{{ item.name }}
+					</view>
+					<view style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
+						查看全部
+					</view>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -221,6 +205,9 @@ const search = (searching = undefined) => {
 	if (!Array.isArray(historyList.value)) {
 		historyList.value = []
 	}
+	if (!value.value || value.value === '') {
+		return
+	}
 	if (historyList.value.includes(value.value))
 		historyList.value.splice(historyList.value.indexOf(value.value), 1)
 	// 保存搜索历史并把value作为第一项
@@ -230,7 +217,7 @@ const search = (searching = undefined) => {
 		historyList.value.pop()
 	}
 	uni.setStorageSync('history', historyList.value)
-	value.value = ''
+	value.value = undefined
 	uni.switchTab({
 		url: '/pages/goods/goods'
 	})
@@ -350,9 +337,9 @@ onShow(() => {
 	}
 
 	.area {
-		display: flex;
-		justify-content: space-between;
-		flex-wrap: wrap;
+		width: 750rpx;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
 		margin-top: 10rpx;
 
 		.toarea {
@@ -361,9 +348,9 @@ onShow(() => {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			width: 340rpx;
+			width: 330rpx;
 			height: 150rpx;
-			color: black;
+			color: rgba(223, 165, 42, 1);
 
 			.name {
 				font-size: 30rpx;
@@ -409,7 +396,7 @@ onShow(() => {
 	margin-top: 30rpx;
 	font-family: Inter, Inter;
 	font-weight: 800;
-	font-size: 50rpx;
+	font-size: 30rpx;
 	color: #000000;
 	text-align: left;
 	font-style: normal;

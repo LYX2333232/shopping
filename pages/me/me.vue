@@ -16,7 +16,6 @@
 					<view class="denglu">
 						{{ store.userInfo.name }}
 					</view>
-					<TnIcon size="40" color="#6D6D6D" name="edit-write" @click="toedit"></TnIcon>
 				</view>
 
 				<view class="bianhao">
@@ -71,6 +70,7 @@
 			<view class="function">
 				<view class="tofunction" v-for="(item, index) in funList" :key="'function1' + index"
 					@click="tap_order(index)">
+					<TnBadge :value="99" type="danger" />
 					<view class="img">
 						<img :src="item.icon" alt="" mode="aspectFill" />
 					</view>
@@ -178,6 +178,7 @@ import TnFormItem from '@/uni_modules/tuniaoui-vue3/components/form/src/form-ite
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
+import TnBadge from '@/uni_modules/tuniaoui-vue3/components/badge/src/badge.vue'
 
 
 const store = UserStore()
@@ -234,7 +235,8 @@ const loginVisible = ref(false)
 
 const login_form = ref({
 	name: undefined,
-	avatar: undefined
+	avatar: undefined,
+	upload: undefined
 })
 
 // 点击分销
@@ -304,7 +306,7 @@ const getphonenumber = (e) => {
 			// 登录
 			Login({
 				code: s.code,
-				avatar: login_form.value.avatar,
+				avatar: login_form.value.upload,
 				name: login_form.value.name,
 				up_id
 			}).then(res => {
@@ -349,7 +351,7 @@ const chooseavatar = (e) => {
 	login_form.value.avatar = 'data:image/png;base64,' + base64
 	uploadImage('data:image/png;base64,' + base64).then(res => {
 		console.log(res)
-		login_form.value.avatar = res.data
+		login_form.value.upload = res.data
 	})
 }
 
@@ -589,6 +591,7 @@ onShow(() => {
 	}
 
 	.tofunction {
+		position: relative;
 		background-color: rgba(255, 255, 255, 1);
 		display: flex;
 		flex-direction: column;

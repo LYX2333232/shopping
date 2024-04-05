@@ -103,7 +103,7 @@ const toWeb = (e) => {
 function buttonClick(e) {
   uni.navigateTo({
     url: '/pages/index/seckill/address/index?good=' + encodeURIComponent(JSON.stringify({
-      id: 1,
+      id: size.value[sizeIndex.value].id,
       name: name.value,
       price: size.value[sizeIndex.value].price,
       num: cont.value,

@@ -22,8 +22,9 @@
           card.state === 8 ? '取消拼团' : card.state === 9 ? '拼团失败' : '' }}
         </text>
       </view>
-      <view v-if="card.state === 2">
-        订单号：{{ card.transport_number }}
+      <view class="order">
+        <view style="margin-right: 30rpx;">订单编号：{{ card.id }}</view>
+        <view v-if="card.state === 2"> 物流单号：{{ card.transport_number }} </view>
       </view>
       <view class="tn-flex-center-between">
         <image :src="card.path" mode="scaleToFill" style="width:160rpx;height:160rpx;border-radius: 15rpx;" />
@@ -103,7 +104,7 @@ let page = 1
 const switchTab = (index) => {
   tab.value = index - 1
   page = 1
-  const i = index === 0 ? undefined : index - 1
+  const i = index - 1
   get_order(page, i).then(res => {
     console.log(res)
     orders.value = res.data.data
@@ -191,7 +192,7 @@ const order_click = (card) => {
           post_receive(card.id).then(res => {
             switchTab(tab.value + 1)
           })
-        } 
+        }
       }
     })
   }
@@ -330,6 +331,12 @@ onReachBottom(() => {
       font-style: normal;
       text-transform: none;
     }
+  }
+
+  .order {
+    font-size: 20rpx;
+    color: gray;
+    margin: 10rpx 0;
   }
 
   .main {

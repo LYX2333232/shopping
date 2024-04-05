@@ -56,7 +56,7 @@
 		<view class="text1" style="width: 90%;margin: 0 auto;">
 			<text>商品详情</text>
 		</view>
-		<view style="width: 90%;margin: 10rpx 5%;" v-html="content"></view>
+		<view style="width: 600rpx;margin: 10rpx 5%;" v-html="content"></view>
 	</view>
 
 	<GoodNav :id="c_id" :like="like" :normal="true" @buttonClick="buttonClick" @changeLike="changeLike" />
@@ -100,7 +100,7 @@ const changeLike = () => {
 
 function buttonClick() {
 	// 加入购物车
-	add_to_cart(size.value[sizeIndex.value].c_id, cont.value).then(res => {
+	add_to_cart(size.value[sizeIndex.value].id, cont.value).then(res => {
 		console.log(res)
 		if (res.code == 200)
 			uni.showToast({
@@ -141,7 +141,10 @@ onLoad((options) => {
 
 		typelist.value = res.data.labels
 
-		content.value = res.data.content
+		console.log('content', res.data.content)
+
+		content.value = res.data.content.replace(/< img ([^>]*)width="[^"]+"([^>]*)>/gi, '< img style="width:100% !important;height:auto !important">')
+		console.log('content', content.value)
 
 		like.value = res.data.is_like
 
@@ -238,6 +241,7 @@ page {
 }
 
 .moredetail {
+	width: 100%;
 	background-color: #fff;
 	margin: 20rpx 0 20rpx;
 	padding-bottom: 200rpx;

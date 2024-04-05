@@ -4,11 +4,15 @@
     <view class="card" v-for="item in addressList" :key="item.id">
       <view class="left">
         <text class="address">{{ JSON.parse(item.address).join('-') + ' ' + item.detail }}</text>
-        <text class="info">{{ item.name }}<text style="margin-left: 30rpx">{{ item.phone }}</text> </text>
+        <view class="info">
+          <view style="width: 100rpx;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{
+      item.name }} </view>
+          <view style="margin-left: 30rpx">{{ item.phone }}</view>
+        </view>
       </view>
       <view style="display: flex;flex-direction: column;align-items: center;">
-        <TnIcon name="edit-write" size="40" @click="toEdit(item.id)"></TnIcon>
-        <TnIcon name="delete" size="40" type="danger" @click="deleteAddress(item.id)"></TnIcon>
+        <TnIcon name="edit-write" size="60" @click="toEdit(item.id)"></TnIcon>
+        <TnIcon name="delete" size="60" type="danger" @click="deleteAddress(item.id)"></TnIcon>
       </view>
     </view>
     <TnButton width="623" height="100" bg-color="#D8CCB5" text-color="#FFFFFF" :custom-style="{ marginTop: '50rpx' }"
@@ -122,6 +126,7 @@ onShow(() => {
       height: 100rpx;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
 
       .address {
         font-family: Inter, Inter;
@@ -133,9 +138,14 @@ onShow(() => {
         font-style: normal;
         text-transform: none;
         margin-bottom: 20rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 550rpx;
       }
 
       .info {
+        display: flex;
         font-family: Inter, Inter;
         font-weight: 400;
         font-size: 27rpx;
@@ -144,6 +154,13 @@ onShow(() => {
         text-align: left;
         font-style: normal;
         text-transform: none;
+
+        .name {
+          width: 200rpx;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
     }
   }

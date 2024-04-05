@@ -4,7 +4,7 @@ export const new_order = (data) => request.post('/order/set_pay_order', data)
 
 export const get_order = (page, type) => {
     const params = { page }
-    if (type) params.type = type
+    if (type >= 0) params.type = type
     return request.get('/order/get_order', params)
 }
 

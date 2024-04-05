@@ -97,7 +97,7 @@ function buttonClick(e) {
     // 立即购买
     uni.navigateTo({
         url: '/pages/index/today/address/index?good=' + encodeURIComponent(JSON.stringify({
-            id: 1,
+            id: size.value[sizeIndex.value].id,
             name: name.value,
             price: size.value[sizeIndex.value].price,
             num: cont.value,

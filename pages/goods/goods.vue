@@ -15,7 +15,7 @@
 	<view class="goods" style="display: flex;background-color:rgba(255, 255, 255, 1) ;">
 		<view style="width: 113rpx;height: 100%;background-color: #F1EDE9; ">
 			<view class="select" v-for="(item, index) in selectlist" :key="index"
-				:style="index === selectIndex ? 'background-color: #FFFFFF;' : ''" @click="selectIndex = index">
+				:style="item.id === selectIndex ? 'background-color: #FFFFFF;' : ''" @click="changeIndex(item.id)">
 				{{ item.name }}
 			</view>
 		</view>
@@ -96,6 +96,11 @@ let styles = ref({
 const selectIndex = ref(0)
 const selectlist = ref([])
 
+const changeIndex = (index) => {
+	selectIndex.value = index
+	getInfoList()
+}
+
 // 记录价格升序降序
 const price = ref(null)
 // 记录销量升序降序
@@ -128,27 +133,27 @@ const getInfoList = async () => {
 		uni.setStorageSync('history', history)
 	}
 	if (upIndex.value === 0) {
-		res = await get_goods_list({ value: searchInfo.value })
+		res = await get_goods_list({ value: searchInfo.value, type: selectIndex.value })
 	}
 	else if (upIndex.value === 1) {
-		res = await get_goods_list({ value: searchInfo.value, order: 1 })
+		res = await get_goods_list({ value: searchInfo.value, order: 1, type: selectIndex.value })
 	}
 	else if (upIndex.value === 2) {
 		if (price.value === 'down') {
 			price.value = 'up'
-			res = await get_goods_list({ value: searchInfo.value, price_order: 1 })
+			res = await get_goods_list({ value: searchInfo.value, price_order: 1, type: selectIndex.value })
 		} else {
 			price.value = 'down'
-			res = await get_goods_list({ value: searchInfo.value, price_order: 2 })
+			res = await get_goods_list({ value: searchInfo.value, price_order: 2, type: selectIndex.value })
 		}
 	}
 	else if (upIndex.value === 3) {
 		if (sale.value === 'down') {
 			sale.value = 'up'
-			res = await get_goods_list({ value: searchInfo.value, sell_order: 1 })
+			res = await get_goods_list({ value: searchInfo.value, sell_order: 1, type: selectIndex.value })
 		} else {
 			sale.value = 'down'
-			res = await get_goods_list({ value: searchInfo.value, sell_order: 2 })
+			res = await get_goods_list({ value: searchInfo.value, sell_order: 2, type: selectIndex.value })
 		}
 	}
 	console.log('infoList', res)
@@ -161,6 +166,7 @@ const getData = () => {
 	get_type_list(t_id).then(res => {
 		console.log('res', res)
 		selectlist.value = res.data
+		selectIndex.value = selectlist.value[0].id
 
 		// 初始化数据
 		getInfoList()
@@ -170,7 +176,6 @@ const getData = () => {
 onShow(() => {
 	searchInfo.value = uni.getStorageSync('searchInfo') ?? ''
 	t_id = uni.getStorageSync('t_id') ?? undefined
-	selectIndex.value = 0
 
 	getData()
 })

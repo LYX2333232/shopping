@@ -136,6 +136,7 @@ onLoad((options) => {
     text-align: right;
     font-style: normal;
     text-transform: none;
+    margin-right: 30rpx;
   }
 }
 </style>
