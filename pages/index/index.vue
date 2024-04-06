@@ -46,7 +46,8 @@
 			</view>
 			<view class="area">
 				<view class="toarea" v-for="item in areaList" @click="tap_item(item.id)">
-					<image :src="item.path" mode="" style="position: absolute; z-index: -999;width: 100%;height: 100%;">
+					<image :src="item.path" mode="aspectFill"
+						style="position: absolute; z-index: -999;width: 100%;height: 100%;">
 					</image>
 					<view class="name">
 						{{ item.name }}
@@ -124,22 +125,22 @@ const areaList = ref([
 	{
 		id: 0,
 		name: '生鲜食养',
-		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png'
+		path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png'
 	},
 	{
 		id: 1,
 		name: '有机专区',
-		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sRLpUzyvIWGFG83tlVvjHmshjQJ4H1XjLhp5rhVkbTez9X6G9Af9icxQ/0?wx_fmt=png'
+		path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sRLpUzyvIWGFG83tlVvjHmshjQJ4H1XjLhp5rhVkbTez9X6G9Af9icxQ/0?wx_fmt=png'
 	},
 	{
 		id: 2,
 		name: '臻臻鲜果',
-		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s7qZzOhLeibsXxQ4ZQ2iaic1CZ1IaiaJoTes1t9CoHHTJL7E5SLGkrV1L6g/0?wx_fmt=png'
+		path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s7qZzOhLeibsXxQ4ZQ2iaic1CZ1IaiaJoTes1t9CoHHTJL7E5SLGkrV1L6g/0?wx_fmt=png'
 	},
 	{
 		id: 3,
 		name: '美容养颜',
-		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sShq5UlxRPhOMibLxWGNmJmOdAXuWiaq09U1pp71FnfMSeh5wM7ibl96tg/0?wx_fmt=png'
+		path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sShq5UlxRPhOMibLxWGNmJmOdAXuWiaq09U1pp71FnfMSeh5wM7ibl96tg/0?wx_fmt=png'
 	}
 ])
 let value = ref('');
@@ -337,7 +338,7 @@ onShow(() => {
 	}
 
 	.area {
-		width: 750rpx;
+		width: 100%;
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		margin-top: 10rpx;
@@ -348,13 +349,12 @@ onShow(() => {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			width: 330rpx;
+			width: 340rpx;
 			height: 150rpx;
-			color: rgba(223, 165, 42, 1);
+			color: #FFFFFF;
 
 			.name {
-				font-size: 30rpx;
-				margin-top: 30rpx;
+				font-size: 40rpx;
 				margin-bottom: 13rpx;
 				margin-left: 20rpx;
 

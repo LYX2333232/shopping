@@ -15,3 +15,5 @@ export const post_refund = (id, reason) => request.post('/order/order_refund', {
 export const post_receive = (id) => request.post('/order/receiving_goods', { id })
 
 export const close_teamwork = (activity_id) => request.post('/teamwork/close_teamwork', { activity_id })
+
+export const get_order_count = () => request.get('/order/order_count')

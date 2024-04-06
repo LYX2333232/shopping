@@ -71,7 +71,8 @@
 				<view class="tofunction" v-for="(item, index) in funList" :key="'function1' + index"
 					@click="tap_order(index)">
 					<view class="img">
-						<TnBadge :value="100" :max="99" type="danger" size="40" />
+						<TnBadge :value="order_count[index] > 0 ? order_count[index] : ''" :max="99" type="danger"
+							size="40" />
 						<img :src="item.icon" alt="" mode="aspectFill" />
 					</view>
 					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
@@ -164,11 +165,13 @@
 
 	</view>
 </template>
+
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { UserStore } from '@/store'
 import { uploadImage, Login, add_us } from '@/api/user/user'
+import { get_order_count } from '@/api/order/order'
 import { post_feedback } from '@/api/feedback/feedback'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
@@ -220,6 +223,8 @@ let funList = [
 	},
 ]
 const funList1 = ref([])
+
+const order_count = ref([])
 
 // 反馈的弹出窗
 const feedback = ref(false)
@@ -429,6 +434,10 @@ const getData = () => {
 		}
 	]
 	funList1.value = list
+	get_order_count().then(res => {
+		console.log(res)
+		order_count.value = [res.data.pay, res.data.delivery, res.data.collect, 0]
+	})
 }
 
 onShow(() => {
