@@ -235,10 +235,10 @@ page {
 	z-index: 999;
 
 	.select {
-		height: 107rpx;
+		padding: 20rpx 30rpx;
 		font-family: Inter, Inter;
 		font-weight: 400;
-		font-size: 25rpx;
+		font-size: 30rpx;
 		color: #555555;
 		display: flex;
 		justify-content: center;
