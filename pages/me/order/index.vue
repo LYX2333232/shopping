@@ -17,9 +17,9 @@
         </view>
         <text class="right">
           {{ card.state === 0 ? '待付款' : card.state === 1 ? '待发货' : card.state === 2 ? '待收货' : card.state === 3 ? '已完成'
-        :
-        card.state === 4 ? '待退货' : card.state === 5 ? '拒绝退款' : card.state === 6 ? '已退款' : card.state === 7 ? '拼团中' :
-          card.state === 8 ? '取消拼团' : card.state === 9 ? '拼团失败' : '' }}
+            :
+            card.state === 4 ? '待退货' : card.state === 5 ? '拒绝退款' : card.state === 6 ? '已退款' : card.state === 7 ? '拼团中' :
+              card.state === 8 ? '取消拼团' : card.state === 9 ? '拼团失败' : '' }}
         </text>
       </view>
       <view class="order">
@@ -51,7 +51,8 @@
           </view>
         </view>
       </view>
-      <view v-if="[0, 2, 3, 5, 7, 8].includes(card.state)" class="tn-flex-center-end tn-mt-lg">
+      <view v-if="[0, 2, 5, 7, 8].includes(card.state) || (card.state === 3 && card.is_refund)"
+        class="tn-flex-center-end tn-mt-lg">
         <TnButton v-if="card.state === 5" bg-color="#C7BAA7" text-color="#FFFFFF" width="250" height="60"
           :custom-style="{ marginRight: '30rpx' }" @click="re_apply(card)" shape="round">
           再次申请
@@ -59,7 +60,7 @@
         <TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="250" height="60"
           :custom-style="{ marginRight: '10rpx' }" @click="order_click(card)" shape="round">
           {{ card.state === 0 ? '去付款' : card.state === 2 ? '确认收货' : card.state === 3 ? '申请退款' : card.state === 5 ?
-        '拒绝原因' : card.state === 7 ? '取消拼团' : card.state === 8 || card.state === 9 ? '再次拼团' : '' }}
+            '拒绝原因' : card.state === 7 ? '取消拼团' : card.state === 8 || card.state === 9 ? '再次拼团' : '' }}
         </TnButton>
       </view>
     </view>
