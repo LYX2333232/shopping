@@ -76,7 +76,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onShow, onHide } from '@dcloudio/uni-app'
+import { onShow, onHide, onReachBottom } from '@dcloudio/uni-app'
 import { get_type_list, get_goods_list } from '@/api/goods/goods'
 import { UserStore } from '@/store'
 
@@ -96,8 +96,11 @@ let styles = ref({
 const selectIndex = ref(0)
 const selectlist = ref([])
 
+let page = 1
+
 const changeIndex = (index) => {
 	selectIndex.value = index
+	page = 1
 	getInfoList()
 }
 
@@ -111,10 +114,11 @@ const upIndex = ref(0)
 const changeUpIndex = (index) => {
 	console.log('index', index)
 	upIndex.value = index
+	infolist.value = []
 	getInfoList()
 }
 
-const infolist = ref()
+const infolist = ref([])
 const toDetail = (id) => {
 	uni.navigateTo({
 		url: '/pages/goods/goods_detail?id=' + id
@@ -133,31 +137,31 @@ const getInfoList = async () => {
 		uni.setStorageSync('history', history)
 	}
 	if (upIndex.value === 0) {
-		res = await get_goods_list({ value: searchInfo.value, type: selectIndex.value })
+		res = await get_goods_list({ value: searchInfo.value, page, type: selectIndex.value })
 	}
 	else if (upIndex.value === 1) {
-		res = await get_goods_list({ value: searchInfo.value, order: 1, type: selectIndex.value })
+		res = await get_goods_list({ value: searchInfo.value, page, order: 1, type: selectIndex.value })
 	}
 	else if (upIndex.value === 2) {
 		if (price.value === 'down') {
 			price.value = 'up'
-			res = await get_goods_list({ value: searchInfo.value, price_order: 1, type: selectIndex.value })
+			res = await get_goods_list({ value: searchInfo.value, page, price_order: 1, type: selectIndex.value })
 		} else {
 			price.value = 'down'
-			res = await get_goods_list({ value: searchInfo.value, price_order: 2, type: selectIndex.value })
+			res = await get_goods_list({ value: searchInfo.value, page, price_order: 2, type: selectIndex.value })
 		}
 	}
 	else if (upIndex.value === 3) {
 		if (sale.value === 'down') {
 			sale.value = 'up'
-			res = await get_goods_list({ value: searchInfo.value, sell_order: 1, type: selectIndex.value })
+			res = await get_goods_list({ value: searchInfo.value, page, sell_order: 1, type: selectIndex.value })
 		} else {
 			sale.value = 'down'
-			res = await get_goods_list({ value: searchInfo.value, sell_order: 2, type: selectIndex.value })
+			res = await get_goods_list({ value: searchInfo.value, page, sell_order: 2, type: selectIndex.value })
 		}
 	}
 	console.log('infoList', res)
-	infolist.value = res.data.data
+	infolist.value = infolist.value.concat(res.data.data)
 }
 
 const getData = () => {
@@ -167,7 +171,8 @@ const getData = () => {
 		console.log('res', res)
 		selectlist.value = res.data
 		selectIndex.value = selectlist.value[0].id
-
+		page = 1
+		infolist.value = []
 		// 初始化数据
 		getInfoList()
 	})
@@ -183,6 +188,11 @@ onShow(() => {
 onHide(() => {
 	uni.setStorageSync('searchInfo', undefined)
 	uni.setStorageSync('t_id', undefined)
+})
+
+onReachBottom(() => {
+	page++
+	getInfoList()
 })
 </script>
 

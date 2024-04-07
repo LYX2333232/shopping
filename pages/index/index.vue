@@ -57,6 +57,24 @@
 					</view>
 				</view>
 			</view>
+			<view class="main">
+				<view class="block3" v-for="item in infolist" :key="index" @click="toDetail(item.id)">
+					<view style="display: block;">
+						<image :src="item.path" mode="" class="image"></image>
+						<view style="width: 96%;margin: 0 auto;font-size: 24rpx;">
+							{{ item.name }}
+						</view>
+						<view style="display: flex;justify-content: space-between;width: 94%;margin-top: 15rpx;">
+							<view class="text1">
+								¥{{ item.price }}
+							</view>
+							<view class="text2">
+								已售{{ item.num }}包
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
 		</view>
 	</view>
 
@@ -91,9 +109,10 @@ import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.v
 import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
 import { ref } from 'vue'
-import { onHide, onShow } from '@dcloudio/uni-app'
+import { onHide, onShow, onReachBottom } from '@dcloudio/uni-app'
 import { UserStore } from '@/store'
 import { get_home } from '@/api/index'
+import { get_goods_list } from '@/api/goods/goods'
 
 const user = UserStore()
 
@@ -177,6 +196,47 @@ const tap_item = (index) => {
 	uni.setStorageSync('t_id', index)
 }
 
+const infolist = ref(
+	[
+		{
+			id: 1,
+			path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png',
+			name: '123',
+			price: 123,
+			num: 123
+		},
+		{
+			id: 2,
+			path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png',
+			name: '123',
+			price: 123,
+			num: 123
+		},
+		{
+			id: 3,
+			path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png',
+			name: '123',
+			price: 123,
+			num: 123
+		},
+		{
+			id: 4,
+			path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png',
+			name: '123',
+			price: 123,
+			num: 123
+		}
+	]
+)
+
+const toDetail = (id) => {
+	uni.navigateTo({
+		url: '/pages/goods/goods_detail?id=' + id,
+	})
+}
+
+let page = 1
+
 const getData = () => {
 	get_home().then(res => {
 		console.log(res)
@@ -189,6 +249,9 @@ const getData = () => {
 	}
 	historyList.value = uni.getStorageSync('history')
 	console.log('history', historyList.value)
+	get_goods_list({ value: '', page }).then(res => {
+		console.log('goods', res)
+	})
 }
 
 // 点击输入框
@@ -230,6 +293,17 @@ onHide(() => {
 
 onShow(() => {
 	getData()
+})
+
+onReachBottom(() => {
+	page++
+	get_goods_list({ value: '', page }).then(res => {
+		if (res.data.length > 0) {
+			goodsList.value = goodsList.value.concat(res.data.data)
+		} else {
+			page--
+		}
+	})
 })
 </script>
 
@@ -359,6 +433,40 @@ onShow(() => {
 				margin-left: 20rpx;
 
 			}
+		}
+	}
+
+	.main {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.block3 {
+		display: flex;
+		margin-left: 15rpx;
+		margin-top: 20rpx;
+
+		.image {
+			width: 290rpx;
+			height: 243rpx;
+			border-radius: 13rpx 13rpx 13rpx 13rpx;
+		}
+
+		.text1 {
+			font-family: Inter, Inter;
+			font-weight: 600;
+			font-size: 33rpx;
+			color: #834820;
+			line-height: 46rpx;
+		}
+
+		.text2 {
+			font-family: Inter, Inter;
+			font-weight: 500;
+			font-size: 23rpx;
+			color: #8D8D8D;
+			margin-top: 5rpx;
+			line-height: 50rpx;
 		}
 	}
 
