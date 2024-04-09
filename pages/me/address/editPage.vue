@@ -62,9 +62,12 @@ const phone = ref('')
 
 const region = ref(['北京市', '市辖区', '东城区'])
 
+const code = ref(["110000", "110100", "110101"])
+
 const onRegionChange = (e) => {
-  // console.log(e)
+  console.log(e)
   region.value = e.detail.value
+  code.value = e.detail.code
 }
 
 const detail = ref('')
@@ -79,7 +82,8 @@ const save = () => {
     phone: phone.value,
     address: region.value,
     detail: detail.value,
-    default: isDefault.value ? 1 : 0
+    default: isDefault.value ? 1 : 0,
+    code,
   }).then((res) => {
     console.log(res)
     if (res.code === 200) {
