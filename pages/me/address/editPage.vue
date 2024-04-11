@@ -83,7 +83,7 @@ const save = () => {
     address: region.value,
     detail: detail.value,
     default: isDefault.value ? 1 : 0,
-    code,
+    code: JSON.stringify(code.value)
   }).then((res) => {
     console.log(res)
     if (res.code === 200) {

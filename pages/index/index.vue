@@ -1,9 +1,9 @@
 <template>
 	<view v-if="!isSearching" style="background-color: #FEF0D6;">
-		<TnSwiper :data="swiperData" width="100%" height="720" indicator indicator-type="dot">
+		<TnSwiper loop autoplay :data="swiperData" width="100%" height="720" indicator indicator-type="dot">
 			<template #default="{ data }">
 				<view class="swiper-data">
-					<image style="width: 750rpx;height: 780rpx;" :src="data.path" mode="aspectFill"></image>
+					<image style="width: 750rpx;height: 680rpx;" :src="data.path" mode="scaleToFill"></image>
 				</view>
 			</template>
 		</TnSwiper>
