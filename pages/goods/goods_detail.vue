@@ -90,6 +90,11 @@ const cont = ref(1)
 
 const content = ref('')
 
+const toWeb = (path) => {
+	uni.navigateTo({
+		url: '/pages/web/index?src=' + path
+	})
+}
 
 const like = ref(0)
 

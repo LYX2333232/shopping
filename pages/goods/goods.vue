@@ -161,7 +161,13 @@ const getInfoList = async () => {
 		}
 	}
 	console.log('infoList', res)
-	infolist.value = infolist.value.concat(res.data.data)
+	if (res.data.data.length === 0) {
+		page--
+		return
+	}
+	if (page > 1)
+		infolist.value = infolist.value.concat(res.data.data)
+	else infolist.value = res.data.data
 }
 
 const getData = () => {

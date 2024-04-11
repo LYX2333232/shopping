@@ -3,7 +3,8 @@
 		<TnSwiper loop autoplay :data="swiperData" width="100%" height="720" indicator indicator-type="dot">
 			<template #default="{ data }">
 				<view class="swiper-data">
-					<image style="width: 750rpx;height: 680rpx;" :src="data.path" mode="scaleToFill"></image>
+					<image style="width: 750rpx;height: 680rpx;" :src="data.path" mode="scaleToFill"
+						@click="toWeb(data.path)"></image>
 				</view>
 			</template>
 		</TnSwiper>
@@ -167,6 +168,12 @@ let styles = ref({
 	color: 'rgba(182, 176, 167, 1)',
 	borderColor: 'rgba(182, 176, 167, 1)'
 })
+
+const toWeb = (path) => {
+	uni.navigateTo({
+		url: '/pages/web/index?src=' + path
+	})
+}
 
 // 顶部的按钮
 const top_button = (index) => {
@@ -485,7 +492,6 @@ onReachBottom(() => {
 			width: 40rpx;
 			height: 40rpx;
 			display: block;
-			-webkit-align-self: center;
 		}
 
 		.pic2 {
@@ -494,7 +500,6 @@ onReachBottom(() => {
 			height: 80rpx;
 			margin-right: 20rpx;
 			display: block;
-			-webkit-align-self: center;
 		}
 	}
 

@@ -44,7 +44,7 @@
 				<image :src="coupon.path" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
 				<view class="main">
 					<view class="title" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">{{
-				coupon.name }}</view>
+						coupon.name }}</view>
 					<view class="price" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">
 						<text v-if="coupon.type === 0 || coupon.type === 3">￥{{ coupon.number }}</text>
 						<text v-if="coupon.type === 1">￥{{ coupon.reduce }} </text>

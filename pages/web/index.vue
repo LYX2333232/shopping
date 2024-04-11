@@ -3,9 +3,7 @@
 </template>
 
 <script setup>
-import {
-  onLoad,
-} from "@dcloudio/uni-app"
+import { onLoad } from "@dcloudio/uni-app"
 import { ref } from "vue";
 
 let src = ref()
