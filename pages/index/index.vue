@@ -110,12 +110,14 @@ import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.v
 import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
 import { ref } from 'vue'
-import { onHide, onShow, onReachBottom } from '@dcloudio/uni-app'
-import { UserStore } from '@/store'
+import { onHide, onLoad, onShow, onReachBottom } from '@dcloudio/uni-app'
+import { UserStore, AddressStore } from '@/store'
+import { get_default_address } from '@/api/address/address'
 import { get_home } from '@/api/index'
 import { get_goods_list } from '@/api/goods/goods'
 
 const user = UserStore()
+const address = AddressStore()
 
 let words_left = "特产鲜果 有机蔬菜"
 let words_right1 = "sharing love"
@@ -300,6 +302,12 @@ onHide(() => {
 
 onShow(() => {
 	getData()
+})
+
+onLoad(() => {
+	get_default_address().then(res => {
+		address.setAddress(JSON.parse(res.data.address).join('-') + '-' + res.data.detail, res.data.name, res.data.phone, res.data.id)
+	})
 })
 
 onReachBottom(() => {

@@ -17,3 +17,6 @@ export const post_receive = (id) => request.post('/order/receiving_goods', { id 
 export const close_teamwork = (activity_id) => request.post('/teamwork/close_teamwork', { activity_id })
 
 export const get_order_count = () => request.get('/order/order_count')
+
+// 获取运费和商品价格
+export const get_order_price = (data) => request.get('/order/price_inquiry', data)

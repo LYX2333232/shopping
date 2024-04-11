@@ -4,7 +4,7 @@
     <TnListItem width="750">
       <view class="tn-flex-center-start">
         <view class="label">姓名</view>
-        <TnInput :border="false" type="text" placeholder="请输入姓名" v-model="name"></TnInput>
+        <TnInput maxlength="10" :border="false" type="text" placeholder="请输入姓名" v-model="name"></TnInput>
       </view>
     </TnListItem>
     <TnListItem width="750">

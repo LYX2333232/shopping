@@ -11,7 +11,7 @@
 		</view>
 		<view style="margin-left: 30rpx;display:flex;" @click="addressChange">
 			<view class="address">
-				地址：{{ address.address }}
+				地址：{{ address.address ?? '请选择地址' }}
 			</view>
 			<TnIcon name="down"></TnIcon>
 		</view>
@@ -31,13 +31,13 @@
 
 			<view class="text2">全选</view>
 			<view class="text3">总计</view>
-			<view class="text4">¥{{ total }} </view>
+			<view class="text4">¥{{ total.toFixed(2) }} </view>
 			<view class="button" @click="tocaculate">
 				结算
 			</view>
 		</view>
-
 	</view>
+
 	<TnPopup v-model="couponVisible" open-direction="bottom" height="60%">
 		<view class="popup">
 			<view class="card" v-for="(coupon, index) in couponList" :key="index">
@@ -69,19 +69,46 @@
 			</view>
 		</view>
 	</TnPopup>
+	<TnPopup v-model="detailVisible" open-direction="bottom" height="50%">
+		<view class="goods">
+			<view style="font-size:45rpx;">订单详细</view>
+			<view class="detail_address" v-if="address.address" @click="addressChange">
+				<view
+					style="font-size:35rpx;margin-bottom: 20rpx;max-width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+					{{ address.address }} </view>
+				<view>{{ address.name }} - {{ address.phone }} </view>
+			</view>
+			<view class="detail_address" style="font-size:35rpx;" v-else @click="addressChange">请先选择地址</view>
+			<view class="good" v-if="select_good">
+				<view>
+					<image :src="select_good.path" mode="scaleToFill" style="width:100rpx; height:100rpx;" />
+				</view>
+				<view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;font-size:20rpx;">
+					<view style="font-size:40rpx;color:#834820">总计：{{ detail_price.freight + detail_price.prcie }}
+					</view>
+					<view>商品：{{ detail_price.prcie }}</view>
+					<view>运费：{{ detail_price.freight }}</view>
+				</view>
+			</view>
+			<view class="btn">
+				<view class="button" @click="order">
+					确认结算
+				</view>
+			</view>
+		</view>
+	</TnPopup>
 
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { onShow, onLoad, onReachBottom } from '@dcloudio/uni-app'
+import { ref, computed, watch } from 'vue'
+import { onShow, onReachBottom } from '@dcloudio/uni-app'
 import shoppingCard from '@/components/shopping/shoppingCard.vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import { get_cart_list, del_cart, get_coupon } from '@/api/cart/cart'
-import { get_default_address } from '@/api/address/address'
-import { new_order } from '@/api/order/order'
+import { new_order, get_order_price } from '@/api/order/order'
 import { AddressStore } from '@/store'
 
 const address = AddressStore()
@@ -101,6 +128,30 @@ const addressChange = () => {
 }
 
 const dataList = ref([])
+
+const select_good = ref(undefined)
+
+const updateTotal = () => {
+	let temp = 0
+	dataList.value.forEach(item => {
+		if (item.order) {
+			select_good.value = item
+			temp += item.price * item.cont
+		}
+	})
+	if (select_coupon.value) {
+		if (select_coupon.value.type === 0 || select_coupon.value.type === 3) {
+			temp -= select_coupon.value.number
+		}
+		else if (select_coupon.value.type === 1) {
+			temp -= select_coupon.value.reduce
+		}
+		else if (select_coupon.value.type === 2) {
+			temp *= select_coupon.value.number / 10
+		}
+	}
+	total.value = temp
+}
 
 // 改变选中状态
 const change = (e, i, j) => {
@@ -124,6 +175,13 @@ const change = (e, i, j) => {
 const changeNum = (e, i, j) => {
 	// console.log('e', e, 'i', i, 'j', j);
 	dataList.value[j].cont = e
+	if (select_coupon.value) {
+		uni.showToast({
+			title: '请重新选择优惠券',
+			icon: 'none'
+		})
+	}
+	select_coupon.value = undefined
 }
 
 // 全选
@@ -148,16 +206,6 @@ const changeOrderAll = (e) => {
 	orderAll.value = e
 }
 
-const total = computed(() => {
-	let total = 0
-	dataList.value.forEach(item => {
-		if (item.order) {
-			total += item.price * item.cont
-		}
-	})
-	return total.toFixed(2)
-})
-
 const del = (id) => {
 	console.log('删除', id)
 	del_cart(id).then(res => {
@@ -171,8 +219,33 @@ const del = (id) => {
 	})
 }
 
+const detailVisible = ref(false)
+
+const detail_price = ref({
+	// 运费,
+	freight: 0,
+	// 商品价格
+	prcie: 0,
+})
+
 const tocaculate = () => {
 	console.log('结算')
+	detailVisible.value = true
+	const option = {
+		address_id: address.address_id,
+		com_id: select_good.value.item_id,
+		com_cont: select_good.value.cont
+	}
+	console.log(select_coupon.value)
+	if (select_coupon.value)
+		option.coupon_id = select_coupon.value.coupon_id
+	get_order_price(option).then(res => {
+		console.log(res)
+		detail_price.value = res.data
+	})
+}
+
+const order = () => {
 	if (!address.address_id) {
 		uni.showToast({
 			title: '请先选择地址',
@@ -183,49 +256,62 @@ const tocaculate = () => {
 		})
 		return
 	}
-	for (var good of dataList.value) {
-		console.log('good', good)
-		if (good.order) {
-			new_order({
-				com_id: good.item_id,
-				address_id: address.address_id,
-				com_cont: good.cont,
-				coupon_id: select_coupon ? select_coupon.id : undefined,
-				shopping_cart_id: good.id
-			}).then(res => {
-				console.log('res', res)
-				uni.requestPayment({
-					provider: 'wxpay',
-					timeStamp: res.data.timeStamp,
-					nonceStr: res.data.nonceStr,
-					package: res.data.package,
-					signType: res.data.signType,
-					paySign: res.data.paySign,
-					success: function (res) {
-						console.log('success', res)
-						if (res.errMsg === 'requestPayment:ok') {
-							uni.showToast({
-								title: '支付成功',
-								icon: 'none'
-							})
-						}
-					},
-					fail: function (err) {
-						console.log('fail', err)
-					}
-				})
-				// 删除该商品
-				dataList.value = dataList.value.filter(item => !item.order)
-			})
-			return
+	console.log('good', select_good.value)
+	new_order({
+		com_id: select_good.value.item_id,
+		address_id: address.address_id,
+		com_cont: select_good.value.cont,
+		coupon_id: select_coupon ? select_coupon.id : undefined,
+		shopping_cart_id: select_good.value.id
+	}).then(res => {
+		console.log('res', res)
+		uni.requestPayment({
+			provider: 'wxpay',
+			timeStamp: res.data.timeStamp,
+			nonceStr: res.data.nonceStr,
+			package: res.data.package,
+			signType: res.data.signType,
+			paySign: res.data.paySign,
+			success: function (res) {
+				console.log('success', res)
+				if (res.errMsg === 'requestPayment:ok') {
+					uni.showToast({
+						title: '支付成功',
+						icon: 'none'
+					})
+				}
+			},
+			fail: function (err) {
+				console.log('fail', err)
+			}
+		})
+		// 删除该商品
+		select_good.value = undefined
+		select_coupon.value = undefined
+		detail_price.value = {
+			// 运费,
+			freight: 0,
+			prcie: 0,
 		}
-	}
+		dataList.value = dataList.value.filter(item => !item.order)
+		detailVisible.value = false
+	})
+	return
+
+
+
 }
 
 const select_coupon = ref(undefined)
 
+const total = ref(0)
+watch(dataList, () => {
+	updateTotal()
+}, { deep: true })
+
 const select = (coupon) => {
 	select_coupon.value = coupon
+	updateTotal()
 	couponVisible.value = false
 }
 
@@ -309,12 +395,18 @@ const getData = () => {
 }
 onShow(() => {
 	getData()
-})
-
-onLoad(() => {
-	console.log('onLoad')
-	get_default_address().then(res => {
-		address.setAddress(JSON.parse(res.data.address).join('-') + '-' + res.data.detail, res.data.id)
+	// 用以在选择地址后更新地址
+	const option = {
+		address_id: address.address_id,
+		com_id: select_good.value.item_id,
+		com_cont: select_good.value.cont
+	}
+	console.log(select_coupon.value)
+	if (select_coupon.value)
+		option.coupon_id = select_coupon.value.coupon_id
+	get_order_price(option).then(res => {
+		console.log(res)
+		detail_price.value = res.data
 	})
 })
 
@@ -478,6 +570,61 @@ page {
 				font-style: normal;
 				text-transform: none;
 			}
+		}
+	}
+}
+
+.goods {
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-bottom: 150rpx;
+	background: #F5F5F5;
+
+	.detail_address {
+		width: 90%;
+		display: flex;
+		flex-direction: column;
+		margin: 30rpx;
+		padding: 20rpx;
+		background: #FFFFFF;
+	}
+
+	.good {
+		width: 90%;
+		margin: 10rpx auto;
+		padding: 30rpx;
+		background: #FFFFFF;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.btn {
+		width: 90%;
+		position: fixed;
+		bottom: 0;
+		display: flex;
+		justify-content: flex-end;
+
+		.button {
+			width: 258rpx;
+			height: 71rpx;
+			margin-bottom: 20rpx;
+			background: #C8B697;
+			border-radius: 10rpx;
+			font-weight: 500;
+			font-size: 31rpx;
+			color: #FFFFFF;
+			text-align: center;
+			margin-left: 20rpx;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 	}
 }

@@ -60,6 +60,34 @@
     <view style="width: 90%;margin: 10rpx 5%;" v-html="content">
     </view>
   </view>
+  <TnPopup v-model="detailVisible" open-direction="bottom" height="50%">
+    <view class="goods">
+      <view style="font-size:45rpx;">订单详细</view>
+      <view class="detail_address" v-if="address.address" @click="selectAddress">
+        <view
+          style="font-size:35rpx;margin-bottom: 20rpx;max-width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+          {{ address.address }} </view>
+        <view>{{ address.name }} - {{ address.phone }} </view>
+      </view>
+      <view class="detail_address" style="font-size:35rpx;" v-else @click="selectAddress">请先选择地址</view>
+      <view class="good">
+        <view>
+          <image :src="swiperImg[0].path" mode="scaleToFill" style="width:100rpx; height:100rpx;" />
+        </view>
+        <view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;font-size:20rpx;">
+          <view style="font-size:40rpx;color:#834820">总计：{{ detail_price.freight + detail_price.prcie }}
+          </view>
+          <view>商品：{{ detail_price.prcie }}</view>
+          <view>运费：{{ detail_price.freight }}</view>
+        </view>
+      </view>
+      <view class="btn">
+        <view class="button" @click="order">
+          确认结算
+        </view>
+      </view>
+    </view>
+  </TnPopup>
 
   <GoodNav :id="c_id" :time="time" :like="true" :normal="false" @buttonClick="buttonClick" />
   <!-- 分享定义在组件goods-nav中 -->
@@ -67,11 +95,23 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app';
+import { onLoad, onShow } from '@dcloudio/uni-app';
 import { get_goods_detail } from '@/api/index/seckill/seckill'
 import Header from '@/components/header.vue'
-import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue';
+import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
+import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import GoodNav from '@/components/goodNav'
+import { new_order, get_order_price } from '@/api/order/order'
+import { AddressStore } from '@/store'
+
+const address = AddressStore()
+
+const detailVisible = ref(false)
+
+const detail_price = ref({
+  freight: 0,
+  prcie: 0
+})
 
 const swiperImg = ref([])
 
@@ -101,14 +141,19 @@ const toWeb = (e) => {
 }
 
 function buttonClick(e) {
+  detailVisible.value = true
+  get_order_price({
+    address_id: address.address_id, teamwork_com_id: flash_com_id,
+    com_id: size.value[sizeIndex.value].id, com_cont: cont.value
+  }).then(res => {
+    console.log(res)
+    detail_price.value = res.data
+  })
+}
+
+const selectAddress = () => {
   uni.navigateTo({
-    url: '/pages/index/seckill/address/index?good=' + encodeURIComponent(JSON.stringify({
-      id: size.value[sizeIndex.value].id,
-      name: name.value,
-      price: size.value[sizeIndex.value].price,
-      num: cont.value,
-      flash_com_id: flash_com_id
-    }))
+    url: '/pages/shopping/selectAddress/index'
   })
 }
 
@@ -142,6 +187,17 @@ onLoad((options) => {
     flash_com_id = res.data.flash_com_id
 
     time.value = (new Date(res.data.end_time) - new Date()) / 1000
+  })
+})
+
+onShow(() => {
+  get_order_price({
+    address_id: address.address_id,
+    flash_com_id,
+    com_id: size.value[sizeIndex.value].id, com_cont: cont.value
+  }).then(res => {
+    console.log(res)
+    detail_price.value = res.data
   })
 })
 </script>

@@ -12,7 +12,7 @@
         <text class="address">{{ JSON.parse(item.address).join('-') + ' ' + item.detail }}</text>
         <view class="info">
           <view style="width: 100rpx;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{
-      item.name }} </view>
+            item.name }} </view>
           <view style="margin-left: 30rpx">{{ item.phone }}</view>
         </view>
       </view>
@@ -42,7 +42,7 @@ const store = AddressStore()
 const addressList = ref([])
 
 const selectAddress = (item) => {
-  store.setAddress(JSON.parse(item.address).join('-') + '-' + item.detail, item.id)
+  store.setAddress(JSON.parse(item.address).join('-') + '-' + item.detail, item.name, item.phone, item.id)
   uni.navigateBack({
     delta: 1
   })
