@@ -191,7 +191,7 @@ page {
 	.info {
 		font-family: Inter, Inter;
 		font-weight: 600;
-		font-size: 31rpx;
+		font-size: 50rpx;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		display: -webkit-box;

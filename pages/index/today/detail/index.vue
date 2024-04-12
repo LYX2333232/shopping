@@ -22,9 +22,9 @@
                     {{ item }}
                 </view>
             </view>
-            <view class="block1">
+            <!-- <view class="block1">
                 已售 {{ sell }}+
-            </view>
+            </view> -->
         </view>
     </view>
     <view class="detail">
@@ -70,7 +70,8 @@
                     <image :src="swiperImg[0].path" mode="scaleToFill" style="width:100rpx; height:100rpx;" />
                 </view>
                 <view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;font-size:20rpx;">
-                    <view style="font-size:40rpx;color:#834820">总计：{{ detail_price.freight + detail_price.price }}
+                    <view style="font-size:40rpx;color:#834820">总计：{{ (parseFloat(detail_price.freight) +
+                        parseFloat(detail_price.price)).toFixed(2) }}
                     </view>
                     <view>商品：{{ detail_price.price }}</view>
                     <view>运费：{{ detail_price.freight }}</view>
@@ -136,7 +137,8 @@ function buttonClick(e) {
     console.log(e)
     detailVisible.value = true
     get_order_price({
-        address_id: address.address_id, teamwork_com_id: teamwork_com_id,
+        address_id: address.address_id,
+        teamwork_com_id,
         com_id: size.value[sizeIndex.value].id, com_cont: cont.value
     }).then(res => {
         console.log(res)
@@ -255,7 +257,7 @@ page {
     .info {
         font-family: Inter, Inter;
         font-weight: 600;
-        font-size: 31rpx;
+        font-size: 50rpx;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;

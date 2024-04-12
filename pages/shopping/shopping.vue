@@ -84,7 +84,8 @@
 					<image :src="select_good.path" mode="scaleToFill" style="width:100rpx; height:100rpx;" />
 				</view>
 				<view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;font-size:20rpx;">
-					<view style="font-size:40rpx;color:#834820">总计：{{ detail_price.freight + detail_price.price }}
+					<view style="font-size:40rpx;color:#834820">总计：{{ (parseFloat(detail_price.freight) +
+						parseFloat(detail_price.price)).toFixed(2) }}
 					</view>
 					<view>商品：{{ detail_price.price }}</view>
 					<view>运费：{{ detail_price.freight }}</view>

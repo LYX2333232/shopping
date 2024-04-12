@@ -1,7 +1,7 @@
 <template>
   <Header title="收货地址" />
   <view class="all">
-    <view @click="selectAddress" class="card" v-for="item in addressList" :key="item.id">
+    <view class="card" v-for="item in addressList" :key="item.id">
       <TnButton width="100" height="100" bg-color="#D8CCB5" text-color="#FFFFFF" @click="selectAddress(item)">
         <div style="white-space:pre-line">
           选择
@@ -9,7 +9,7 @@
         </div>
       </TnButton>
       <view class="left">
-        <text class="address">{{ JSON.parse(item.address).join('-') + ' ' + item.detail }}</text>
+        <text class="address">{{ item.address.join('-') + ' ' + item.detail }}</text>
         <view class="info">
           <view style="width: 100rpx;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{
             item.name }} </view>
@@ -42,7 +42,7 @@ const store = AddressStore()
 const addressList = ref([])
 
 const selectAddress = (item) => {
-  store.setAddress(JSON.parse(item.address).join('-') + '-' + item.detail, item.name, item.phone, item.id)
+  store.setAddress(item.address.join('-') + '-' + item.detail, item.name, item.phone, item.id)
   uni.navigateBack({
     delta: 1
   })
@@ -76,7 +76,10 @@ const deleteAddress = (id) => {
 const getData = () => {
   get_address_list().then(res => {
     console.log(res)
-    addressList.value = res.data.data
+    addressList.value = res.data.data.map(item => {
+      item.address = JSON.parse(item.address)
+      return item
+    })
     console.log(addressList.value)
   })
 }

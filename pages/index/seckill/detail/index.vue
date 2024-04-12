@@ -26,9 +26,9 @@
           {{ item }}
         </view>
       </view>
-      <view class="block1">
+      <!-- <view class="block1">
         已售 {{ sell }}+
-      </view>
+      </view> -->
     </view>
   </view>
   <view class="detail">
@@ -75,7 +75,8 @@
           <image :src="swiperImg[0].path" mode="scaleToFill" style="width:100rpx; height:100rpx;" />
         </view>
         <view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;font-size:20rpx;">
-          <view style="font-size:40rpx;color:#834820">总计：{{ detail_price.freight + detail_price.price }}
+          <view style="font-size:40rpx;color:#834820">总计：{{ (parseFloat(detail_price.freight) +
+            parseFloat(detail_price.price)).toFixed(2) }}
           </view>
           <view>商品：{{ detail_price.price }}</view>
           <view>运费：{{ detail_price.freight }}</view>
@@ -115,7 +116,7 @@ const detail_price = ref({
 
 const swiperImg = ref([])
 
-let sell = ref("150")
+let sell = ref(0)
 const name = ref('')
 const typelist = ref([])
 
@@ -143,8 +144,10 @@ const toWeb = (e) => {
 function buttonClick(e) {
   detailVisible.value = true
   get_order_price({
-    address_id: address.address_id, teamwork_com_id: flash_com_id,
-    com_id: size.value[sizeIndex.value].id, com_cont: cont.value
+    address_id: address.address_id,
+    flash_com_id,
+    com_id: size.value[sizeIndex.value].id,
+    com_cont: cont.value
   }).then(res => {
     console.log(res)
     detail_price.value = res.data
@@ -263,7 +266,7 @@ page {
   .info {
     font-family: Inter, Inter;
     font-weight: 600;
-    font-size: 31rpx;
+    font-size: 50rpx;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -382,5 +385,60 @@ page {
   /* #endif */
   bottom: 0;
   z-index: 100;
+}
+
+.goods {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 150rpx;
+  background: #F5F5F5;
+
+  .detail_address {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    margin: 30rpx;
+    padding: 20rpx;
+    background: #FFFFFF;
+  }
+
+  .good {
+    width: 90%;
+    margin: 10rpx auto;
+    padding: 30rpx;
+    background: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn {
+    width: 90%;
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+
+    .button {
+      width: 258rpx;
+      height: 71rpx;
+      margin-bottom: 20rpx;
+      background: #C8B697;
+      border-radius: 10rpx;
+      font-weight: 500;
+      font-size: 31rpx;
+      color: #FFFFFF;
+      text-align: center;
+      margin-left: 20rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 }
 </style>

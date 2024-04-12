@@ -59,7 +59,7 @@
 				</view>
 			</view>
 			<view class="main">
-				<view class="block3" v-for="item in infolist" :key="index" @click="toDetail(item.id)">
+				<view class="block3" v-for="item in infoList" :key="index" @click="toDetail(item.id)">
 					<view style="display: block;">
 						<image :src="item.path" mode="" class="image"></image>
 						<view style="width: 96%;margin: 0 auto;font-size: 24rpx;">
@@ -68,9 +68,6 @@
 						<view style="display: flex;justify-content: space-between;width: 94%;margin-top: 15rpx;">
 							<view class="text1">
 								¥{{ item.price }}
-							</view>
-							<view class="text2">
-								已售{{ item.num }}包
 							</view>
 						</view>
 					</view>
@@ -205,38 +202,7 @@ const tap_item = (index) => {
 	uni.setStorageSync('t_id', index)
 }
 
-const infolist = ref(
-	[
-		{
-			id: 1,
-			path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png',
-			name: '123',
-			price: 123,
-			num: 123
-		},
-		{
-			id: 2,
-			path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png',
-			name: '123',
-			price: 123,
-			num: 123
-		},
-		{
-			id: 3,
-			path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png',
-			name: '123',
-			price: 123,
-			num: 123
-		},
-		{
-			id: 4,
-			path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png',
-			name: '123',
-			price: 123,
-			num: 123
-		}
-	]
-)
+const infoList = ref()
 
 const toDetail = (id) => {
 	uni.navigateTo({
@@ -258,8 +224,9 @@ const getData = () => {
 	}
 	historyList.value = uni.getStorageSync('history')
 	console.log('history', historyList.value)
-	get_goods_list({ value: '', page }).then(res => {
+	get_goods_list({ page }).then(res => {
 		console.log('goods', res)
+		infoList.value = res.data.data
 	})
 }
 
@@ -312,9 +279,9 @@ onLoad(() => {
 
 onReachBottom(() => {
 	page++
-	get_goods_list({ value: '', page }).then(res => {
-		if (res.data.length > 0) {
-			goodsList.value = goodsList.value.concat(res.data.data)
+	get_goods_list({ page }).then(res => {
+		if (res.data.data.length > 0) {
+			infoList.value = infoList.value.concat(res.data.data)
 		} else {
 			page--
 		}
@@ -458,8 +425,7 @@ onReachBottom(() => {
 
 	.block3 {
 		display: flex;
-		margin-left: 15rpx;
-		margin-top: 20rpx;
+		margin: 40rpx 15rpx;
 
 		.image {
 			width: 290rpx;
