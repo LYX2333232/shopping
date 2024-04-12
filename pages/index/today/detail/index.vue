@@ -70,9 +70,9 @@
                     <image :src="swiperImg[0].path" mode="scaleToFill" style="width:100rpx; height:100rpx;" />
                 </view>
                 <view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;font-size:20rpx;">
-                    <view style="font-size:40rpx;color:#834820">总计：{{ detail_price.freight + detail_price.prcie }}
+                    <view style="font-size:40rpx;color:#834820">总计：{{ detail_price.freight + detail_price.price }}
                     </view>
-                    <view>商品：{{ detail_price.prcie }}</view>
+                    <view>商品：{{ detail_price.price }}</view>
                     <view>运费：{{ detail_price.freight }}</view>
                 </view>
             </view>
@@ -105,7 +105,7 @@ const detailVisible = ref(false)
 
 const detail_price = ref({
     freight: 0,
-    prcie: 0
+    price: 0
 })
 
 const swiperImg = ref([])
@@ -155,7 +155,8 @@ const order = () => {
         com_id: size.value[sizeIndex.value].id,
         com_cont: cont.value,
         address_id: address.address_id,
-        teamwork_com_id
+        teamwork_com_id,
+        freight: detail_price.value.freight
     }).then(res => {
         uni.requestPayment({
             provider: 'wxpay',

@@ -84,9 +84,9 @@
 					<image :src="select_good.path" mode="scaleToFill" style="width:100rpx; height:100rpx;" />
 				</view>
 				<view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;font-size:20rpx;">
-					<view style="font-size:40rpx;color:#834820">总计：{{ detail_price.freight + detail_price.prcie }}
+					<view style="font-size:40rpx;color:#834820">总计：{{ detail_price.freight + detail_price.price }}
 					</view>
-					<view>商品：{{ detail_price.prcie }}</view>
+					<view>商品：{{ detail_price.price }}</view>
 					<view>运费：{{ detail_price.freight }}</view>
 				</view>
 			</view>
@@ -225,7 +225,7 @@ const detail_price = ref({
 	// 运费,
 	freight: 0,
 	// 商品价格
-	prcie: 0,
+	price: 0,
 })
 
 const tocaculate = () => {
@@ -262,7 +262,8 @@ const order = () => {
 		address_id: address.address_id,
 		com_cont: select_good.value.cont,
 		coupon_id: select_coupon ? select_coupon.id : undefined,
-		shopping_cart_id: select_good.value.id
+		shopping_cart_id: select_good.value.id,
+		freight: detail_price.value.freight,
 	}).then(res => {
 		console.log('res', res)
 		uni.requestPayment({
@@ -291,7 +292,7 @@ const order = () => {
 		detail_price.value = {
 			// 运费,
 			freight: 0,
-			prcie: 0,
+			price: 0,
 		}
 		dataList.value = dataList.value.filter(item => !item.order)
 		detailVisible.value = false
@@ -322,41 +323,6 @@ const couponVisible = ref(false)
 let coupon_page = 0
 
 const openPopup = () => {
-	// 如果获取到优惠券
-	// const list = [
-	// 	{
-	// 		path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
-	// 		name: '满减优惠券',
-	// 		full: '200',
-	// 		reduce: '10',
-	// 		start: '2021-01-01',
-	// 		end: '2021-12-31',
-	// 	},
-	// 	{
-	// 		path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
-	// 		name: '满减优惠券',
-	// 		full: '200',
-	// 		reduce: '10',
-	// 		start: '2021-01-01',
-	// 		end: '2021-12-31',
-	// 	},
-	// 	{
-	// 		path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
-	// 		name: '满减优惠券',
-	// 		full: '200',
-	// 		reduce: '10',
-	// 		start: '2021-01-01',
-	// 		end: '2021-12-31',
-	// 	},
-	// 	{
-	// 		path: 'https://img.alicdn.com/tfs/TB1vKwgLpXXXXX1XpXXXXXXXXXX-200-200.png',
-	// 		name: '满减优惠券',
-	// 		full: '200',
-	// 		reduce: '10',
-	// 		start: '2021-01-01',
-	// 		end: '2021-12-31',
-	// 	}
-	// ]
 	const item = dataList.value.find(item => item.order)
 	if (!item) {
 		uni.showToast({
