@@ -1,9 +1,9 @@
 <template>
 	<view v-if="!isSearching" style="background-color: #FEF0D6;">
-		<TnSwiper loop autoplay :data="swiperData" width="100%" height="720" indicator indicator-type="dot">
+		<TnSwiper loop autoplay :data="swiperData" width="100%" height="900" indicator indicator-type="dot">
 			<template #default="{ data }">
 				<view class="swiper-data">
-					<image style="width: 750rpx;height: 680rpx;" :src="data.path" mode="scaleToFill"
+					<image style="width: 750rpx;height: 850rpx;" :src="data.path" mode="scaleToFill"
 						@click="toWeb(data.path)"></image>
 				</view>
 			</template>
@@ -343,7 +343,7 @@ onReachBottom(() => {
 .white_boxs {
 	height: 70vh;
 	background-color: rgba(248, 248, 248, 1);
-	margin-top: -40rpx;
+	margin-top: -55rpx;
 	border-radius: 40rpx 40rpx 0 0;
 	position: relative;
 	z-index: 999;
