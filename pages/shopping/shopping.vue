@@ -69,29 +69,41 @@
 			</view>
 		</view>
 	</TnPopup>
-	<TnPopup v-model="detailVisible" open-direction="bottom" height="50%">
+	<TnPopup v-model="detailVisible" open-direction="bottom" height="60%">
 		<view class="goods">
-			<view style="font-size:45rpx;">订单详细</view>
+			<view style="font-size:45rpx;">价格详细</view>
 			<view class="detail_address" v-if="address.address" @click="addressChange">
 				<view
 					style="font-size:35rpx;margin-bottom: 20rpx;max-width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
 					{{ address.address }} </view>
-				<view>{{ address.name }} - {{ address.phone }} </view>
+				<view style="display:flex">
+					<view style="max-width: 200rpx;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+						{{ address.name }}
+					</view>
+					- {{ address.phone }}
+				</view>
 			</view>
 			<view class="detail_address" style="font-size:35rpx;" v-else @click="addressChange">请先选择地址</view>
 			<view class="good" v-if="select_good">
 				<view>
-					<image :src="select_good.path" mode="scaleToFill" style="width:100rpx; height:100rpx;" />
+					{{ select_good.name }}
 				</view>
-				<view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;font-size:20rpx;">
-					<view style="font-size:40rpx;color:#834820">总计：{{ (parseFloat(detail_price.freight) +
-						parseFloat(detail_price.price)).toFixed(2) }}
-					</view>
-					<view>商品：{{ detail_price.price }}</view>
-					<view>运费：{{ detail_price.freight }}</view>
+				<view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;">
+					￥{{ detail_price.price }}
+				</view>
+			</view>
+			<view class="good" v-if="select_good">
+				<view>
+					运费
+				</view>
+				<view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;">
+					￥{{ detail_price.freight }}
 				</view>
 			</view>
 			<view class="btn">
+				<view class="total">
+					总计：￥{{ (parseFloat(detail_price.freight) + parseFloat(detail_price.price)).toFixed(2) }}
+				</view>
 				<view class="button" @click="order">
 					确认结算
 				</view>
@@ -565,23 +577,30 @@ page {
 		width: 90%;
 		margin: 10rpx auto;
 		padding: 30rpx;
-		background: #FFFFFF;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		font-size: 35rpx;
 	}
 
 	.btn {
 		width: 90%;
 		position: fixed;
 		bottom: 0;
+		margin-bottom: 20rpx;
 		display: flex;
 		justify-content: flex-end;
+		align-items: center;
+
+		.total {
+			font-size: 35rpx;
+			color: #834820;
+			margin-right: 20rpx;
+		}
 
 		.button {
 			width: 258rpx;
 			height: 71rpx;
-			margin-bottom: 20rpx;
 			background: #C8B697;
 			border-radius: 10rpx;
 			font-weight: 500;
