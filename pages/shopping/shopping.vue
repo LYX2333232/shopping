@@ -25,7 +25,7 @@
 			<view>{{ select_coupon !== undefined ? select_coupon.name : '暂无优惠券' }} </view>
 			<text style="color: #C7BAA5;text-decoration: underline;" @click="openPopup">选择优惠券></text>
 		</view>
-		<view style="width: 90%;margin: 0 auto;display: flex;align-items: center;">
+		<view style="width: 90%;margin: 10rpx auto;display: flex;align-items: center;">
 			<TnCheckbox v-model="orderAll" :indeterminate="ordertSome" @change="changeOrderAll" checked-shape="circle"
 				size="lg" active-color="#C7BAA5"></TnCheckbox>
 
@@ -71,7 +71,7 @@
 	</TnPopup>
 	<TnPopup v-model="detailVisible" open-direction="bottom" height="60%">
 		<view class="goods">
-			<view style="font-size:45rpx;">价格详细</view>
+			<view style="font-size:45rpx;margin-top:30rpx">价格详细</view>
 			<view class="detail_address" v-if="address.address" @click="addressChange">
 				<view
 					style="font-size:35rpx;margin-bottom: 20rpx;max-width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
@@ -146,6 +146,7 @@ const select_good = ref(undefined)
 
 const updateTotal = () => {
 	let temp = 0
+	select_good.value = undefined
 	dataList.value.forEach(item => {
 		if (item.order) {
 			select_good.value = item
@@ -243,7 +244,13 @@ const detail_price = ref({
 
 const tocaculate = () => {
 	console.log('结算')
-	detailVisible.value = true
+	if (!select_good.value) {
+		uni.showToast({
+			title: '请先选择商品',
+			icon: 'none'
+		})
+		return
+	}
 	const option = {
 		address_id: address.address_id,
 		com_id: select_good.value.item_id,
@@ -255,6 +262,7 @@ const tocaculate = () => {
 	get_order_price(option).then(res => {
 		console.log(res)
 		detail_price.value = res.data
+		detailVisible.value = true
 	})
 }
 

@@ -40,13 +40,12 @@
 				<view class="words_left">
 					{{ words_left }}
 				</view>
-				<view style="width: 280rpx;text-align: right;border-bottom: 3rpx solid #eee7d7;">
-					<view class="words_right1">{{ words_right1 }}</view>
+				<view style="width: 280rpx;text-align: right">
 					<view class="words_right2" style="">{{ words_right2 }}</view>
 				</view>
 			</view>
 			<view class="area">
-				<view class="toarea" v-for="item in areaList" @click="tap_item(item.id)">
+				<!-- <view class="toarea" v-for="item in areaList" @click="tap_item(item.id)">
 					<image :src="item.path" mode="aspectFill"
 						style="position: absolute; z-index: -999;width: 100%;height: 100%;">
 					</image>
@@ -55,6 +54,45 @@
 					</view>
 					<view style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
 						查看全部
+					</view>
+				</view> -->
+				<view style="width:100%;height:300rpx;display:flex;justify-content:space-between;align-items:center">
+					<view class="toarea" style="width:50%;height:100%" @click="tap_item(areaList[0].id)">
+						<image :src="areaList[0].path" mode="aspectFill"
+							style="position: absolute; z-index: -999;width: 100%;height: 100%;">
+						</image>
+						<view class="name">
+							{{ areaList[0].name }}
+						</view>
+					</view>
+					<view
+						style="width:49%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
+						<view class="toarea" style="width:100%;height:49%" @click="tap_item(areaList[1].id)">
+							<image :src="areaList[1].path" mode="aspectFill"
+								style="position: absolute; z-index: -999;width: 100%;height: 100%;">
+							</image>
+							<view class="name">
+								{{ areaList[1].name }}
+							</view>
+						</view>
+						<view class="toarea" style="width:100%;height:49%" @click="tap_item(areaList[2].id)">
+							<image :src="areaList[2].path" mode="aspectFill"
+								style="position: absolute; z-index: -999;width: 100%;height: 100%;">
+							</image>
+							<view class="name">
+								{{ areaList[2].name }}
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="toarea"
+					style="width:100%;height:150rpx;display:flex;justify-content:center;align-items:center;margin-top:10rpx"
+					@click="tap_item(areaList[3].id)">
+					<image :src="areaList[3].path" mode="aspectFill"
+						style="position: absolute; z-index: -999;width: 100%;height: 100%;">
+					</image>
+					<view class="name">
+						{{ areaList[3].name }}
 					</view>
 				</view>
 			</view>
@@ -361,6 +399,7 @@ onReachBottom(() => {
 	.show_words {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		margin-top: 25rpx;
 
 		.words_left {
@@ -385,7 +424,7 @@ onReachBottom(() => {
 		.words_right2 {
 			overflow-wrap: break-word;
 			color: rgba(176, 176, 176, 1);
-			font-size: 12px;
+			font-size: 20rpx;
 			font-family: Inter-Regular;
 			font-weight: normal;
 			white-space: nowrap;
@@ -395,25 +434,18 @@ onReachBottom(() => {
 
 	.area {
 		width: 100%;
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
 		margin-top: 10rpx;
 
 		.toarea {
+			border-radius: 20rpx;
 			position: relative;
-			margin-top: 10rpx;
 			display: flex;
-			flex-direction: column;
 			justify-content: center;
-			width: 340rpx;
-			height: 150rpx;
+			align-items: center;
 			color: #FFFFFF;
 
 			.name {
-				font-size: 40rpx;
-				margin-bottom: 13rpx;
-				margin-left: 20rpx;
-
+				font-size: 35rpx;
 			}
 		}
 	}
