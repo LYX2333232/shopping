@@ -60,29 +60,51 @@
     <view style="width: 90%;margin: 10rpx 5%;" v-html="content">
     </view>
   </view>
-  <TnPopup v-model="detailVisible" open-direction="bottom" height="50%">
+  <TnPopup v-model="detailVisible" open-direction="bottom" height="80%">
     <view class="goods">
-      <view style="font-size:45rpx;">订单详细</view>
+      <view style="font-size:45rpx;margin-top:30rpx">订单详细</view>
       <view class="detail_address" v-if="address.address" @click="selectAddress">
         <view
           style="font-size:35rpx;margin-bottom: 20rpx;max-width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
           {{ address.address }} </view>
-        <view>{{ address.name }} - {{ address.phone }} </view>
+        <view style="display:flex">
+          <view style="max-width: 200rpx;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+            {{ address.name }}
+          </view>
+          - {{ address.phone }}
+        </view>
       </view>
       <view class="detail_address" style="font-size:35rpx;" v-else @click="selectAddress">请先选择地址</view>
       <view class="good">
+        <image :src="swiperImg[0].path" mode="scaleToFill" style="width:100rpx; height:100rpx;margin-left:30rpx" />
         <view>
-          <image :src="swiperImg[0].path" mode="scaleToFill" style="width:100rpx; height:100rpx;" />
+          {{ name }}
         </view>
-        <view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;font-size:20rpx;">
-          <view style="font-size:40rpx;color:#834820">总计：{{ (parseFloat(detail_price.freight) +
-            parseFloat(detail_price.price)).toFixed(2) }}
+      </view>
+      <view class="good" style="color:#C7BAA5;">
+        <view>商品价格</view>
+        <view style="display:flex;flex-direction:column;align-items:center;">
+          <view>
+            ￥{{ detail_price.price }}
           </view>
-          <view>商品：{{ detail_price.price }}</view>
-          <view>运费：{{ detail_price.freight }}</view>
+          <view style="text-decoration:line-through;color:black;font-size:20rpx;margin-top:10rpx;"
+            v-if="detail_price.price != detail_price.show_price">
+            原价：￥{{ detail_price.show_price }}
+          </view>
+        </view>
+      </view>
+      <view class="good">
+        <view>
+          运费
+        </view>
+        <view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;">
+          ￥{{ detail_price.freight }}
         </view>
       </view>
       <view class="btn">
+        <view class="total">
+          总计：￥{{ (parseFloat(detail_price.freight) + parseFloat(detail_price.price)).toFixed(2) }}
+        </view>
         <view class="button" @click="order">
           确认结算
         </view>
@@ -111,7 +133,8 @@ const detailVisible = ref(false)
 
 const detail_price = ref({
   freight: 0,
-  price: 0
+  price: 0,
+  show_price: 0
 })
 
 const swiperImg = ref([])
@@ -165,6 +188,10 @@ const order = () => {
   new_order({
     com_id: size.value[sizeIndex.value].id,
     com_cont: cont.value,
+    ids: [{
+      id: size.value[sizeIndex.value].id,
+      cont: cont.value
+    }],
     address_id: address.address_id,
     flash_com_id,
     freight: detail_price.value.freight
@@ -411,18 +438,26 @@ page {
     width: 90%;
     margin: 10rpx auto;
     padding: 30rpx;
-    background: #FFFFFF;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 35rpx;
   }
 
   .btn {
     width: 90%;
     position: fixed;
     bottom: 0;
+    margin-bottom: 20rpx;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+
+    .total {
+      font-size: 35rpx;
+      color: #834820;
+      margin-right: 20rpx;
+    }
 
     .button {
       width: 258rpx;
