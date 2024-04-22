@@ -300,6 +300,23 @@ const tap_application = (index) => {
 			url: '/pages/me/favorite/index'
 		})
 	}
+	if (index === 5) { // 退出登录
+		uni.showModal({
+			title: '提示',
+			content: '确定要退出登录吗？',
+			success: (res) => {
+				if (res.confirm) {
+					console.log(res)
+					store.set_user_info(null)
+					uni.clearStorageSync()
+					// 重新加载当前页面
+					uni.switchTab({
+						url: '/pages/me/me',
+					})
+				}
+			}
+		})
+	}
 }
 
 const getphonenumber = (e) => {
@@ -431,6 +448,10 @@ const getData = () => {
 		{
 			name: '收藏商品',
 			icon: '../../static/icon/me/star.png'
+		},
+		{
+			name: '退出登录',
+			icon: '../../static/icon/me/logout.png'
 		}
 	]
 	funList1.value = list

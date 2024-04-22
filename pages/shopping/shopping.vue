@@ -69,7 +69,7 @@
 			</view>
 		</view>
 	</TnPopup>
-	<TnPopup v-model="detailVisible" open-direction="bottom" height="60%">
+	<TnPopup v-model="detailVisible" open-direction="bottom" height="80%">
 		<view class="goods">
 			<view style="font-size:45rpx;margin-top:30rpx">价格详细</view>
 			<view class="detail_address" v-if="address.address" @click="addressChange">
@@ -84,15 +84,25 @@
 				</view>
 			</view>
 			<view class="detail_address" style="font-size:35rpx;" v-else @click="addressChange">请先选择地址</view>
-			<view class="good" v-if="select_good">
+			<view v-for="good in select_goods" class="good">
+				<image :src="good.path" style="width: 100rpx; height: 100rpx;margin-left: 30rpx;" mode="scaleToFill" />
 				<view>
-					{{ select_good.name }}
-				</view>
-				<view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;">
-					￥{{ detail_price.price }}
+					{{ good.name }}
 				</view>
 			</view>
-			<view class="good" v-if="select_good">
+			<view class="good" style="color:#C7BAA5;">
+				<view>商品价格</view>
+				<view style="display:flex;flex-direction:column;align-items:center;">
+					<view>
+						￥{{ detail_price.price }}
+					</view>
+					<view style="text-decoration:line-through;color:black;font-size:20rpx;margin-top:10rpx;"
+						v-if="detail_price.price != detail_price.show_price">
+						原价：￥{{ detail_price.show_price }}
+					</view>
+				</view>
+			</view>
+			<view class="good">
 				<view>
 					运费
 				</view>
@@ -142,14 +152,14 @@ const addressChange = () => {
 
 const dataList = ref([])
 
-const select_good = ref(undefined)
+const select_goods = ref([])
 
 const updateTotal = () => {
 	let temp = 0
-	select_good.value = undefined
+	select_goods.value = []
 	dataList.value.forEach(item => {
 		if (item.order) {
-			select_good.value = item
+			select_goods.value.push(item)
 			temp += item.price * item.cont
 		}
 	})
@@ -169,12 +179,12 @@ const updateTotal = () => {
 
 // 改变选中状态
 const change = (e, i, j) => {
-	if (e)
-		dataList.value.forEach((item, index) => {
-			if (index !== j) {
-				item.order = false
-			}
-		})
+	// if (e)
+	// 	dataList.value.forEach((item, index) => {
+	// 		if (index !== j) {
+	// 			item.order = false
+	// 		}
+	// 	})
 	dataList.value[j].order = e
 	if (select_coupon.value) {
 		uni.showToast({
@@ -244,19 +254,23 @@ const detail_price = ref({
 
 const tocaculate = () => {
 	console.log('结算')
-	if (!select_good.value) {
+	if (select_goods.value.length === 0) {
 		uni.showToast({
 			title: '请先选择商品',
 			icon: 'none'
 		})
 		return
 	}
+	//! 根据接口改变字段
 	const option = {
-		address_id: address.address_id,
-		com_id: select_good.value.item_id,
-		com_cont: select_good.value.cont
+		ids: select_goods.value.map(item => {
+			return {
+				id: item.item_id,
+				cont: item.cont
+			}
+		}),
+		address_id: address.address_id
 	}
-	console.log(select_coupon.value)
 	if (select_coupon.value)
 		option.coupon_id = select_coupon.value.coupon_id
 	get_order_price(option).then(res => {
@@ -273,17 +287,21 @@ const order = () => {
 			icon: 'none',
 			duration: 1000
 		}).then(() => {
-			setTimeout(addressChange, 1000);
+			setTimeout(addressChange, 500);
 		})
 		return
 	}
-	console.log('good', select_good.value)
+	console.log('good', select_goods.value)
 	new_order({
-		com_id: select_good.value.item_id,
+		ids: select_goods.value.map(item => {
+			return {
+				id: item.item_id,
+				cont: item.cont
+			}
+		}),
 		address_id: address.address_id,
-		com_cont: select_good.value.cont,
 		coupon_id: select_coupon ? select_coupon.id : undefined,
-		shopping_cart_id: select_good.value.id,
+		shopping_cart_ids: select_goods.value.map(item => item.id),
 		freight: detail_price.value.freight,
 	}).then(res => {
 		console.log('res', res)
@@ -308,7 +326,7 @@ const order = () => {
 			}
 		})
 		// 删除该商品
-		select_good.value = undefined
+		select_goods.value = []
 		select_coupon.value = undefined
 		detail_price.value = {
 			// 运费,
@@ -341,11 +359,11 @@ const couponList = ref([])
 
 const couponVisible = ref(false)
 
-let coupon_page = 0
+// let coupon_page = 0
 
 const openPopup = () => {
-	const item = dataList.value.find(item => item.order)
-	if (!item) {
+	// const item = dataList.value.find(item => item.order)
+	if (select_goods.value.length === 0) {
 		uni.showToast({
 			title: '先请选择商品',
 			icon: 'none'
@@ -353,8 +371,14 @@ const openPopup = () => {
 		return
 
 	}
-	coupon_page = 0
-	get_coupon(item.item_id, item.cont, coupon_page).then(res => {
+	// coupon_page = 0
+	const ids = select_goods.value.map(item => {
+		return {
+			id: item.item_id,
+			cont: item.cont
+		}
+	})
+	get_coupon(ids).then(res => {
 		console.log('res', res)
 		couponList.value = res.data.data
 		if (couponList.value.length > 0) {

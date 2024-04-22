@@ -23,6 +23,12 @@ export const UserStore = defineStore('cp-user', () => {
     }
 
     const set_user_info = (e) => {
+        if (!e) {
+            userInfo.value = ''
+            auth.value = ''
+            uni.clearStorageSync()
+            return
+        }
         userInfo.value = e.userInfo
         uni.setStorageSync('userInfo', e.userInfo)
         auth.value = e.auth
