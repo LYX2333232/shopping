@@ -36,14 +36,17 @@
 				</view>
 			</view>
 
-			<view class="show_words">
+			<view class="title">
+				热门好物
+			</view>
+			<!-- <view class="show_words">
 				<view class="words_left">
 					{{ words_left }}
 				</view>
 				<view style="width: 280rpx;text-align: right">
 					<view class="words_right2" style="">{{ words_right2 }}</view>
 				</view>
-			</view>
+			</view> -->
 			<view class="area">
 				<!-- <view class="toarea" v-for="item in areaList" @click="tap_item(item.id)">
 					<image :src="item.path" mode="aspectFill"
@@ -96,6 +99,7 @@
 					</view>
 				</view>
 			</view>
+			<view class="title">猜你喜欢</view>
 			<view class="main">
 				<view class="block3" v-for="item in infoList" :key="index" @click="toDetail(item.id)">
 					<view style="display: block;">
@@ -450,6 +454,13 @@ onReachBottom(() => {
 		}
 	}
 
+	.title {
+		font-family: Inter, Inter;
+		font-weight: 600;
+		font-size: 40rpx;
+		margin: 20rpx;
+	}
+
 	.main {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -457,7 +468,7 @@ onReachBottom(() => {
 
 	.block3 {
 		display: flex;
-		margin: 40rpx 15rpx;
+		margin: 20rpx 15rpx;
 
 		.image {
 			width: 290rpx;

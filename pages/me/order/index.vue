@@ -26,33 +26,42 @@
         <view style="margin-right: 30rpx;">订单编号：{{ card.id }}</view>
         <view v-if="card.state === 2"> 物流单号：{{ card.transport_number }} </view>
       </view>
-      <view class="tn-flex-center-between">
-        <image :src="card.path" mode="scaleToFill" style="width:160rpx;height:160rpx;border-radius: 15rpx;" />
+      <view class="tn-flex-center-between tn-mt-lg" v-for="good in card.order_com">
+        <image :src="good.path" mode="scaleToFill" style="width:160rpx;height:160rpx;border-radius: 15rpx;" />
         <view class="main">
           <view class="good">
-            {{ card.name }}
+            {{ good.name }}
           </view>
           <text class="size">
-            {{ card.item_name }}
+            {{ good.item_name }}
           </text>
           <text class="number">
-            x{{ card.com_cont }}
+            x{{ good.com_cont }}
           </text>
-          <view class="tn-flex-center-between">
-            <view class="tn-flex-center-start">
-              <TnTag v-for="(tag, index) in card.tags" :key="index" width="100" font-size="20" shape="round"
-                bg-color="#C7BAA7" text-color="#FFFFFF" :custom-style="{ marginRight: '20rpx' }">
-                {{ tag }}
-              </TnTag>
-            </view>
-            <view class="price">
-              实付款：￥{{ card.price }}
-            </view>
+          <view class="tn-flex-center-start" style="flex-wrap: wrap;">
+            <TnTag v-for="(tag, index) in good.labels" :key="index" width="100" font-size="20" shape="round"
+              bg-color="#C7BAA7" text-color="#FFFFFF" :custom-style="{ marginRight: '20rpx' }">
+              {{ tag }}
+            </TnTag>
           </view>
+          <!-- <view class="tn-flex-center-center tn-flex-column">
+              <view class="price">
+                实付款：￥{{ good.price }}
+              </view>
+              <view v-if="good.price !== good.should_price" class="old_price">
+                原价：￥{{ good.should_price }}
+              </view>
+              <view class="price">
+                运费：￥{{ good.freight }}
+              </view>
+            </view> -->
         </view>
       </view>
       <view v-if="[0, 2, 5, 7, 8].includes(card.state) || (card.state === 3 && card.is_refund)"
         class="tn-flex-center-end tn-mt-lg">
+        <view class="price">
+          总价格：￥{{ card.price }}
+        </view>
         <TnButton v-if="card.state === 5" bg-color="#C7BAA7" text-color="#FFFFFF" width="250" height="60"
           :custom-style="{ marginRight: '30rpx' }" @click="re_apply(card)" shape="round">
           再次申请
@@ -107,7 +116,7 @@ const switchTab = (index) => {
   page = 1
   const i = index - 1
   get_order(page, i).then(res => {
-    console.log(res)
+    console.log('orders', res)
     orders.value = res.data.data
   })
 }
@@ -341,11 +350,10 @@ onReachBottom(() => {
   }
 
   .main {
-    height: 160rpx;
+    width: 70%;
     display: flex;
     flex-direction: column;
     align-items: start;
-    justify-content: space-between;
 
     .good {
       width: 420rpx;
@@ -367,7 +375,6 @@ onReachBottom(() => {
       font-weight: 400;
       font-size: 25rpx;
       color: #9F9F9F;
-      line-height: 38rpx;
       text-align: center;
       font-style: normal;
       text-transform: none;
@@ -384,16 +391,30 @@ onReachBottom(() => {
       text-transform: none;
     }
 
-    .price {
+
+    .old_price {
       font-family: Inter, Inter;
       font-weight: normal;
-      font-size: 29rpx;
+      font-size: 20rpx;
       color: #000000;
+      text-decoration: line-through;
       line-height: 43rpx;
       text-align: left;
       font-style: normal;
       text-transform: none;
     }
+  }
+
+  .price {
+    font-family: Inter, Inter;
+    font-weight: normal;
+    font-size: 29rpx;
+    color: #834820;
+    line-height: 43rpx;
+    text-align: left;
+    font-style: normal;
+    text-transform: none;
+    margin-right: 20rpx;
   }
 }
 
