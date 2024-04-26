@@ -455,6 +455,10 @@ const getData = () => {
 		}
 	]
 	funList1.value = list
+	if (!store.userInfo) {
+		loginVisible.value = true
+		return 
+	}
 	get_order_count().then(res => {
 		console.log(res)
 		order_count.value = [res.data.pay, res.data.delivery, res.data.collect, 0]
