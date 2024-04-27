@@ -37,7 +37,11 @@
 			</view>
 
 			<view class="title">
-				热门好物
+				{{ recommend }}
+			</view>
+			<view class="title_bottom">
+				<view class="tag">微信小程序下单已上线</view>
+				<view>特产鲜果 | 有机蔬菜</view>
 			</view>
 			<!-- <view class="show_words">
 				<view class="words_left">
@@ -99,7 +103,11 @@
 					</view>
 				</view>
 			</view>
-			<view class="title">猜你喜欢</view>
+			<view class="title">POPULAR GOODS</view>
+			<view class="title_bottom">
+				<view class="tag">点击购买，即日配送</view>
+				<view>优选好物 | 价格实惠</view>
+			</view>
 			<view class="main">
 				<view class="block3" v-for="item in infoList" :key="index" @click="toDetail(item.id)">
 					<view style="display: block;">
@@ -158,9 +166,7 @@ import { get_goods_list } from '@/api/goods/goods'
 const user = UserStore()
 const address = AddressStore()
 
-let words_left = "特产鲜果 有机蔬菜"
-let words_right1 = "sharing love"
-let words_right2 = "健康 x 营养 x 有机"
+let recommend = 'RECOMMEND FOR YOU'
 
 // 判断是否为搜索页
 const isSearching = ref(false)
@@ -457,8 +463,36 @@ onReachBottom(() => {
 	.title {
 		font-family: Inter, Inter;
 		font-weight: 600;
-		font-size: 40rpx;
-		margin: 20rpx;
+		font-size: 46rpx;
+		color: #A09D85;
+		line-height: 60rpx;
+		text-align: left;
+		font-style: normal;
+		text-transform: none;
+		margin-top: 30rpx;
+	}
+
+	.title_bottom {
+		margin: 20rpx 0;
+		font-family: Inter, Inter;
+		font-weight: 400;
+		font-size: 25rpx;
+		color: #B0B0B0;
+		line-height: 35rpx;
+		text-align: left;
+		font-style: normal;
+		text-transform: none;
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+
+		.tag {
+			text-align: center;
+			padding: 0 10rpx;
+			color: #FFFFFF;
+			background: #C7BAA5;
+			border-radius: 10rpx;
+		}
 	}
 
 	.main {
@@ -468,10 +502,11 @@ onReachBottom(() => {
 
 	.block3 {
 		display: flex;
-		margin: 20rpx 15rpx;
+		margin-bottom: 20rpx;
+		margin-right: 25rpx;
 
 		.image {
-			width: 290rpx;
+			width: 337rpx;
 			height: 243rpx;
 			border-radius: 13rpx 13rpx 13rpx 13rpx;
 		}
