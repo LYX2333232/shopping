@@ -157,7 +157,7 @@ import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.v
 import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
 import { ref } from 'vue'
-import { onHide, onLoad, onShow, onReachBottom } from '@dcloudio/uni-app'
+import { onHide, onLoad, onShow, onReachBottom, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { UserStore, AddressStore } from '@/store'
 import { get_default_address } from '@/api/address/address'
 import { get_home } from '@/api/index'
@@ -189,26 +189,26 @@ let funList = [
 	},
 ]
 const areaList = ref([
-	{
-		id: 0,
-		name: '生鲜食养',
-		path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png'
-	},
-	{
-		id: 1,
-		name: '有机专区',
-		path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sRLpUzyvIWGFG83tlVvjHmshjQJ4H1XjLhp5rhVkbTez9X6G9Af9icxQ/0?wx_fmt=png'
-	},
-	{
-		id: 2,
-		name: '臻臻鲜果',
-		path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s7qZzOhLeibsXxQ4ZQ2iaic1CZ1IaiaJoTes1t9CoHHTJL7E5SLGkrV1L6g/0?wx_fmt=png'
-	},
-	{
-		id: 3,
-		name: '美容养颜',
-		path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sShq5UlxRPhOMibLxWGNmJmOdAXuWiaq09U1pp71FnfMSeh5wM7ibl96tg/0?wx_fmt=png'
-	}
+	// {
+	// 	id: 0,
+	// 	name: '生鲜食养',
+	// 	path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png'
+	// },
+	// {
+	// 	id: 1,
+	// 	name: '有机专区',
+	// 	path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sRLpUzyvIWGFG83tlVvjHmshjQJ4H1XjLhp5rhVkbTez9X6G9Af9icxQ/0?wx_fmt=png'
+	// },
+	// {
+	// 	id: 2,
+	// 	name: '臻臻鲜果',
+	// 	path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s7qZzOhLeibsXxQ4ZQ2iaic1CZ1IaiaJoTes1t9CoHHTJL7E5SLGkrV1L6g/0?wx_fmt=png'
+	// },
+	// {
+	// 	id: 3,
+	// 	name: '美容养颜',
+	// 	path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sShq5UlxRPhOMibLxWGNmJmOdAXuWiaq09U1pp71FnfMSeh5wM7ibl96tg/0?wx_fmt=png'
+	// }
 ])
 let value = ref('');
 let styles = ref({
@@ -335,6 +335,20 @@ onReachBottom(() => {
 		}
 	})
 })
+
+onShareAppMessage(() => {
+	return {
+		title: '森美臻品',
+		path: '/pages/index/index'
+	}
+})
+
+onShareTimeline(() => {
+	return {
+		title: '森美臻品',
+		path: '/pages/index/index'
+	}
+})
 </script>
 
 <style lang="scss" scoped>
@@ -356,6 +370,7 @@ onReachBottom(() => {
 }
 
 .white_boxs {
+	width: 100%;
 	height: 70vh;
 	background-color: rgba(248, 248, 248, 1);
 	margin-top: -55rpx;
@@ -506,8 +521,8 @@ onReachBottom(() => {
 		margin-right: 25rpx;
 
 		.image {
-			width: 337rpx;
-			height: 243rpx;
+			width: 330rpx;
+			height: 330rpx;
 			border-radius: 13rpx 13rpx 13rpx 13rpx;
 		}
 

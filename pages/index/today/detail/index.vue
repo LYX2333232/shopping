@@ -1,8 +1,8 @@
 <template>
     <Header />
-    <swiper indicator-dots autoplay circular style="height:500rpx;">
+    <swiper indicator-dots autoplay circular style="height:780rpx;">
         <swiper-item v-for="(item, index) in swiperImg" :key="'swiper' + index">
-            <image :src="item.path" mode="aspectFill" style="width: 100%;height: 500rpx;" @click="toWeb(item.path)">
+            <image :src="item.path" mode="aspectFill" style="width: 100%;height: 750rpx;" @click="toWeb(item.path)">
             </image>
         </swiper-item>
     </swiper>

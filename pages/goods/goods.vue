@@ -13,10 +13,17 @@
 
 
 	<view class="goods" style="display: flex;background-color:rgba(255, 255, 255, 1) ;">
-		<view style="width: 113rpx;height: 100%;background-color: #F1EDE9; ">
+		<view
+			style="width: 1000rpx;height: 100%;background-color: #F1EDE9;display: flex;flex-direction: column;align-items: center;">
+			<!-- <view class="select">
+				<text>生</text>
+				<text>鲜</text>
+				<text>水</text>
+				<text>果</text>
+			</view> -->
 			<view class="select" v-for="(item, index) in selectlist" :key="index"
 				:style="item.id === selectIndex ? 'background-color: #FFFFFF;' : ''" @click="changeIndex(item.id)">
-				{{ item.name }}
+				<text v-for="(text, index) in item.name" :key="index">{{ text }}</text>
 			</view>
 		</view>
 		<view style="display: block;">
@@ -51,7 +58,7 @@
 				</view>
 			</view>
 			<view class="main">
-				<view class="block3" v-for="item in infolist" :key="index" @click="toDetail(item.id)">
+				<view class="block3" v-for="(item, index) in infolist" :key="index" @click="toDetail(item.id)">
 					<view style="display: block;">
 						<image :src="item.path" mode="" class="image"></image>
 						<view style="width: 96%;margin: 0 auto;font-size: 24rpx;">
@@ -251,19 +258,22 @@ page {
 	z-index: 999;
 
 	.select {
+		width: 200rpx;
 		padding: 20rpx 30rpx;
 		font-family: Inter, Inter;
 		font-weight: 400;
 		font-size: 30rpx;
 		color: #555555;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 		font-style: normal;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-wrap: wrap;
+		letter-spacing: 0.1rem;
 	}
 
 	.select1 {
-		width: 620rpx;
+		width: 550rpx;
 		height: 120rpx;
 		font-family: Inter, Inter;
 		font-weight: normal;
@@ -299,7 +309,7 @@ page {
 
 		.image {
 			width: 290rpx;
-			height: 243rpx;
+			height: 290rpx;
 			border-radius: 13rpx 13rpx 13rpx 13rpx;
 		}
 

@@ -17,7 +17,7 @@
         <image :src="QR" mode="scaleToFill" style="width:150rpx;height:150rpx;border-radius: 50%" />
       </view>
     </view>
-    <view class="share">
+    <!-- <view class="share">
       <view class="icon">
         <TnIcon name="wechat" size="50" color="#997D5D"></TnIcon>
         保存海报
@@ -26,13 +26,13 @@
         <TnIcon name="pay" size="50" color="#997D5D"></TnIcon>
         微信好友
       </view>
-    </view>
+    </view> -->
   </view>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { get_share } from '@/api/share/share'
 import { UserStore } from '@/store'
 import Header from '@/components/header.vue'
@@ -55,6 +55,19 @@ const getData = () => {
 onShow(() => {
   getData()
 })
+
+onShareAppMessage(() => {
+  return {
+    title: '森美臻品',
+    path: '/pages/me/invite/invite'
+  }
+})
+onShareTimeline(() => {
+  return {
+    title: '森美臻品',
+    path: '/pages/me/invite/invite'
+  }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -65,7 +78,7 @@ onShow(() => {
   width: 100%;
   min-height: 100vh;
   background: #F7F7F7;
-  padding-top: 150rpx;
+  padding-top: 180rpx;
 
   .main {
     width: 90%;
