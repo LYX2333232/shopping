@@ -68,9 +68,6 @@
 						<image :src="areaList[0].path" mode="aspectFill"
 							style="position: absolute; z-index: -999;width: 100%;height: 100%;">
 						</image>
-						<view class="name">
-							{{ areaList[0].name }}
-						</view>
 					</view>
 					<view
 						style="width:49%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
@@ -78,17 +75,11 @@
 							<image :src="areaList[1].path" mode="aspectFill"
 								style="position: absolute; z-index: -999;width: 100%;height: 100%;">
 							</image>
-							<view class="name">
-								{{ areaList[1].name }}
-							</view>
 						</view>
 						<view class="toarea" style="width:100%;height:49%" @click="tap_item(areaList[2].id)">
 							<image :src="areaList[2].path" mode="aspectFill"
 								style="position: absolute; z-index: -999;width: 100%;height: 100%;">
 							</image>
-							<view class="name">
-								{{ areaList[2].name }}
-							</view>
 						</view>
 					</view>
 				</view>
@@ -98,9 +89,6 @@
 					<image :src="areaList[3].path" mode="aspectFill"
 						style="position: absolute; z-index: -999;width: 100%;height: 100%;">
 					</image>
-					<view class="name">
-						{{ areaList[3].name }}
-					</view>
 				</view>
 			</view>
 			<view class="title">POPULAR GOODS</view>
