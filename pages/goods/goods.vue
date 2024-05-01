@@ -170,6 +170,7 @@ const getInfoList = async () => {
 	console.log('infoList', res)
 	if (res.data.data.length === 0) {
 		page--
+		if (page === 0) infolist.value = []
 		return
 	}
 	if (page > 1)
