@@ -14,7 +14,7 @@
 
 	<view class="goods" style="display: flex;background-color:rgba(255, 255, 255, 1) ;">
 		<view
-			style="width: 1000rpx;height: 100%;background-color: #F1EDE9;display: flex;flex-direction: column;align-items: center;">
+			style="width: 200rpx;height: 100%;background-color: #F1EDE9;display: flex;flex-direction: column;align-items: center;">
 			<!-- <view class="select">
 				<text>生</text>
 				<text>鲜</text>
@@ -260,7 +260,7 @@ page {
 
 	.select {
 		width: 200rpx;
-		padding: 20rpx 30rpx;
+		padding: 20rpx 0;
 		font-family: Inter, Inter;
 		font-weight: 400;
 		font-size: 30rpx;
@@ -309,8 +309,8 @@ page {
 		margin-left: 15rpx;
 
 		.image {
-			width: 290rpx;
-			height: 290rpx;
+			width: 250rpx;
+			height: 250rpx;
 			border-radius: 13rpx 13rpx 13rpx 13rpx;
 		}
 
