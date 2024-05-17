@@ -41,7 +41,7 @@
 			</view>
 			<view class="title_bottom">
 				<view class="tag">微信小程序下单已上线</view>
-				<view>特产鲜果 | 有机蔬菜</view>
+				<view></view>
 			</view>
 			<!-- <view class="show_words">
 				<view class="words_left">
@@ -93,7 +93,7 @@
 			</view>
 			<view class="title">POPULAR GOODS</view>
 			<view class="title_bottom">
-				<view class="tag">点击购买，即日配送</view>
+				<view class="tag">点击购买，48小时内配货</view>
 				<view>优选好物 | 价格实惠</view>
 			</view>
 			<view class="main">

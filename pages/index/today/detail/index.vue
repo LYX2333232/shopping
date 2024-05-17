@@ -29,7 +29,7 @@
     </view>
     <view class="detail">
         <view style="width: 90%;margin: 0 auto;">
-            <view class="">
+            <view>
                 规格
             </view>
             <uni-section title="更多样式 - tag" subTitle="使用mode=tag属性使用标签样式" type="line">
@@ -318,7 +318,6 @@ page {
 
 .detail {
     background-color: #fff;
-    height: 240rpx;
     margin-top: 10rpx;
     padding-top: 20rpx;
     font-family: Inter, Inter;
