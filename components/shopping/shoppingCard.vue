@@ -14,7 +14,7 @@
     <view class="right">
       <view>
         <view class="title">{{ data.name }}</view>
-        <view style="width:120rpx;text-align: center;background-color: #F3F3F3;color: #6C6C6C">
+        <view class="item-name">
           {{ data.item_name }}
         </view>
       </view>
@@ -112,6 +112,16 @@ const changeNum = (e, i) => {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+}
+
+.item-name{
+  width: 200rpx;
+  text-align: center;
+  background-color: #F3F3F3;
+  color: #6C6C6C;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .price {
