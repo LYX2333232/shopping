@@ -43,14 +43,6 @@
 				<view class="tag">微信小程序下单已上线</view>
 				<view></view>
 			</view>
-			<!-- <view class="show_words">
-				<view class="words_left">
-					{{ words_left }}
-				</view>
-				<view style="width: 280rpx;text-align: right">
-					<view class="words_right2" style="">{{ words_right2 }}</view>
-				</view>
-			</view> -->
 			<view class="area">
 				<!-- <view class="toarea" v-for="item in areaList" @click="tap_item(item.id)">
 					<image :src="item.path" mode="aspectFill"
@@ -176,28 +168,7 @@ let funList = [
 		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60srm92zvWgCkNp5ruHn4AaRbRHavgKOsw1kWIARx9kIttxNYnvaIO5ww/0?wx_fmt=png'
 	},
 ]
-const areaList = ref([
-	// {
-	// 	id: 0,
-	// 	name: '生鲜食养',
-	// 	path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sIu0aPfSmbL3SSbXRLkMiciby05PI3Hp2SC8Ys0nfjBKsVqRLXnPSVgnA/0?wx_fmt=png'
-	// },
-	// {
-	// 	id: 1,
-	// 	name: '有机专区',
-	// 	path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sRLpUzyvIWGFG83tlVvjHmshjQJ4H1XjLhp5rhVkbTez9X6G9Af9icxQ/0?wx_fmt=png'
-	// },
-	// {
-	// 	id: 2,
-	// 	name: '臻臻鲜果',
-	// 	path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s7qZzOhLeibsXxQ4ZQ2iaic1CZ1IaiaJoTes1t9CoHHTJL7E5SLGkrV1L6g/0?wx_fmt=png'
-	// },
-	// {
-	// 	id: 3,
-	// 	name: '美容养颜',
-	// 	path: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sShq5UlxRPhOMibLxWGNmJmOdAXuWiaq09U1pp71FnfMSeh5wM7ibl96tg/0?wx_fmt=png'
-	// }
-])
+const areaList = ref([])
 let value = ref('');
 let styles = ref({
 	color: 'rgba(182, 176, 167, 1)',

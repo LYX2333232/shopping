@@ -81,13 +81,10 @@ const request = {
 				} else {
 					// 用户未登录,弹出提示
 					uni.showModal({
-						// confirmColor: "#a4192e",
-						// confirmText: "请先登录",
 						title: '您未登录',
 						success(ts) {
 							if (ts.confirm) {
 								uni.switchTab({ url: '/pages/me/me' })
-								// UserStore().login()
 							}
 						}
 					})
@@ -128,32 +125,6 @@ const request = {
 			'Authorization': UserStore().auth.access_token ? `Bearer ${UserStore().auth.access_token}` : '', // 这里是token(可自行修改)
 
 		}
-		// let time = Math.floor(Date.now() / 1000);
-		// let bytes = new Uint8Array(5);
-
-
-		// let randomString = generateRandomString(8); 
-
-		// let md5 = MD5('digua_' + time+ "_" + randomString).toString();
-
-
-		//  function generateRandomString(length) {
-		//    var result = '';
-		//    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		//    var charactersLength = characters.length;
-
-		//    for (var i = 0; i < length; i++) {
-		//      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-		//    }
-
-		//    return result;
-		//  } 
-		// let param = {
-		// 	t: time,
-		// 	n: randomString,
-		// 	iv: md5
-		// }
-		// options.header = { ...options.header, ...param };
 		// resolved是返回成功数据，rejected返回错误数据
 		return new Promise((resolved, rejected) => {
 			options.success = (res) => {
@@ -173,8 +144,6 @@ const request = {
 				} else {
 					// 用户未登录,弹出提示
 					uni.showModal({
-						// confirmColor: "#a4192e",
-						// confirmText: "请先登录",
 						title: '您未登录',
 						success(ts) {
 							if (ts.confirm) {

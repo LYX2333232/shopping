@@ -1,5 +1,5 @@
 <template>
-  <web-view :src="src"></web-view>
+  <image style="width:750rpx;height:100vh" mode="aspectFit" :src="src"></image>
 </template>
 
 <script setup>
