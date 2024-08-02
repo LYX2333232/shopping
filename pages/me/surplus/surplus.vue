@@ -98,7 +98,6 @@ const confirm = () => {
     })
     // 提交
     withdrawal(price.value).then(res => {
-      console.log(res)
       uni.hideLoading({
         success: () => {
           uni.showToast({
@@ -114,13 +113,11 @@ const confirm = () => {
 
 const getData = () => {
   get_balance().then(res => {
-    console.log(res)
     usable.value = toFixed(res.data.balance)
     total.value = res.data.cumulative
     frozen.value = toFixed(res.data.freeze)
   })
   get_record().then(res => {
-    console.log(res.data)
     recordList.value = res.data.data
   })
 }

@@ -140,7 +140,6 @@ let page = 1
 const edit = ref(false)
 
 const changeEdit = (e) => {
-	console.log(e)
 	edit.value = e
 }
 
@@ -197,7 +196,6 @@ const change = (e, i, j) => {
 
 // 修改数量
 const changeNum = (e, i, j) => {
-	// console.log('e', e, 'i', i, 'j', j);
 	dataList.value[j].cont = e
 	if (select_coupon.value) {
 		uni.showToast({
@@ -231,7 +229,6 @@ const changeOrderAll = (e) => {
 }
 
 const del = (id) => {
-	console.log('删除', id)
 	del_cart(id).then(res => {
 		if (res.code === 200) {
 			uni.showToast({
@@ -253,7 +250,6 @@ const detail_price = ref({
 })
 
 const tocaculate = () => {
-	console.log('结算')
 	if (select_goods.value.length === 0) {
 		uni.showToast({
 			title: '请先选择商品',
@@ -274,7 +270,6 @@ const tocaculate = () => {
 	if (select_coupon.value)
 		option.coupon_id = select_coupon.value.coupon_id
 	get_order_price(option).then(res => {
-		console.log(res)
 		detail_price.value = res.data
 		detailVisible.value = true
 	})
@@ -291,7 +286,6 @@ const order = () => {
 		})
 		return
 	}
-	console.log('good', select_goods.value)
 	new_order({
 		ids: select_goods.value.map(item => {
 			return {
@@ -304,7 +298,6 @@ const order = () => {
 		shopping_cart_ids: select_goods.value.map(item => item.id),
 		freight: detail_price.value.freight,
 	}).then(res => {
-		console.log('res', res)
 		uni.requestPayment({
 			provider: 'wxpay',
 			timeStamp: res.data.timeStamp,
@@ -313,7 +306,6 @@ const order = () => {
 			signType: res.data.signType,
 			paySign: res.data.paySign,
 			success: function (res) {
-				console.log('success', res)
 				if (res.errMsg === 'requestPayment:ok') {
 					uni.showToast({
 						title: '支付成功',
@@ -379,7 +371,6 @@ const openPopup = () => {
 		}
 	})
 	get_coupon(ids).then(res => {
-		console.log('res', res)
 		couponList.value = res.data.data
 		if (couponList.value.length > 0) {
 			couponVisible.value = true
@@ -395,7 +386,6 @@ const openPopup = () => {
 
 const getData = () => {
 	get_cart_list(1).then(res => {
-		console.log('res', res)
 		dataList.value = res.data.data.map(item => {
 			return {
 				...item,
@@ -412,11 +402,9 @@ onShow(() => {
 		com_id: select_good.value.item_id,
 		com_cont: select_good.value.cont
 	}
-	console.log(select_coupon.value)
 	if (select_coupon.value)
 		option.coupon_id = select_coupon.value.coupon_id
 	get_order_price(option).then(res => {
-		console.log(res)
 		detail_price.value = res.data
 	})
 })
@@ -424,7 +412,6 @@ onShow(() => {
 onReachBottom(() => {
 	page++
 	get_cart_list(page).then(res => {
-		console.log('res', res)
 		dataList.value = dataList.value.concat(res.data.data.map(item => {
 			return {
 				...item,

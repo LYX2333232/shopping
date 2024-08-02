@@ -164,7 +164,6 @@ function buttonClick(e) {
         com_id: size.value[sizeIndex.value].id,
         com_cont: cont.value
     }).then(res => {
-        console.log(res)
         detail_price.value = res.data
     })
 }
@@ -195,7 +194,6 @@ const order = () => {
             signType: res.data.signType,
             paySign: res.data.paySign,
             success: function (res) {
-                console.log('success', res)
                 if (res.errMsg === 'requestPayment:ok') {
                     uni.showToast({
                         title: '支付成功',
@@ -212,9 +210,7 @@ const order = () => {
 }
 
 onLoad((options) => {
-    console.log('options', options)
     get_today_detail(options.id).then(res => {
-        console.log(res)
         // 轮播图
         swiperImg.value = res.data.paths
 
@@ -239,8 +235,6 @@ onLoad((options) => {
 
         typelist.value = res.data.labels
 
-        console.log('typelist', typelist.value)
-
         content.value = res.data.content.replace(/(<img [^>]*)(style="[^"]*")?/gi, '$1 style="width:100%;"')
     })
 })
@@ -251,7 +245,6 @@ onShow(() => {
         teamwork_com_id,
         com_id: size.value[sizeIndex.value].id, com_cont: cont.value
     }).then(res => {
-        console.log(res)
         detail_price.value = res.data
     })
 })

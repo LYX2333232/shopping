@@ -65,7 +65,6 @@ const region = ref(['北京市', '市辖区', '东城区'])
 const code = ref(["110000", "110100", "110101"])
 
 const onRegionChange = (e) => {
-  console.log(e)
   region.value = e.detail.value
   code.value = e.detail.code
 }
@@ -75,7 +74,6 @@ const detail = ref('')
 const isDefault = ref(false)
 
 const save = () => {
-  console.log('保存')
   add_address({
     id,
     name: name.value,
@@ -85,7 +83,6 @@ const save = () => {
     default: isDefault.value ? 1 : 0,
     code: JSON.stringify(code.value)
   }).then((res) => {
-    console.log(res)
     if (res.code === 200) {
       uni.showToast({
         title: '保存成功',
@@ -101,14 +98,12 @@ const save = () => {
 }
 
 onLoad((options) => {
-  console.log(options)
   if (options.index === '-1') {
     title.value = '新增地址'
   } else {
     title.value = '编辑地址'
     id = parseInt(options.index)
     get_address_detail(id).then(res => {
-      console.log(res)
       name.value = res.data.name
       phone.value = res.data.phone
       region.value = JSON.parse(res.data.address)

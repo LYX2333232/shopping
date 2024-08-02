@@ -46,7 +46,6 @@ const getData = () => {
   //   }
   // ]
   get_up_list().then(res => {
-    console.log(res)
     userList.value.push({
       ...res.data.up_user,
       referee: true

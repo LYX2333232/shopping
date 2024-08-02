@@ -23,8 +23,6 @@ const request = {
 		options.url = `${baseUrl}${options.url}`;
 		// 判断本地是否存在token，如果存在则带上请求头
 
-		// console.log(UserStore().auth.access_token);
-
 		options.header = {
 			'Accept': 'application/json',
 			'content-type': 'application/json',

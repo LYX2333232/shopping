@@ -48,7 +48,6 @@ const receive = (coupon) => {
   // 还有优惠券未领取
   if (coupon.state === 0) {
     receive_coupon(coupon.id).then(res => {
-      console.log(res)
       if (res.code === 200) {
         uni.showToast({
           title: '领取成功',
@@ -64,14 +63,12 @@ const receive = (coupon) => {
 const getData = () => {
   // 获取优惠券列表
   get_coupon_list(1).then(res => {
-    console.log(res)
     couponList.value = res.data.data
   })
 }
 
 onShow(() => {
   getData()
-  console.log(couponList.value);
 })
 
 // 是否触底进行加载中
@@ -84,7 +81,6 @@ onReachBottom(() => {
   isReaching.value = true
   page++
   get_coupon_list(page).then(res => {
-    console.log(res)
     couponList.value = couponList.value.concat(res.data.data)
     isReaching.value = false
   })

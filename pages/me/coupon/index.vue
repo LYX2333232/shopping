@@ -5,7 +5,7 @@
       <image :src="card.path" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
       <view class="main">
         <view class="title" :style="card.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">{{
-      card.name }}</view>
+          card.name }}</view>
         <view class="price" :style="card.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">
           <text v-if="card.type === 0 || card.type === 3">￥{{ card.number }}</text>
           <text v-if="card.type === 1">￥{{ card.reduce }} </text>
@@ -53,7 +53,6 @@ const toCart = () => {
 
 const getData = () => {
   get_my_coupon(1).then(res => {
-    console.log(res)
     cardList.value = res.data.data
   })
 }
@@ -65,7 +64,6 @@ onShow(() => {
 onReachBottom(() => {
   page++
   get_my_coupon(page).then(res => {
-    console.log(res)
     cardList.value = cardList.value.concat(res.data.data)
   })
 })

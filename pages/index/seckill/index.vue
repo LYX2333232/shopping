@@ -83,7 +83,6 @@ const items = ref([])
 
 // 马上抢
 const toBuy = (id) => {
-  console.log('buy')
   uni.navigateTo({
     url: '/pages/index/seckill/detail/index?id=' + id
   })
@@ -159,7 +158,6 @@ const getData = () => {
   //   }
   // ]
   get_goods_list().then(res => {
-    console.log(res)
     items.value = res.data.data
   })
   mainCard.value = main

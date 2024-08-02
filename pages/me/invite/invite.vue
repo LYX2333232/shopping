@@ -46,9 +46,7 @@ const QR = ref()
 
 const getData = () => {
   get_share().then(res => {
-    console.log('res', res)
     QR.value = res.data
-    // console.log(QR.value)
   })
 }
 

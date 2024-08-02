@@ -172,7 +172,6 @@ function buttonClick(e) {
     com_id: size.value[sizeIndex.value].id,
     com_cont: cont.value
   }).then(res => {
-    console.log(res)
     detail_price.value = res.data
   })
 }
@@ -204,7 +203,6 @@ const order = () => {
       signType: res.data.signType,
       paySign: res.data.paySign,
       success: function (res) {
-        console.log('success', res)
         if (res.errMsg === 'requestPayment:ok') {
           uni.showToast({
             title: '支付成功',
@@ -222,9 +220,7 @@ const order = () => {
 
 
 onLoad((options) => {
-  console.log('id', options.id)
   get_goods_detail(options.id).then(res => {
-    console.log(res)
     // 轮播图
     swiperImg.value = res.data.paths
 
@@ -260,7 +256,6 @@ onShow(() => {
     flash_com_id,
     com_id: size.value[sizeIndex.value].id, com_cont: cont.value
   }).then(res => {
-    console.log(res)
     detail_price.value = res.data
   })
 })

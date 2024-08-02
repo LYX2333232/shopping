@@ -245,7 +245,6 @@ const login_form = ref({
 
 // 点击分销
 const tap_item = (index) => {
-	console.log(index)
 	if (index === 0) {
 		uni.navigateTo({
 			url: '/pages/me/surplus/surplus',
@@ -270,7 +269,6 @@ const tap_item = (index) => {
 
 // 点击订单
 const tap_order = (index) => {
-	console.log(index)
 	uni.navigateTo({
 		url: '/pages/me/order/index?index=' + index
 	})
@@ -278,7 +276,6 @@ const tap_order = (index) => {
 
 // 点击我的应用的内容
 const tap_application = (index) => {
-	console.log(index)
 	// 收货地址
 	if (index === 0) {
 		uni.navigateTo({
@@ -306,7 +303,6 @@ const tap_application = (index) => {
 			content: '确定要退出登录吗？',
 			success: (res) => {
 				if (res.confirm) {
-					console.log(res)
 					store.set_user_info(null)
 					uni.clearStorageSync()
 					// 重新加载当前页面
@@ -320,7 +316,6 @@ const tap_application = (index) => {
 }
 
 const getphonenumber = (e) => {
-	console.log(e)
 	const up_id = uni.getStorageSync('up_id')
 	uni.login({
 		success: (s) => {
@@ -331,7 +326,6 @@ const getphonenumber = (e) => {
 				name: login_form.value.name,
 				up_id
 			}).then(res => {
-				console.log(res)
 				// 登录成功
 				if (res.code === 200) {
 					// 关闭弹窗
@@ -354,7 +348,6 @@ const submitFeedback = () => {
 		phone: phone.value,
 		content: feedbackContent.value
 	}).then(res => {
-		console.log(res)
 		if (res.code === 200) {
 			feedback.value = false
 			phone.value = ''
@@ -368,10 +361,8 @@ const chooseavatar = (e) => {
 	// 转换为base64
 	const base64 = uni.getFileSystemManager().readFileSync(e.detail.avatarUrl, 'base64')
 	// 添加前缀
-	// console.log(login_form.value.avatar)
 	login_form.value.avatar = 'data:image/png;base64,' + base64
 	uploadImage('data:image/png;base64,' + base64).then(res => {
-		console.log(res)
 		login_form.value.upload = res.data
 	})
 }
@@ -392,7 +383,6 @@ const add_us_rules = ref({
 
 const addUs = () => {
 	const pattern = /^1[3-9]\d{9}$/
-	console.log(add_us_form.value)
 	if (add_us_form.value.phone.toString().length !== 11 || !pattern.test(add_us_form.value.phone)) {
 		uni.showModal({
 			title: '提示',
@@ -410,7 +400,6 @@ const addUs = () => {
 		return
 	}
 	add_us(add_us_form.value.phone).then(res => {
-		console.log(res)
 		if (res.code === 200) {
 			uni.showToast({
 				title: '提示',
@@ -460,7 +449,6 @@ const getData = () => {
 		return 
 	}
 	get_order_count().then(res => {
-		console.log(res)
 		order_count.value = [res.data.pay, res.data.delivery, res.data.collect, 0]
 	})
 }

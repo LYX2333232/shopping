@@ -60,7 +60,6 @@ import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.v
 const dataList = ref([])
 
 const toDetail = (id) => {
-  console.log('toDetail');
   uni.navigateTo({
     url: '/pages/index/today/detail/index?id=' + id
   })
@@ -68,7 +67,6 @@ const toDetail = (id) => {
 
 const getData = () => {
   get_today_list().then(res => {
-    console.log(res)
     dataList.value = res.data.data
   })
 }

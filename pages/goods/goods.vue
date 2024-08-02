@@ -119,7 +119,6 @@ const sale = ref(null)
 const upIndex = ref(0)
 
 const changeUpIndex = (index) => {
-	console.log('index', index)
 	upIndex.value = index
 	infolist.value = []
 	getInfoList()
@@ -167,7 +166,6 @@ const getInfoList = async () => {
 			res = await get_goods_list({ value: searchInfo.value, page, sell_order: 2, type: selectIndex.value })
 		}
 	}
-	console.log('infoList', res)
 	if (res.data.data.length === 0) {
 		page--
 		if (page === 0) infolist.value = []
@@ -182,7 +180,6 @@ const getData = () => {
 
 	// 获取分类列表
 	get_type_list(t_id).then(res => {
-		console.log('res', res)
 		selectlist.value = res.data
 		selectIndex.value = selectlist.value[0].id
 		page = 1

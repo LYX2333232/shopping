@@ -57,7 +57,6 @@ const selectAddress = (item) => {
             signType: res.data.signType,
             paySign: res.data.paySign,
             success: function (res) {
-                console.log('success', res)
                 if (res.errMsg === 'requestPayment:ok') {
                     uni.showToast({
                         title: '支付成功',
@@ -97,7 +96,6 @@ const deleteAddress = (id) => {
         success: res => {
             if (res.confirm) {
                 delete_address(id).then(res => {
-                    console.log(res)
                     uni.showToast({
                         title: '删除成功',
                         icon: 'none'
@@ -111,9 +109,7 @@ const deleteAddress = (id) => {
 
 const getData = () => {
     get_address_list().then(res => {
-        // console.log(res)
         addressList.value = res.data.data
-        console.log('address', addressList.value)
     })
 }
 
@@ -122,9 +118,7 @@ onShow(() => {
 })
 
 onLoad((option) => {
-    console.log(option)
     good.value = JSON.parse(decodeURIComponent(option.good))
-    console.log('good', good.value)
 })
 </script>
 

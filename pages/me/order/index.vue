@@ -116,7 +116,6 @@ const switchTab = (index) => {
   page = 1
   const i = index - 1
   get_order(page, i).then(res => {
-    console.log('orders', res)
     orders.value = res.data.data
   })
 }
@@ -130,7 +129,6 @@ const refundVisible = ref(false)
 const refund_reason = ref('')
 const refund_order = () => {
   post_refund(select_order.value.id, refund_reason.value).then(res => {
-    console.log(res)
     if (res.code = 200) {
       refundVisible.value = false
       uni.showToast({
@@ -160,12 +158,10 @@ const re_apply = (card) => {
 
 
 const order_click = (card) => {
-  console.log(card)
   select_order.value = card
   // 重新付款
   if (card.state === 0) {
     repay_order(card.id).then(res => {
-      console.log(res)
       uni.requestPayment({
         provider: 'wxpay',
         timeStamp: res.data.timeStamp,
@@ -174,7 +170,6 @@ const order_click = (card) => {
         signType: res.data.signType,
         paySign: res.data.paySign,
         success: function (res) {
-          console.log('success', res)
           if (res.errMsg === 'requestPayment:ok') {
             uni.showToast({
               title: '支付成功',
@@ -186,7 +181,6 @@ const order_click = (card) => {
           console.log('fail', err)
         },
         complete: () => {
-          console.log('complete')
           switchTab(tab.value + 1)
         },
       })

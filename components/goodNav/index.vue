@@ -58,7 +58,6 @@ const toCart = () => {
 
 // 点击收藏
 const favorite = () => {
-    console.log('like', props.like)
     uni.showLoading({
         title: '加载中'
     })

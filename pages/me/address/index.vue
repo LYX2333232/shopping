@@ -45,7 +45,6 @@ const deleteAddress = (id) => {
     success: res => {
       if (res.confirm) {
         delete_address(id).then(res => {
-          console.log(res)
           uni.showToast({
             title: '删除成功',
             icon: 'none'
@@ -58,42 +57,8 @@ const deleteAddress = (id) => {
 }
 
 const getData = () => {
-  // const list = [
-  //   {
-  //     address: '广东省广州市天河区天河路',
-  //     name: '张三',
-  //     phone: '13888888888'
-  //   },
-  //   {
-  //     address: '广东省广州市天河区天河路',
-  //     name: '李四',
-  //     phone: '13888888888'
-  //   },
-  //   {
-  //     address: '广东省广州市天河区天河路',
-  //     name: '王五',
-  //     phone: '13888888888'
-  //   },
-  //   {
-  //     address: '广东省广州市天河区天河路',
-  //     name: '赵六',
-  //     phone: '13888888888'
-  //   },
-  //   {
-  //     address: '广东省广州市天河区天河路',
-  //     name: '孙七',
-  //     phone: '13888888888'
-  //   },
-  //   {
-  //     address: '广东省广州市天河区天河路',
-  //     name: '周八',
-  //     phone: '13888888888'
-  //   }
-  // ]
   get_address_list().then(res => {
-    console.log(res)
     addressList.value = res.data.data
-    console.log(addressList.value)
   })
 }
 

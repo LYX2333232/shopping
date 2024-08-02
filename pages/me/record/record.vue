@@ -36,55 +36,7 @@ const recordList = ref([])
 
 // 获取销售记录
 const getData = () => {
-  // TODO
-  // const list = [
-  //   {
-  //     id: 1,
-  //     user: '张三',
-  //     avatar: 'https://source.unsplash.com/random?1',
-  //     path: 'https://source.unsplash.com/random?1',
-  //     name: '墨西哥牛油果',
-  //     size: '100g',
-  //     number: 1,
-  //     price: 100,
-  //     tags: ['新鲜', '热卖']
-  //   },
-  //   {
-  //     id: 2,
-  //     user: '李四',
-  //     avatar: 'https://source.unsplash.com/random?1',
-  //     path: 'https://source.unsplash.com/random?2',
-  //     name: '墨西哥牛油果',
-  //     size: '200g',
-  //     number: 2,
-  //     price: 200,
-  //     tags: ['新鲜', '热卖']
-  //   },
-  //   {
-  //     id: 3,
-  //     user: '王五',
-  //     avatar: 'https://source.unsplash.com/random?1',
-  //     path: 'https://source.unsplash.com/random?3',
-  //     name: '墨西哥牛油果',
-  //     size: '300g',
-  //     number: 3,
-  //     price: 300,
-  //     tags: ['新鲜', '热卖']
-  //   },
-  //   {
-  //     id: 4,
-  //     user: '赵六',
-  //     avatar: 'https://source.unsplash.com/random?1',
-  //     path: 'https://source.unsplash.com/random?4',
-  //     name: '墨西哥牛油果',
-  //     size: '400g',
-  //     number: 4,
-  //     price: 400,
-  //     tags: ['新鲜', '热卖']
-  //   }
-  // ]
   get_userList().then(res => {
-    console.log(res)
     recordList.value = res.data.data
   })
 }

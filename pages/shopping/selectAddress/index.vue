@@ -61,7 +61,6 @@ const deleteAddress = (id) => {
     success: res => {
       if (res.confirm) {
         delete_address(id).then(res => {
-          console.log(res)
           uni.showToast({
             title: '删除成功',
             icon: 'none'
@@ -75,12 +74,10 @@ const deleteAddress = (id) => {
 
 const getData = () => {
   get_address_list().then(res => {
-    console.log(res)
     addressList.value = res.data.data.map(item => {
       item.address = JSON.parse(item.address)
       return item
     })
-    console.log(addressList.value)
   })
 }
 

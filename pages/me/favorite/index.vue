@@ -35,29 +35,9 @@ import { get_favorite_list } from '@/api/goods/goods'
 const list = ref([])
 
 const getData = () => {
-  // const data = [
-  //   {
-  //     id: 1,
-  //     path: 'https://source.unsplash.com/random',
-  //     title: '【限时抢购】华为mate40pro 5G 8GB+256GB 5G手机',
-  //     number: 100,
-  //     tags: ['手机', '华为'],
-  //     price: 9999
-  //   },
-  //   {
-  //     id: 2,
-  //     path: 'https://source.unsplash.com/random',
-  //     title: '【限时抢购】华为mate40pro 5G 8GB+256GB 5G手机',
-  //     number: 100,
-  //     tags: ['手机', '华为'],
-  //     price: 9999
-  //   }
-  // ]
   get_favorite_list().then(res => {
-    console.log(res)
     list.value = res.data.data
   })
-  // list.value = data
 }
 
 onShow(() => {

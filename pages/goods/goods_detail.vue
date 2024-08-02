@@ -59,7 +59,7 @@
 		<view style="width: 90%;margin: 10rpx 5%;">
 			<rich-text :nodes="content"></rich-text>
 		</view>
-<!-- <video style="width: 922px; height: 461px;" controls="controls" width="922" height="461"><source src="https://mpvideo.qpic.cn/0bf2guaaoaaabean5xombzpfanoda42qabya.f10002.mp4?dis_k=a5f90bc0dbc726c4b2ac5b32a0821cca&amp;dis_t=1715919994&amp;play_scene=10120&amp;auth_info=f4Pqm+MDFwMyz/eloHQQBGFKBBVyJW9ZZR5YP1l5d25BVTVgAw1KbFA5aEJjVwc+aw==&amp;auth_key=dd4be7dc4502ca6325fb6791d7dee054&amp;vid=wxv_1357125600510820355&amp;format_id=10002&amp;support_redirect=0&amp;mmversion=false"></video> -->
+		<!-- <video style="width: 922px; height: 461px;" controls="controls" width="922" height="461"><source src="https://mpvideo.qpic.cn/0bf2guaaoaaabean5xombzpfanoda42qabya.f10002.mp4?dis_k=a5f90bc0dbc726c4b2ac5b32a0821cca&amp;dis_t=1715919994&amp;play_scene=10120&amp;auth_info=f4Pqm+MDFwMyz/eloHQQBGFKBBVyJW9ZZR5YP1l5d25BVTVgAw1KbFA5aEJjVwc+aw==&amp;auth_key=dd4be7dc4502ca6325fb6791d7dee054&amp;vid=wxv_1357125600510820355&amp;format_id=10002&amp;support_redirect=0&amp;mmversion=false"></video> -->
 	</view>
 
 	<GoodNav :id="c_id" :like="like" :normal="true" @buttonClick="buttonClick" @changeLike="changeLike" />
@@ -68,7 +68,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad,onReady } from '@dcloudio/uni-app'
+import { onLoad, onReady } from '@dcloudio/uni-app'
 import { get_goods_detail } from '@/api/goods/goods'
 import { add_to_cart } from '@/api/cart/cart'
 import Header from '@/components/header.vue'
@@ -103,13 +103,11 @@ const like = ref(0)
 
 const changeLike = () => {
 	like.value = 1 - like.value
-	console.log(like.value)
 }
 
 function buttonClick() {
 	// 加入购物车
 	add_to_cart(size.value[sizeIndex.value].id, cont.value).then(res => {
-		console.log(res)
 		if (res.code == 200)
 			uni.showToast({
 				title: '加入购物车成功',
@@ -126,10 +124,8 @@ function buttonClick() {
 }
 
 onLoad((options) => {
-	// console.log(options)
 	const that = this
 	get_goods_detail({ id: options.id }).then(res => {
-		console.log('详情', res)
 		// 轮播图
 		swiperImg.value = res.data.paths
 

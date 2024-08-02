@@ -50,7 +50,6 @@ const messageList = ref([])
 const near = (time1, time2) => {
   const t1 = new Date(time1)
   const t2 = new Date(time2)
-  console.log(t1 - t2)
   return Math.abs(t1 - t2) > 5 * 60 * 1000
 }
 
@@ -91,7 +90,6 @@ const getData = () => {
 }
 
 onLoad((e) => {
-  console.log(e)
   getData()
 })
 </script>

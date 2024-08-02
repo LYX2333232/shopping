@@ -75,13 +75,13 @@
 						</view>
 					</view>
 				</view>
-				<view class="toarea"
+				<!-- <view class="toarea"
 					style="width:100%;height:150rpx;display:flex;justify-content:center;align-items:center;margin-top:10rpx"
 					@click="tap_item(areaList[3].id)">
 					<image :src="areaList[3].path" mode="aspectFill"
 						style="position: absolute; z-index: -999;width: 100%;height: 100%;">
 					</image>
-				</view>
+				</view> -->
 			</view>
 			<view class="title">POPULAR GOODS</view>
 			<view class="title_bottom">
@@ -202,7 +202,6 @@ const top_button = (index) => {
 
 // 底部的图片按钮
 const tap_item = (index) => {
-	console.log(index)
 	uni.switchTab({
 		url: '/pages/goods/goods?',
 	})
@@ -221,18 +220,14 @@ let page = 1
 
 const getData = () => {
 	get_home().then(res => {
-		console.log(res)
 		swiperData.value = res.data.swiper
 		areaList.value = res.data.news
-		console.log('areaList', areaList.value)
 	})
 	if (!uni.getStorageSync('history')) {
 		uni.setStorageSync('history', [])
 	}
 	historyList.value = uni.getStorageSync('history')
-	console.log('history', historyList.value)
 	get_goods_list({ page }).then(res => {
-		console.log('goods', res)
 		infoList.value = res.data.data
 	})
 }
