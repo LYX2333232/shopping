@@ -26,7 +26,8 @@
 				</view>
 			</view>
 			<view class="function">
-				<view class="tofunction" v-for="(item, index) in funList" @click="top_button(index)">
+				<view class="tofunction" v-for="(item, index) in funList" :key="'fun' + index"
+					@click="top_button(index)">
 					<view class="img">
 						<image :src="item.icon" alt="" mode="aspectFill" />
 					</view>
@@ -138,13 +139,11 @@ import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
 import { ref } from 'vue'
 import { onHide, onLoad, onShow, onReachBottom, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
-import { UserStore, AddressStore } from '@/store'
-import { get_default_address } from '@/api/address/address'
+import { UserStore } from '@/store'
 import { get_home } from '@/api/index'
 import { get_goods_list } from '@/api/goods/goods'
 
 const user = UserStore()
-const address = AddressStore()
 
 let recommend = 'RECOMMEND FOR YOU'
 
@@ -272,13 +271,6 @@ onHide(() => {
 onShow(() => {
 	getData()
 })
-
-onLoad(() => {
-	get_default_address().then(res => {
-		address.setAddress(JSON.parse(res.data.address).join('-') + '-' + res.data.detail, res.data.name, res.data.phone, res.data.id)
-	})
-})
-
 onReachBottom(() => {
 	page++
 	get_goods_list({ page }).then(res => {

@@ -1,6 +1,5 @@
 <template>
 	<view class="all">
-
 		<view class="top">
 			<view class="avatar">
 				<image
@@ -22,7 +21,7 @@
 					编号：{{ store.userInfo.uid }}
 				</view>
 			</view>
-			<view style="margin-left:30rpx" class="denglu" v-else @click="loginVisible = true">
+			<view style="margin-left:30rpx" class="denglu" v-else @click="showLogin">
 				点击授权登录
 			</view>
 		</view>
@@ -243,6 +242,74 @@ const login_form = ref({
 	upload: undefined
 })
 
+// 展示登录弹窗
+const showLogin = () => {
+
+	const systemInfo = uni.getSystemInfoSync()
+	console.log('版本', systemInfo.SDKVersion)
+
+	if (compare(systemInfo.SDKVersion, '2.21.2') < 0) {
+		uni.showToast({
+			title: '当前版本不支持自定义登录，将自动选择默认头像和用户名登录',
+			icon: 'none'
+		})
+		defaultLogin()
+		return
+	}
+	loginVisible.value = true
+}
+
+const compare = (a, b) => {
+	const a_array = a.split('.').map(e => parseInt(e))
+	const b_array = b.split('.').map(e => parseInt(e))
+	for (let i = 0; i < a_array.length; i++) {
+		if (a_array[i] > b_array[i]) {
+			return 1
+		} else if (a_array[i] < b_array[i]) {
+			return -1
+		}
+	}
+	return 0
+}
+
+// 使用默认用户名和头像登录
+const defaultLogin = async () => {
+	const downloadResult = await new Promise((resolve, reject) => {
+		uni.downloadFile({
+			url: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png',
+			success: resolve,
+			fail: reject
+		});
+	});
+	const filePath = downloadResult.tempFilePath;
+	// 转换为base64
+	const base64 = uni.getFileSystemManager().readFileSync(filePath, 'base64')
+	// 添加前缀
+	login_form.value.avatar = 'data:image/png;base64,' + base64
+	const res = await uploadImage('data:image/png;base64,' + base64)
+
+	const up_id = uni.getStorageSync('up_id')
+	uni.login({
+		success: (s) => {
+			// 登录
+			Login({
+				code: s.code,
+				avatar: res.data,
+				name: 'user',
+				up_id
+			}).then(res => {
+				// 登录成功
+				if (res.code === 200) {
+					// 关闭弹窗
+					loginVisible.value = false
+					// 获取用户信息
+					store.set_user_info(res.data)
+				}
+			})
+		},
+	})
+}
+
 // 点击分销
 const tap_item = (index) => {
 	if (index === 0) {
@@ -446,7 +513,7 @@ const getData = () => {
 	funList1.value = list
 	if (!store.userInfo) {
 		loginVisible.value = true
-		return 
+		return
 	}
 	get_order_count().then(res => {
 		order_count.value = [res.data.pay, res.data.delivery, res.data.collect, 0]
