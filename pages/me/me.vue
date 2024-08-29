@@ -21,7 +21,7 @@
 					编号：{{ store.userInfo.uid }}
 				</view>
 			</view>
-			<view style="margin-left:30rpx" class="denglu" v-else @click="showLogin">
+			<view style="margin-left:30rpx;" class="denglu" v-else @click="showLogin">
 				点击授权登录
 			</view>
 		</view>
@@ -124,7 +124,7 @@
 				<view class="title_border_text align_center">
 					获取用户昵称，头像
 				</view>
-				<view class="user_text">
+				<view class="user_text" style="padding: 0 15rpx;">
 					获取用户头像、昵称，主要用于向用户提供具有辨识度的用户体验
 				</view>
 				<button class="up_avatar" open-type="chooseAvatar" @chooseavatar="chooseavatar">
@@ -166,7 +166,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { UserStore } from '@/store'
 import { uploadImage, Login, add_us } from '@/api/user/user'
@@ -181,6 +181,13 @@ import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.v
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 import TnBadge from '@/uni_modules/tuniaoui-vue3/components/badge/src/badge.vue'
 
+onMounted(() => {
+	if (!store.userInfo) {
+		nextTick(() => {
+			loginVisible.value = true
+		})
+	}
+})
 
 const store = UserStore()
 
@@ -245,17 +252,17 @@ const login_form = ref({
 // 展示登录弹窗
 const showLogin = () => {
 
-	const systemInfo = uni.getSystemInfoSync()
-	console.log('版本', systemInfo.SDKVersion)
+	// const systemInfo = uni.getSystemInfoSync()
+	// console.log('版本', systemInfo.SDKVersion)
 
-	if (compare(systemInfo.SDKVersion, '2.21.2') < 0) {
-		uni.showToast({
-			title: '当前版本不支持自定义登录，将自动选择默认头像和用户名登录',
-			icon: 'none'
-		})
-		defaultLogin()
-		return
-	}
+	// if (compare(systemInfo.SDKVersion, '2.21.2') < 0) {
+	// 	uni.showToast({
+	// 		title: '当前版本不支持自定义登录，将自动选择默认头像和用户名登录',
+	// 		icon: 'none'
+	// 	})
+	// 	defaultLogin()
+	// 	return
+	// }
 	loginVisible.value = true
 }
 
@@ -511,10 +518,7 @@ const getData = () => {
 		}
 	]
 	funList1.value = list
-	if (!store.userInfo) {
-		loginVisible.value = true
-		return
-	}
+
 	get_order_count().then(res => {
 		order_count.value = [res.data.pay, res.data.delivery, res.data.collect, 0]
 	})
