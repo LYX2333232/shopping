@@ -250,6 +250,7 @@ const detail_price = ref({
 	price: 0,
 })
 
+// 点击结算
 const tocaculate = () => {
 	if (select_goods.value.length === 0) {
 		uni.showToast({
@@ -298,8 +299,8 @@ const order = () => {
 		coupon_id: select_coupon ? select_coupon.id : undefined,
 		shopping_cart_ids: select_goods.value.map(item => item.id),
 		freight: detail_price.value.freight,
-	}).then(res => {
-		uni.requestPayment({
+	}).then(async res => {
+		await uni.requestPayment({
 			provider: 'wxpay',
 			timeStamp: res.data.timeStamp,
 			nonceStr: res.data.nonceStr,
@@ -312,22 +313,25 @@ const order = () => {
 						title: '支付成功',
 						icon: 'none'
 					})
+					// 删除该商品
+					select_goods.value = []
+					select_coupon.value = undefined
+					detail_price.value = {
+						// 运费,
+						freight: 0,
+						price: 0,
+					}
+					dataList.value = dataList.value.filter(item => !item.order)
 				}
 			},
 			fail: function (err) {
 				console.log('fail', err)
+			},
+			complete: function () {
+				detailVisible.value = false
 			}
 		})
-		// 删除该商品
-		select_goods.value = []
-		select_coupon.value = undefined
-		detail_price.value = {
-			// 运费,
-			freight: 0,
-			price: 0,
-		}
-		dataList.value = dataList.value.filter(item => !item.order)
-		detailVisible.value = false
+
 	})
 	return
 

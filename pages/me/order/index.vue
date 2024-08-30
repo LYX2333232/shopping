@@ -58,7 +58,10 @@
         </view>
       </view>
       <view v-if="[0, 2, 5, 7, 8].includes(card.state) || (card.state === 3 && card.is_refund)"
-        class="tn-flex-center-end tn-mt-lg">
+        class="tn-flex-center-between tn-mt-lg">
+        <TnButton v-show="card.state === 0" type="danger" width="150" height="60" @click="delete_order(card)"
+          shape="round">
+          删除订单</TnButton>
         <view class="price">
           总价格：￥{{ card.price }}
         </view>
@@ -66,10 +69,12 @@
           :custom-style="{ marginRight: '30rpx' }" @click="re_apply(card)" shape="round">
           再次申请
         </TnButton>
-        <TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="250" height="60"
+        <TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="150" height="60"
           :custom-style="{ marginRight: '10rpx' }" @click="order_click(card)" shape="round">
-          {{ card.state === 0 ? '去付款' : card.state === 2 ? '确认收货' : card.state === 3 ? '申请退款' : card.state === 5 ?
-            '拒绝原因' : card.state === 7 ? '取消拼团' : card.state === 8 || card.state === 9 ? '再次拼团' : '' }}
+          {{ card.state === 0 ? '去付款' : card.state === 1 ? '申请退款' : card.state === 2 ? '确认收货' : card.state === 3 ?
+            '申请退款'
+            : card.state === 5 ?
+              '拒绝原因' : card.state === 7 ? '取消拼团' : card.state === 8 || card.state === 9 ? '再次拼团' : '' }}
         </TnButton>
       </view>
     </view>
@@ -102,7 +107,7 @@ import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
-import { get_order, repay_order, post_refund, post_receive, close_teamwork } from '@/api/order/order'
+import { get_order, repay_order, post_refund, post_receive, close_teamwork, post_delete_order } from '@/api/order/order'
 import { get_today_detail } from '@/api/index/today/today'
 
 
@@ -123,6 +128,24 @@ const switchTab = (index) => {
 const orders = ref([])
 
 const select_order = ref({})
+
+// 删除订单
+const delete_order = (card) => {
+  post_delete_order(card.id).then(res => {
+    if (res.code === 200) {
+      uni.showToast({
+        title: '删除成功',
+        icon: 'none'
+      })
+      switchTab(tab.value + 1)
+    }
+    else
+      uni.showToast({
+        title: '删除失败',
+        icon: 'none'
+      })
+  })
+}
 
 // 申请退款
 const refundVisible = ref(false)
@@ -201,7 +224,7 @@ const order_click = (card) => {
     })
   }
   // 申请退款
-  if (card.state === 3) {
+  if (card.state === 3 || card.state === 1) {
     refundVisible.value = true
   }
   // 拒绝原因
@@ -408,7 +431,6 @@ onReachBottom(() => {
     text-align: left;
     font-style: normal;
     text-transform: none;
-    margin-right: 20rpx;
   }
 }
 

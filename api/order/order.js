@@ -20,3 +20,5 @@ export const get_order_count = () => request.get('/order/order_count')
 
 // 获取运费和商品价格
 export const get_order_price = (data) => request.post('/order/price_inquiry', data)
+
+export const post_delete_order = (id) => request.post('/order/delete_order', { id })
