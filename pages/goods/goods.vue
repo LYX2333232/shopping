@@ -13,15 +13,14 @@
 
 
 	<view class="goods" style="display: flex;background-color:rgba(255, 255, 255, 1) ;">
-		<view
-			style="width: 200rpx;height: 100%;background-color: #F1EDE9;display: flex;flex-direction: column;align-items: center;">
+		<view class="left">
 			<view class="select" v-for="item in showSelectList" :key="item.id"
-				:style="(item.children ? '' : 'background-color: #FFFFFF;') + (item.id === selectIndex ? 'font-weight: 800' : '')"
+				:style="(item.children ? '' : 'background-color: #FFFFFF;') + (item.id === (select.t_id ?? select.f_t_id) ? 'font-weight: 800' : '')"
 				@click="changeIndex(item)">
-				<text v-for="(text, index) in item.name" :key="index">{{ text }}</text>
+				<text v-for="(text, index) in item.name" :key="text + index">{{ text }}</text>
 			</view>
 		</view>
-		<view style="display: block;">
+		<view class="right">
 			<view class="select1">
 				<view :style="upIndex === 0 ? 'color: #75694A;font-size: 1.1rem' : ''" @click="changeUpIndex(0)">
 					综合
@@ -71,7 +70,6 @@
 				</view>
 			</view>
 		</view>
-
 	</view>
 
 </template>
@@ -95,14 +93,14 @@ let styles = ref({
 })
 
 // 选中的list的index
-const selectIndex = ref(0)
+const select = ref(0)
 const selectlist = ref([])
 const showSelectList = ref([])
 
 let page = 1
 
 const changeIndex = (item) => {
-	selectIndex.value = item.id
+	select.value = item
 	console.log(item)
 	if (item.children) {
 		changeShowList(item.id)
@@ -142,7 +140,6 @@ const toDetail = (id) => {
 }
 
 const getInfoList = async () => {
-	let res
 	const history = uni.getStorageSync('history')
 	if (searchInfo.value !== '') {
 		if (history.includes(searchInfo.value)) {
@@ -152,30 +149,31 @@ const getInfoList = async () => {
 		history.unshift(searchInfo.value)
 		uni.setStorageSync('history', history)
 	}
-	if (upIndex.value === 0) {
-		res = await get_goods_list({ value: searchInfo.value, page, type: selectIndex.value })
-	}
-	else if (upIndex.value === 1) {
-		res = await get_goods_list({ value: searchInfo.value, page, order: 1, type: selectIndex.value })
+	console.log(select.value)
+	const option = {}
+	// 搜索商品
+	option.value = searchInfo.value
+	// 选中的类目
+	if (select.value.f_t_id)
+		option.f_t_id = select.value.f_t_id
+	else if (select.value.t_id)
+		option.t_id = select.value.t_id
+	// 排序
+	if (upIndex.value === 1) {
+		option.order = 1
 	}
 	else if (upIndex.value === 2) {
-		if (price.value === 'down') {
-			price.value = 'up'
-			res = await get_goods_list({ value: searchInfo.value, page, price_order: 1, type: selectIndex.value })
-		} else {
-			price.value = 'down'
-			res = await get_goods_list({ value: searchInfo.value, page, price_order: 2, type: selectIndex.value })
-		}
+		option.price_order = price.value === 'down' ? 1 : 2
+		price.value = price.value === 'down' ? 'up' : 'down'
 	}
 	else if (upIndex.value === 3) {
-		if (sale.value === 'down') {
-			sale.value = 'up'
-			res = await get_goods_list({ value: searchInfo.value, page, sell_order: 1, type: selectIndex.value })
-		} else {
-			sale.value = 'down'
-			res = await get_goods_list({ value: searchInfo.value, page, sell_order: 2, type: selectIndex.value })
-		}
+		option.sell_order = sale.value === 'down' ? 1 : 2
+		sale.value = sale.value === 'down' ? 'up' : 'down'
 	}
+	// 页码
+	option.page = page
+
+	const res = await get_goods_list(option)
 	if (res.data.data.length === 0) {
 		page--
 		if (page === 0) infolist.value = []
@@ -189,13 +187,23 @@ const getInfoList = async () => {
 const getData = () => {
 	// 获取分类列表
 	get_type_list(t_id).then(res => {
-		console.log(res.data)
-		selectlist.value = res.data.map(data => ({
-			...data,
-			children: [{ id: data.id, name: '全部商品' }]
-		}))
-		showSelectList.value = [{ id: 0, name: '全部商品', children: [] }, ...selectlist.value]
-		selectIndex.value = showSelectList.value[0].id
+		selectlist.value = res.data.map(data => {
+			const children = [{ f_t_id: data.id, name: '全部商品' }]
+			data.new_children.forEach(child => {
+				children.push({
+					t_id: child.id,
+					name: child.name
+				})
+			})
+			return {
+				...data,
+				f_t_id: data.id,
+				children
+			}
+		})
+		showSelectList.value = [{ name: '全部商品', children: [] }, ...selectlist.value]
+		console.log(selectlist.value)
+		select.value = showSelectList.value[0]
 		page = 1
 		infolist.value = []
 		// 初始化数据
@@ -268,20 +276,36 @@ page {
 	position: relative;
 	z-index: 999;
 
-	.select {
+	.left {
 		width: 200rpx;
-		padding: 20rpx 0;
-		font-family: Inter, Inter;
-		font-weight: 400;
-		font-size: 30rpx;
-		color: #555555;
-		font-style: normal;
+		height: 100%;
+		background-color: #F1EDE9;
 		display: flex;
+		flex-direction: column;
 		align-items: center;
-		justify-content: center;
-		flex-wrap: wrap;
-		letter-spacing: 0.1rem;
+		position: fixed;
+
+		.select {
+			width: 200rpx;
+			padding: 20rpx 0;
+			font-family: Inter, Inter;
+			font-weight: 400;
+			font-size: 30rpx;
+			color: #555555;
+			font-style: normal;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-wrap: wrap;
+			letter-spacing: 0.1rem;
+		}
 	}
+
+	.right {
+		display: block;
+		margin-left: 200rpx;
+	}
+
 
 	.select1 {
 		width: 550rpx;
