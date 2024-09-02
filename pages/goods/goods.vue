@@ -1,7 +1,7 @@
 <template>
 	<view class=" tab">
 		<view class="pic">
-			<image :src="user.userInfo.avatar" mode="" style=""></image>
+			<image :src="user.userInfo.avatar"></image>
 		</view>
 		<view style="width: 580rpx;height: 50rpx;">
 			<uni-section title="图标" type="line" padding>
@@ -15,14 +15,9 @@
 	<view class="goods" style="display: flex;background-color:rgba(255, 255, 255, 1) ;">
 		<view
 			style="width: 200rpx;height: 100%;background-color: #F1EDE9;display: flex;flex-direction: column;align-items: center;">
-			<!-- <view class="select">
-				<text>生</text>
-				<text>鲜</text>
-				<text>水</text>
-				<text>果</text>
-			</view> -->
-			<view class="select" v-for="(item, index) in selectlist" :key="index"
-				:style="item.id === selectIndex ? 'background-color: #FFFFFF;' : ''" @click="changeIndex(item.id)">
+			<view class="select" v-for="item in showSelectList" :key="item.id"
+				:style="(item.children ? '' : 'background-color: #FFFFFF;') + (item.id === selectIndex ? 'font-weight: 800' : '')"
+				@click="changeIndex(item)">
 				<text v-for="(text, index) in item.name" :key="index">{{ text }}</text>
 			</view>
 		</view>
@@ -102,13 +97,28 @@ let styles = ref({
 // 选中的list的index
 const selectIndex = ref(0)
 const selectlist = ref([])
+const showSelectList = ref([])
 
 let page = 1
 
-const changeIndex = (index) => {
-	selectIndex.value = index
+const changeIndex = (item) => {
+	selectIndex.value = item.id
+	console.log(item)
+	if (item.children) {
+		changeShowList(item.id)
+	}
 	page = 1
 	getInfoList()
+}
+
+const changeShowList = (id) => {
+	showSelectList.value = [{ id: 0, name: '全部商品', children: [] }]
+	selectlist.value.forEach(item => {
+		showSelectList.value.push(item)
+		if (item.id === id) {
+			showSelectList.value.push(...item.children)
+		}
+	})
 }
 
 // 记录价格升序降序
@@ -177,11 +187,15 @@ const getInfoList = async () => {
 }
 
 const getData = () => {
-
 	// 获取分类列表
 	get_type_list(t_id).then(res => {
-		selectlist.value = res.data
-		selectIndex.value = selectlist.value[0].id
+		console.log(res.data)
+		selectlist.value = res.data.map(data => ({
+			...data,
+			children: [{ id: data.id, name: '全部商品' }]
+		}))
+		showSelectList.value = [{ id: 0, name: '全部商品', children: [] }, ...selectlist.value]
+		selectIndex.value = showSelectList.value[0].id
 		page = 1
 		infolist.value = []
 		// 初始化数据
@@ -192,7 +206,6 @@ const getData = () => {
 onShow(() => {
 	searchInfo.value = uni.getStorageSync('searchInfo') ?? ''
 	t_id = uni.getStorageSync('t_id') ?? undefined
-
 	getData()
 })
 

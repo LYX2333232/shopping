@@ -50,7 +50,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onReachBottom } from '@dcloudio/uni-app'
 import { get_today_list } from '@/api/index/today/today'
 import Header from '@/components/header.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
@@ -66,13 +66,29 @@ const toDetail = (id) => {
 }
 
 const getData = () => {
-  get_today_list().then(res => {
+  get_today_list(1).then(res => {
     dataList.value = res.data.data
   })
 }
 
+var page = 1
+
 onShow(() => {
   getData()
+})
+
+onReachBottom(() => {
+  get_today_list(++page).then(res => {
+    if (res.data.data.length)
+      dataList.value = dataList.value.concat(res.data.data)
+    else {
+      page--
+      uni.showToast({
+        title: '没有更多了',
+        icon: 'none'
+      })
+    }
+  })
 })
 </script>
 

@@ -2,44 +2,6 @@
   <Header title="限时秒杀" />
   <view class="all">
     <view class="background" />
-    <!-- <view class="top">
-      <TnScrollList :indicator="false">
-        <view class="item-container">
-          <view class="main">
-            <image :src="mainCard.img" style="width: 300rpx;height: 300rpx;" mode="scaleToFill" />
-            <view class="tn-flex-center-start">
-              <image :src="mainCard.subImg" mode="scaleToFill" style="width: 70rpx;height: 70rpx;margin: 15rpx;" />
-              <view class="mainText">
-                <view class="main_title">{{ mainCard.title }}</view>
-                <view class="main_price">
-                  ￥ {{ mainCard.price }}
-                </view>
-                <view class="tn-flex-center-start">
-                  <TnLineProgress style="width: 150rpx;" :percent="mainCard.saled" active-color="#834820" />
-                  <view class="main_done">已抢{{ mainCard.saled }}%</view>
-                </view>
-              </view>
-            </view>
-          </view>
-          <view v-for="(item, index) in subCard" :key="'subCard' + index" class="sub">
-            <image :src="mainCard.img" style="width: 240rpx;height: 240rpx;" mode="scaleToFill" />
-            <view class="tn-flex-center-start">
-              <image :src="mainCard.subImg" mode="scaleToFill" style="width: 60rpx;height: 60rpx;margin: 15rpx;" />
-              <view class="subText">
-                <view class="sub_title">{{ mainCard.title }}</view>
-                <view class="sub_price">
-                  ￥ {{ mainCard.price }}
-                </view>
-                <view class="tn-flex-center-start">
-                  <TnLineProgress style="width: 120rpx;" :percent="mainCard.saled" active-color="#834820" />
-                  <view class="sub_done">已抢{{ mainCard.saled }}%</view>
-                </view>
-              </view>
-            </view>
-          </view>
-        </view>
-      </TnScrollList>
-    </view> -->
     <view v-for="(item, index) in items" :key="'item' + index" class="item">
       <image :src="item.path" mode="scaleToFill" style="width:200rpx;height:160rpx" />
       <view class="right">
@@ -71,13 +33,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
+import { onShow, onReachBottom } from '@dcloudio/uni-app'
 import Header from '@/components/header.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import { get_goods_list } from '@/api/index/seckill/seckill'
 
-const mainCard = ref({})
-const subCard = ref([])
 // 底部的数据
 const items = ref([])
 
@@ -90,83 +50,29 @@ const toBuy = (id) => {
 
 const getData = () => {
   // 获取数据
-  const main = {
-    img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-    subImg: 'https://img.yzcdn.cn/vant/apple-2.jpg',
-    title: '休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包',
-    price: 100,
-    saled: 50
-  }
-  const sub = [
-    {
-      img: 'https://img.yzcdn.cn/vant/apple-2.jpg',
-      subImg: 'https://img.yzcdn.cn/vant/apple-3.jpg',
-      title: '休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包',
-      price: 100,
-      saled: 50
-    },
-    {
-      img: 'https://img.yzcdn.cn/vant/apple-3.jpg',
-      subImg: 'https://img.yzcdn.cn/vant/apple-4.jpg',
-      title: '休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包',
-      price: 100,
-      saled: 50
-    },
-    {
-      img: 'https://img.yzcdn.cn/vant/apple-4.jpg',
-      subImg: 'https://img.yzcdn.cn/vant/apple-5.jpg',
-      title: '休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包休闲芒果干大礼包',
-      price: 100,
-      saled: 50
-    }
-  ]
-  // const item = [
-  //   {
-  //     img: 'https://img.yzcdn.cn/vant/apple-1.jpg',
-  //     name: '智利车厘子1000g（当季限定）',
-  //     price: 199,
-  //     old_price: 299,
-  //     last: 100
-  //   },
-  //   {
-  //     img: 'https://img.yzcdn.cn/vant/apple-2.jpg',
-  //     name: '智利车厘子1000g（当季限定）',
-  //     price: 199,
-  //     old_price: 299,
-  //     last: 100
-  //   },
-  //   {
-  //     img: 'https://img.yzcdn.cn/vant/apple-3.jpg',
-  //     name: '智利车厘子1000g（当季限定）',
-  //     price: 199,
-  //     old_price: 299,
-  //     last: 100
-  //   },
-  //   {
-  //     img: 'https://img.yzcdn.cn/vant/apple-4.jpg',
-  //     name: '智利车厘子1000g（当季限定）',
-  //     price: 199,
-  //     old_price: 299,
-  //     last: 100
-  //   },
-  //   {
-  //     img: 'https://img.yzcdn.cn/vant/apple-5.jpg',
-  //     name: '智利车厘子1000g（当季限定）',
-  //     price: 199,
-  //     old_price: 299,
-  //     last: 100
-  //   }
-  // ]
-  get_goods_list().then(res => {
+  get_goods_list(1).then(res => {
     items.value = res.data.data
   })
-  mainCard.value = main
-  subCard.value = sub
 }
 
 onShow(() => {
   getData()
 })
+
+var page = 1
+onReachBottom(() => {
+  get_goods_list(++page).then(res => {
+    if (res.data.data.length)
+      items.value = items.value.concat(res.data.data)
+    else {
+      page--
+      uni.showToast({
+        title: '没有更多数据了',
+        icon: 'none'
+      })
+    }
+  })
+}) 
 </script>
 
 <style lang="scss" scoped>

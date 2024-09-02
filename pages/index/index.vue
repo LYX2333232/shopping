@@ -15,8 +15,8 @@
 			<view class=" tab">
 				<view class="pic">
 					<image
-						:src="user.userInfo ? user.userInfo.avatar : 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png'"
-						mode="" style=""></image>
+						:src="user.userInfo ? user.userInfo.avatar : 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png'">
+					</image>
 				</view>
 				<view style="width: 580rpx;height: 50rpx;">
 					<uni-section title="图标" type="line" padding>
