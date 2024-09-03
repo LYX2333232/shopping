@@ -166,622 +166,643 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
-import { UserStore } from '@/store'
-import { uploadImage, Login, add_us } from '@/api/user/user'
-import { get_order_count } from '@/api/order/order'
-import { post_feedback } from '@/api/feedback/feedback'
-import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
-import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
-import TnForm from '@/uni_modules/tuniaoui-vue3/components/form/src/form.vue'
-import TnFormItem from '@/uni_modules/tuniaoui-vue3/components/form/src/form-item.vue'
-import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
-import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
-import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
-import TnBadge from '@/uni_modules/tuniaoui-vue3/components/badge/src/badge.vue'
+	import {
+		onMounted,
+		ref
+	} from 'vue'
+	import {
+		onShow
+	} from '@dcloudio/uni-app'
+	import {
+		UserStore
+	} from '@/store'
+	import {
+		uploadImage,
+		Login,
+		add_us
+	} from '@/api/user/user'
+	import {
+		get_order_count
+	} from '@/api/order/order'
+	import {
+		post_feedback
+	} from '@/api/feedback/feedback'
+	import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+	import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
+	import TnForm from '@/uni_modules/tuniaoui-vue3/components/form/src/form.vue'
+	import TnFormItem from '@/uni_modules/tuniaoui-vue3/components/form/src/form-item.vue'
+	import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
+	import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+	import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
+	import TnBadge from '@/uni_modules/tuniaoui-vue3/components/badge/src/badge.vue'
 
-onMounted(() => {
-	if (!store.userInfo) {
-		nextTick(() => {
-			loginVisible.value = true
+	onMounted(() => {
+		if (!store.userInfo) {
+			nextTick(() => {
+				loginVisible.value = true
+			})
+		}
+	})
+
+	const store = UserStore()
+
+	const funList0 = ref([{
+			name: '账户余额',
+			icon: '../../static/icon/me/wallet.png'
+		},
+		{
+			name: '我的团队',
+			icon: '../../static/icon/me/team.png'
+		},
+		{
+			name: '销售记录',
+			icon: '../../static/icon/me/sell.png'
+		},
+		{
+			name: '邀请好友',
+			icon: '../../static/icon/me/person.png'
+		}
+	])
+
+	let funList = [{
+			name: '待付款',
+			icon: '../../static/icon/me/topay.png'
+		},
+		{
+			name: '待发货',
+			icon: '../../static/icon/me/wait.png'
+		},
+		{
+			name: '待收货',
+			icon: '../../static/icon/me/truck.png'
+		},
+		{
+			name: '退款/售后',
+			icon: '../../static/icon/me/after.png'
+		},
+	]
+	const funList1 = ref([])
+
+	const order_count = ref([])
+
+	// 反馈的弹出窗
+	const feedback = ref(false)
+
+	const phone = ref()
+
+	// 反馈的内容
+	const feedbackContent = ref()
+
+	// 登录弹窗
+	const loginVisible = ref(false)
+
+	const login_form = ref({
+		name: undefined,
+		avatar: undefined,
+		upload: undefined
+	})
+
+	// 展示登录弹窗
+	const showLogin = () => {
+
+		// const systemInfo = uni.getSystemInfoSync()
+		// console.log('版本', systemInfo.SDKVersion)
+
+		// if (compare(systemInfo.SDKVersion, '2.21.2') < 0) {
+		// 	uni.showToast({
+		// 		title: '当前版本不支持自定义登录，将自动选择默认头像和用户名登录',
+		// 		icon: 'none'
+		// 	})
+		// 	defaultLogin()
+		// 	return
+		// }
+		loginVisible.value = true
+	}
+
+	const compare = (a, b) => {
+		const a_array = a.split('.').map(e => parseInt(e))
+		const b_array = b.split('.').map(e => parseInt(e))
+		for (let i = 0; i < a_array.length; i++) {
+			if (a_array[i] > b_array[i]) {
+				return 1
+			} else if (a_array[i] < b_array[i]) {
+				return -1
+			}
+		}
+		return 0
+	}
+
+	// 使用默认用户名和头像登录
+	const defaultLogin = async () => {
+		const downloadResult = await new Promise((resolve, reject) => {
+			uni.downloadFile({
+				url: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png',
+				success: resolve,
+				fail: reject
+			});
+		});
+		const filePath = downloadResult.tempFilePath;
+		// 转换为base64
+		const base64 = uni.getFileSystemManager().readFileSync(filePath, 'base64')
+		// 添加前缀
+		login_form.value.avatar = 'data:image/png;base64,' + base64
+		const res = await uploadImage('data:image/png;base64,' + base64)
+
+		const up_id = uni.getStorageSync('up_id')
+		uni.login({
+			success: (s) => {
+				// 登录
+				Login({
+					code: s.code,
+					avatar: res.data,
+					name: 'user',
+					up_id
+				}).then(res => {
+					// 登录成功
+					if (res.code === 200) {
+						// 关闭弹窗
+						loginVisible.value = false
+						// 获取用户信息
+						store.set_user_info(res.data)
+					}
+				})
+			},
 		})
 	}
-})
 
-const store = UserStore()
-
-const funList0 = ref([
-	{
-		name: '账户余额',
-		icon: '../../static/icon/me/wallet.png'
-	},
-	{
-		name: '我的团队',
-		icon: '../../static/icon/me/team.png'
-	},
-	{
-		name: '销售记录',
-		icon: '../../static/icon/me/sell.png'
-	},
-	{
-		name: '邀请好友',
-		icon: '../../static/icon/me/person.png'
-	}
-])
-
-let funList = [
-	{
-		name: '待付款',
-		icon: '../../static/icon/me/topay.png'
-	},
-	{
-		name: '待发货',
-		icon: '../../static/icon/me/wait.png'
-	},
-	{
-		name: '待收货',
-		icon: '../../static/icon/me/truck.png'
-	},
-	{
-		name: '退款/售后',
-		icon: '../../static/icon/me/after.png'
-	},
-]
-const funList1 = ref([])
-
-const order_count = ref([])
-
-// 反馈的弹出窗
-const feedback = ref(false)
-
-const phone = ref()
-
-// 反馈的内容
-const feedbackContent = ref()
-
-// 登录弹窗
-const loginVisible = ref(false)
-
-const login_form = ref({
-	name: undefined,
-	avatar: undefined,
-	upload: undefined
-})
-
-// 展示登录弹窗
-const showLogin = () => {
-
-	// const systemInfo = uni.getSystemInfoSync()
-	// console.log('版本', systemInfo.SDKVersion)
-
-	// if (compare(systemInfo.SDKVersion, '2.21.2') < 0) {
-	// 	uni.showToast({
-	// 		title: '当前版本不支持自定义登录，将自动选择默认头像和用户名登录',
-	// 		icon: 'none'
-	// 	})
-	// 	defaultLogin()
-	// 	return
-	// }
-	loginVisible.value = true
-}
-
-const compare = (a, b) => {
-	const a_array = a.split('.').map(e => parseInt(e))
-	const b_array = b.split('.').map(e => parseInt(e))
-	for (let i = 0; i < a_array.length; i++) {
-		if (a_array[i] > b_array[i]) {
-			return 1
-		} else if (a_array[i] < b_array[i]) {
-			return -1
+	// 点击分销
+	const tap_item = (index) => {
+		if (index === 0) {
+			uni.navigateTo({
+				url: '/pages/me/surplus/surplus',
+			})
+		}
+		if (index === 1) {
+			uni.navigateTo({
+				url: '/pages/me/team/team',
+			})
+		}
+		if (index === 2) {
+			uni.navigateTo({
+				url: '/pages/me/record/record',
+			})
+		}
+		if (index === 3) {
+			uni.navigateTo({
+				url: '/pages/me/invite/invite',
+			})
 		}
 	}
-	return 0
-}
 
-// 使用默认用户名和头像登录
-const defaultLogin = async () => {
-	const downloadResult = await new Promise((resolve, reject) => {
-		uni.downloadFile({
-			url: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png',
-			success: resolve,
-			fail: reject
-		});
-	});
-	const filePath = downloadResult.tempFilePath;
-	// 转换为base64
-	const base64 = uni.getFileSystemManager().readFileSync(filePath, 'base64')
-	// 添加前缀
-	login_form.value.avatar = 'data:image/png;base64,' + base64
-	const res = await uploadImage('data:image/png;base64,' + base64)
+	// 点击订单
+	const tap_order = (index) => {
+		uni.navigateTo({
+			url: '/pages/me/order/index?index=' + index
+		})
+	}
 
-	const up_id = uni.getStorageSync('up_id')
-	uni.login({
-		success: (s) => {
-			// 登录
-			Login({
-				code: s.code,
-				avatar: res.data,
-				name: 'user',
-				up_id
-			}).then(res => {
-				// 登录成功
-				if (res.code === 200) {
-					// 关闭弹窗
-					loginVisible.value = false
-					// 获取用户信息
-					store.set_user_info(res.data)
+	// 点击我的应用的内容
+	const tap_application = (index) => {
+		// 收货地址
+		if (index === 0) {
+			uni.navigateTo({
+				url: '/pages/me/address/index'
+			})
+		}
+		// 我的优惠券
+		if (index === 2) {
+			uni.navigateTo({
+				url: '/pages/me/coupon/index'
+			})
+		}
+		// 点击反馈
+		if (index === 3) {
+			feedback.value = true
+		}
+		if (index === 4) {
+			uni.navigateTo({
+				url: '/pages/me/favorite/index'
+			})
+		}
+		if (index === 5) { // 退出登录
+			uni.showModal({
+				title: '提示',
+				content: '确定要退出登录吗？',
+				success: (res) => {
+					if (res.confirm) {
+						store.set_user_info(null)
+						uni.clearStorageSync()
+						// 重新加载当前页面
+						uni.switchTab({
+							url: '/pages/me/me',
+						})
+					}
 				}
 			})
-		},
-	})
-}
+		}
+	}
 
-// 点击分销
-const tap_item = (index) => {
-	if (index === 0) {
-		uni.navigateTo({
-			url: '/pages/me/surplus/surplus',
+	const getphonenumber = (e) => {
+		const up_id = uni.getStorageSync('up_id')
+		uni.login({
+			success: (s) => {
+				// 登录
+				Login({
+					code: s.code,
+					avatar: login_form.value.upload,
+					name: login_form.value.name,
+					up_id
+				}).then(res => {
+					// 登录成功
+					if (res.code === 200) {
+						// 关闭弹窗
+						loginVisible.value = false
+						// 获取用户信息
+						store.set_user_info(res.data)
+					}
+				})
+			},
 		})
 	}
-	if (index === 1) {
-		uni.navigateTo({
-			url: '/pages/me/team/team',
-		})
-	}
-	if (index === 2) {
-		uni.navigateTo({
-			url: '/pages/me/record/record',
-		})
-	}
-	if (index === 3) {
-		uni.navigateTo({
-			url: '/pages/me/invite/invite',
-		})
-	}
-}
 
-// 点击订单
-const tap_order = (index) => {
-	uni.navigateTo({
-		url: '/pages/me/order/index?index=' + index
-	})
-}
 
-// 点击我的应用的内容
-const tap_application = (index) => {
-	// 收货地址
-	if (index === 0) {
-		uni.navigateTo({
-			url: '/pages/me/address/index'
-		})
+	const cancelFeedback = () => {
+		feedback.value = false
 	}
-	// 我的优惠券
-	if (index === 2) {
-		uni.navigateTo({
-			url: '/pages/me/coupon/index'
-		})
-	}
-	// 点击反馈
-	if (index === 3) {
-		feedback.value = true
-	}
-	if (index === 4) {
-		uni.navigateTo({
-			url: '/pages/me/favorite/index'
-		})
-	}
-	if (index === 5) { // 退出登录
-		uni.showModal({
-			title: '提示',
-			content: '确定要退出登录吗？',
-			success: (res) => {
-				if (res.confirm) {
-					store.set_user_info(null)
-					uni.clearStorageSync()
-					// 重新加载当前页面
-					uni.switchTab({
-						url: '/pages/me/me',
-					})
-				}
+
+	const submitFeedback = () => {
+		post_feedback({
+			phone: phone.value,
+			content: feedbackContent.value
+		}).then(res => {
+			if (res.code === 200) {
+				feedback.value = false
+				phone.value = ''
+				feedbackContent.value = ''
 			}
 		})
 	}
-}
 
-const getphonenumber = (e) => {
-	const up_id = uni.getStorageSync('up_id')
-	uni.login({
-		success: (s) => {
-			// 登录
-			Login({
-				code: s.code,
-				avatar: login_form.value.upload,
-				name: login_form.value.name,
-				up_id
-			}).then(res => {
-				// 登录成功
-				if (res.code === 200) {
-					// 关闭弹窗
-					loginVisible.value = false
-					// 获取用户信息
-					store.set_user_info(res.data)
-				}
-			})
-		},
-	})
-}
-
-
-const cancelFeedback = () => {
-	feedback.value = false
-}
-
-const submitFeedback = () => {
-	post_feedback({
-		phone: phone.value,
-		content: feedbackContent.value
-	}).then(res => {
-		if (res.code === 200) {
-			feedback.value = false
-			phone.value = ''
-			feedbackContent.value = ''
-		}
-	})
-}
-
-// 选择头像
-const chooseavatar = (e) => {
-	// 转换为base64
-	const base64 = uni.getFileSystemManager().readFileSync(e.detail.avatarUrl, 'base64')
-	// 添加前缀
-	login_form.value.avatar = 'data:image/png;base64,' + base64
-	uploadImage('data:image/png;base64,' + base64).then(res => {
-		login_form.value.upload = res.data
-	})
-}
-
-const addUsVisible = ref(false)
-const add_us_title = ref('分销规则')
-const add_us_content = ref('分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是')
-const add_us_form = ref({
-	phone: undefined,
-	agree: false
-})
-const add_us_rules = ref({
-	phone: [
-		{ required: true, message: '请输入手机号', trigger: 'blur' },
-		{ pattern: /^1[3-9]\d{9}$/, message: '手机号格式错误', trigger: 'blur' }
-	]
-})
-
-const addUs = () => {
-	const pattern = /^1[3-9]\d{9}$/
-	if (add_us_form.value.phone.toString().length !== 11 || !pattern.test(add_us_form.value.phone)) {
-		uni.showModal({
-			title: '提示',
-			content: '请输入正确的手机号码',
-			showCancel: false
+	// 选择头像
+	const chooseavatar = (e) => {
+		// 转换为base64
+		const base64 = uni.getFileSystemManager().readFileSync(e.detail.avatarUrl, 'base64')
+		// 添加前缀
+		login_form.value.avatar = 'data:image/png;base64,' + base64
+		uploadImage('data:image/png;base64,' + base64).then(res => {
+			login_form.value.upload = res.data
 		})
-		return
 	}
-	if (!add_us_form.value.agree) {
-		uni.showModal({
-			title: '提示',
-			content: '请同意相关服务条款',
-			showCancel: false
+
+	const addUsVisible = ref(false)
+	const add_us_title = ref('分销规则')
+	const add_us_content = ref(
+		'分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是'
+	)
+	const add_us_form = ref({
+		phone: undefined,
+		agree: false
+	})
+	const add_us_rules = ref({
+		phone: [{
+				required: true,
+				message: '请输入手机号',
+				trigger: 'blur'
+			},
+			{
+				pattern: /^1[3-9]\d{9}$/,
+				message: '手机号格式错误',
+				trigger: 'blur'
+			}
+		]
+	})
+
+	const addUs = () => {
+		const pattern = /^1[3-9]\d{9}$/
+		if (add_us_form.value.phone.toString().length !== 11 || !pattern.test(add_us_form.value.phone)) {
+			uni.showModal({
+				title: '提示',
+				content: '请输入正确的手机号码',
+				showCancel: false
+			})
+			return
+		}
+		if (!add_us_form.value.agree) {
+			uni.showModal({
+				title: '提示',
+				content: '请同意相关服务条款',
+				showCancel: false
+			})
+			return
+		}
+		add_us(add_us_form.value.phone).then(res => {
+			if (res.code === 200) {
+				uni.showToast({
+					title: '提示',
+					content: '申请成功'
+				})
+				addUsVisible.value = false
+			} else {
+				uni.showToast({
+					title: '提示',
+					content: res.msg
+				})
+			}
 		})
-		return
 	}
-	add_us(add_us_form.value.phone).then(res => {
-		if (res.code === 200) {
-			uni.showToast({
-				title: '提示',
-				content: '申请成功'
-			})
-			addUsVisible.value = false
-		}
-		else {
-			uni.showToast({
-				title: '提示',
-				content: res.msg
-			})
-		}
+
+	const getData = () => {
+		const list = [{
+				name: '收货地址',
+				icon: '../../static/icon/me/location.png'
+			},
+			{
+				name: '联系客服',
+				icon: '../../static/icon/me/service.png'
+			},
+			{
+				name: '我的优惠券',
+				icon: '../../static/icon/me/money.png'
+			},
+			{
+				name: '意见反馈',
+				icon: '../../static/icon/me/feedback.png'
+			},
+			{
+				name: '收藏商品',
+				icon: '../../static/icon/me/star.png'
+			},
+			{
+				name: '退出登录',
+				icon: '../../static/icon/me/logout.png'
+			}
+		]
+		funList1.value = list
+
+		get_order_count().then(res => {
+			order_count.value = [res.data.pay, res.data.delivery, res.data.collect, 0]
+			console.log(order_count.value, "order_count.value")
+		})
+	}
+
+	onShow(() => {
+		getData()
 	})
-}
-
-const getData = () => {
-	const list = [
-		{
-			name: '收货地址',
-			icon: '../../static/icon/me/location.png'
-		},
-		{
-			name: '联系客服',
-			icon: '../../static/icon/me/service.png'
-		},
-		{
-			name: '我的优惠券',
-			icon: '../../static/icon/me/money.png'
-		},
-		{
-			name: '意见反馈',
-			icon: '../../static/icon/me/feedback.png'
-		},
-		{
-			name: '收藏商品',
-			icon: '../../static/icon/me/star.png'
-		},
-		{
-			name: '退出登录',
-			icon: '../../static/icon/me/logout.png'
-		}
-	]
-	funList1.value = list
-
-	get_order_count().then(res => {
-		order_count.value = [res.data.pay, res.data.delivery, res.data.collect, 0]
-	})
-}
-
-onShow(() => {
-	getData()
-})
 </script>
 
 <style lang="scss" scoped>
-.all {
-	width: 750rpx;
-	min-height: 100vh;
-	//background: linear-gradient(0deg, rgba(240, 240, 240, 1.0) 67.000002%, rgba(240, 224, 198, 1)100.000002%);
-	background: linear-gradient(180deg, #FAEBD9 0%, #F0E0C6 10%, #FBF0E2 20%, #F7F7F7 50%, #F7F7F7 100%);
-	padding-top: 100rpx;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-
-	.top {
-		width: 90%;
-		height: 150rpx;
+	.all {
+		width: 750rpx;
+		min-height: 100vh;
+		//background: linear-gradient(0deg, rgba(240, 240, 240, 1.0) 67.000002%, rgba(240, 224, 198, 1)100.000002%);
+		background: linear-gradient(180deg, #FAEBD9 0%, #F0E0C6 10%, #FBF0E2 20%, #F7F7F7 50%, #F7F7F7 100%);
+		padding-top: 100rpx;
 		display: flex;
-		margin: 0 0 40rpx;
+		flex-direction: column;
+		align-items: center;
 
-		.avatar {
-			position: relative;
+		.top {
+			width: 90%;
+			height: 150rpx;
+			display: flex;
+			margin: 0 0 40rpx;
+
+			.avatar {
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+
+				.image {
+					width: 150rpx;
+					height: 150rpx;
+					border-radius: 100%;
+				}
+
+				.tabel {
+					position: absolute;
+					height: 36.54rpx;
+					border-radius: 53.85rpx;
+					bottom: -20rpx;
+					text-align: center;
+					padding: 0 20rpx;
+				}
+			}
+
+			.denglu {
+				font-style: Inter-Medium;
+				font-size: 34rpx;
+				margin: 20rpx 0 10rpx;
+			}
+
+			.bianhao {
+				color: #6D6D6D;
+				font-size: 22rpx;
+			}
+		}
+
+		.middle {
+			width: 95%;
+			height: 140.38rpx;
+			border-radius: 11.54rpx;
+
+			.block {
+				display: flex;
+				padding-top: 10rpx;
+				padding-left: 26rpx;
+				font-family: PingFang SC, PingFang SC;
+
+				.image {
+					width: 30rpx;
+					height: 30rpx;
+					margin-right: 10rpx;
+					margin-top: 30rpx;
+				}
+
+				.p1 {
+					margin-top: 20rpx;
+					font-weight: 500;
+					font-size: 31rpx;
+					color: #FFDFC3;
+					line-height: 46rpx;
+					text-align: left;
+				}
+
+				.p2 {
+					font-weight: 400;
+					font-size: 23rpx;
+					color: #FFDFC3;
+					line-height: 35rpx;
+				}
+
+				.p3 {
+					width: 146rpx;
+					height: 56rpx;
+					background: linear-gradient(96deg, #EDD3A9 0%, #E0B57E 100%);
+					border-radius: 56rpx;
+					text-align: center;
+					font-family: PingFang SC, PingFang SC;
+					font-weight: 500;
+					font-size: 27rpx;
+					color: #835A2C;
+					padding-top: 12rpx;
+					position: absolute;
+					right: 50rpx;
+					top: 375rpx;
+
+				}
+			}
+
+		}
+
+		.block1 {
+			width: 95%;
+			height: 232.69rpx;
+			background-color: #fff;
+			border-radius: 13.46rpx;
+			margin-top: 15rpx;
+
+			.myorder {
+				font-family: Inter, Inter;
+				font-weight: 600;
+				font-size: 31rpx;
+				color: #000000;
+				line-height: 46rpx;
+				text-align: left;
+				font-style: normal;
+				text-transform: none;
+				padding-left: 20rpx;
+				padding-top: 10rpx;
+			}
+		}
+
+		.block2 {
+			width: 95%;
+			height: 438.46rpx;
+			background-color: #fff;
+			border-radius: 13.46rpx;
+			margin-top: 15rpx;
+
+			.myorder {
+				font-family: Inter, Inter;
+				font-weight: 600;
+				font-size: 31rpx;
+				color: #000000;
+				line-height: 46rpx;
+				text-align: left;
+				font-style: normal;
+				text-transform: none;
+				padding-left: 20rpx;
+				padding-top: 10rpx;
+			}
+		}
+
+		.function {
+			margin-top: 15rpx;
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+		}
+
+		.tofunction {
+			background-color: rgba(255, 255, 255, 1);
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 
-			.image {
-				width: 150rpx;
-				height: 150rpx;
-				border-radius: 100%;
-			}
-
-			.tabel {
-				position: absolute;
-				height: 36.54rpx;
-				border-radius: 53.85rpx;
-				bottom: -20rpx;
+			.img {
+				position: relative;
+				width: 50rpx;
+				height: 50rpx;
 				text-align: center;
-				padding: 0 20rpx;
-			}
-		}
-
-		.denglu {
-			font-style: Inter-Medium;
-			font-size: 34rpx;
-			margin: 20rpx 0 10rpx;
-		}
-
-		.bianhao {
-			color: #6D6D6D;
-			font-size: 22rpx;
-		}
-	}
-
-	.middle {
-		width: 95%;
-		height: 140.38rpx;
-		border-radius: 11.54rpx;
-
-		.block {
-			display: flex;
-			padding-top: 10rpx;
-			padding-left: 26rpx;
-			font-family: PingFang SC, PingFang SC;
-
-			.image {
-				width: 30rpx;
-				height: 30rpx;
-				margin-right: 10rpx;
-				margin-top: 30rpx;
-			}
-
-			.p1 {
-				margin-top: 20rpx;
-				font-weight: 500;
-				font-size: 31rpx;
-				color: #FFDFC3;
-				line-height: 46rpx;
-				text-align: left;
-			}
-
-			.p2 {
-				font-weight: 400;
-				font-size: 23rpx;
-				color: #FFDFC3;
-				line-height: 35rpx;
-			}
-
-			.p3 {
-				width: 146rpx;
-				height: 56rpx;
-				background: linear-gradient(96deg, #EDD3A9 0%, #E0B57E 100%);
-				border-radius: 56rpx;
-				text-align: center;
-				font-family: PingFang SC, PingFang SC;
-				font-weight: 500;
-				font-size: 27rpx;
-				color: #835A2C;
-				padding-top: 12rpx;
-				position: absolute;
-				right: 50rpx;
-				top: 375rpx;
-
-			}
-		}
-
-	}
-
-	.block1 {
-		width: 95%;
-		height: 232.69rpx;
-		background-color: #fff;
-		border-radius: 13.46rpx;
-		margin-top: 15rpx;
-
-		.myorder {
-			font-family: Inter, Inter;
-			font-weight: 600;
-			font-size: 31rpx;
-			color: #000000;
-			line-height: 46rpx;
-			text-align: left;
-			font-style: normal;
-			text-transform: none;
-			padding-left: 20rpx;
-			padding-top: 10rpx;
-		}
-	}
-
-	.block2 {
-		width: 95%;
-		height: 438.46rpx;
-		background-color: #fff;
-		border-radius: 13.46rpx;
-		margin-top: 15rpx;
-
-		.myorder {
-			font-family: Inter, Inter;
-			font-weight: 600;
-			font-size: 31rpx;
-			color: #000000;
-			line-height: 46rpx;
-			text-align: left;
-			font-style: normal;
-			text-transform: none;
-			padding-left: 20rpx;
-			padding-top: 10rpx;
-		}
-	}
-
-	.function {
-		margin-top: 15rpx;
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-	}
-
-	.tofunction {
-		background-color: rgba(255, 255, 255, 1);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-
-		.img {
-			position: relative;
-			width: 50rpx;
-			height: 50rpx;
-			text-align: center;
-			margin: 0 auto;
-			margin-top: 35rpx;
-			margin-bottom: 25rpx;
-		}
-	}
-
-	.user_popup {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-
-		.title_border_text {
-			font-size: 33rpx;
-			font-weight: bold;
-			height: 80rpx;
-			margin-top: 10rpx;
-		}
-
-		.user_text {
-			font-size: 26rpx;
-			color: #999;
-		}
-
-		.up_avatar {
-			height: 150rpx;
-			width: 150rpx;
-			border: 4rpx solid #fff;
-			margin-top: 50rpx;
-			border-radius: 100rpx;
-			background: #f8f7f8;
-			box-shadow: 0 0 2.5rem rgba(0, 0, 0, .15);
-
-			image {
-				height: 150rpx;
-				width: 150rpx;
-				border-radius: 50%;
-				margin-left: -30rpx;
-			}
-		}
-
-		.user_name {
-			height: 80rpx;
-			margin-top: 50rpx;
-			border-radius: 10rpx;
-			background: #f8f7f8;
-
-			input {
-				width: 650rpx;
-				height: 100%;
 				margin: 0 auto;
+				margin-top: 35rpx;
+				margin-bottom: 25rpx;
 			}
 		}
 
-		.login {
-			height: 80rpx;
-			border-radius: 10rpx;
-			background: #e6e6e6;
-			margin-top: 70rpx;
+		.user_popup {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			.title_border_text {
+				font-size: 33rpx;
+				font-weight: bold;
+				height: 80rpx;
+				margin-top: 10rpx;
+			}
+
+			.user_text {
+				font-size: 26rpx;
+				color: #999;
+			}
+
+			.up_avatar {
+				height: 150rpx;
+				width: 150rpx;
+				border: 4rpx solid #fff;
+				margin-top: 50rpx;
+				border-radius: 100rpx;
+				background: #f8f7f8;
+				box-shadow: 0 0 2.5rem rgba(0, 0, 0, .15);
+
+				image {
+					height: 150rpx;
+					width: 150rpx;
+					border-radius: 50%;
+					margin-left: -30rpx;
+				}
+			}
+
+			.user_name {
+				height: 80rpx;
+				margin-top: 50rpx;
+				border-radius: 10rpx;
+				background: #f8f7f8;
+
+				input {
+					width: 650rpx;
+					height: 100%;
+					margin: 0 auto;
+				}
+			}
+
+			.login {
+				height: 80rpx;
+				border-radius: 10rpx;
+				background: #e6e6e6;
+				margin-top: 70rpx;
+			}
+		}
+
+		.title {
+			font-family: PingFang SC, PingFang SC;
+			font-weight: 500;
+			font-size: 38rpx;
+			color: #474747;
+			line-height: 45rpx;
+			text-align: left;
+			font-style: normal;
+			text-transform: none;
+		}
+
+		.content {
+			font-family: Inter, Inter;
+			font-weight: 400;
+			font-size: 27rpx;
+			color: #474747;
+			line-height: 32rpx;
+			text-align: left;
+			font-style: normal;
+			text-transform: none;
+			margin: 30rpx 0;
+		}
+
+		.footer {
+			width: 100%;
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
 		}
 	}
-
-	.title {
-		font-family: PingFang SC, PingFang SC;
-		font-weight: 500;
-		font-size: 38rpx;
-		color: #474747;
-		line-height: 45rpx;
-		text-align: left;
-		font-style: normal;
-		text-transform: none;
-	}
-
-	.content {
-		font-family: Inter, Inter;
-		font-weight: 400;
-		font-size: 27rpx;
-		color: #474747;
-		line-height: 32rpx;
-		text-align: left;
-		font-style: normal;
-		text-transform: none;
-		margin: 30rpx 0;
-	}
-
-	.footer {
-		width: 100%;
-		display: flex;
-		justify-content: space-around;
-		align-items: center;
-	}
-}
 </style>
