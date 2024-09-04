@@ -12,7 +12,7 @@
 	</view>
 	<view class="goods" style="display: flex;background-color:rgba(255, 255, 255, 1) ;">
 		<view class="left">
-			<view class="select" v-for="item in showSelectList" :key="item.id"
+			<view class="select" v-for="item in showSelectList" :key="item.id ?? item.t_id ?? item.f_t_id"
 				:style="(item.children ? '' : 'background-color: #FFFFFF;') + (item.id === (select.t_id ?? select.f_t_id) ? 'font-weight: 800' : '')"
 				@click="changeIndex(item)">
 				<text v-for="(text, index) in item.name" :key="text + index">{{ text }}</text>
@@ -111,10 +111,8 @@ let page = 1
 
 const changeIndex = (item) => {
 	select.value = item
-	console.log(item)
-	if (item.children) {
+	if (item.children)
 		changeShowList(item.id)
-	}
 	page = 1
 	getInfoList()
 }
@@ -163,7 +161,6 @@ const getInfoList = async () => {
 		history.unshift(searchInfo.value)
 		uni.setStorageSync('history', history)
 	}
-	console.log(select.value)
 	const option = {}
 	// 搜索商品
 	option.value = searchInfo.value
@@ -220,7 +217,6 @@ const getData = () => {
 			name: '全部商品',
 			children: []
 		}, ...selectlist.value]
-		console.log(selectlist.value)
 		select.value = showSelectList.value[0]
 		page = 1
 		infolist.value = []
