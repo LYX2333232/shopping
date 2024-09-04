@@ -165,14 +165,6 @@
 			"style": {
 				"navigationBarTitleText": "图片详情"
 			}
-		},
-		{
-			"path" : "pages/goods/1/1",
-			"style" : 
-			{
-				"navigationBarTitleText" : "",
-				"enablePullDownRefresh" : false
-			}
 		}
 	],
 	"globalStyle": {

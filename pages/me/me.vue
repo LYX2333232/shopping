@@ -93,7 +93,7 @@
 					@click="tap_application(index)">
 					<!-- button删除原有样式，改为view -->
 					<button v-if="index === 1" open-type="contact"
-						style="background:none;border:none;padding:0;margin:-20rpx;width:100%;height:120%;">
+						style="background:none;border:none;padding:0;margin:-15rpx;width:100%;height:120%;">
 						<view class="img">
 							<img :src="item.icon" alt="" mode="aspectFill" />
 						</view>
