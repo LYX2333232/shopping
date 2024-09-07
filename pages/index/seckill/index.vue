@@ -51,6 +51,7 @@ const toBuy = (id) => {
 const getData = () => {
   // 获取数据
   get_goods_list(1).then(res => {
+    page = 1
     items.value = res.data.data
   })
 }

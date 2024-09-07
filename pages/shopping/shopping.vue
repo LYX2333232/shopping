@@ -356,8 +356,6 @@ const couponList = ref([])
 
 const couponVisible = ref(false)
 
-// let coupon_page = 0
-
 const openPopup = () => {
 	// const item = dataList.value.find(item => item.order)
 	if (select_goods.value.length === 0) {
@@ -368,7 +366,6 @@ const openPopup = () => {
 		return
 
 	}
-	// coupon_page = 0
 	const ids = select_goods.value.map(item => {
 		return {
 			id: item.item_id,
@@ -391,6 +388,7 @@ const openPopup = () => {
 
 const getData = () => {
 	get_cart_list(1).then(res => {
+		page = 1
 		dataList.value = res.data.data.map(item => {
 			return {
 				...item,

@@ -45,17 +45,6 @@
 				<view></view>
 			</view>
 			<view class="area">
-				<!-- <view class="toarea" v-for="item in areaList" @click="tap_item(item.id)">
-					<image :src="item.path" mode="aspectFill"
-						style="position: absolute; z-index: -999;width: 100%;height: 100%;">
-					</image>
-					<view class="name">
-						{{ item.name }}
-					</view>
-					<view style="font-size: 22rpx;margin-left: 20rpx;margin-top: 10rpx;">
-						查看全部
-					</view>
-				</view> -->
 				<view style="width:100%;height:300rpx;display:flex;justify-content:space-between;align-items:center">
 					<view class="toarea" style="width:50%;height:100%" @click="tap_item(areaList[0].id)">
 						<image :src="areaList[0].path" mode="aspectFill"
@@ -76,13 +65,6 @@
 						</view>
 					</view>
 				</view>
-				<!-- <view class="toarea"
-					style="width:100%;height:150rpx;display:flex;justify-content:center;align-items:center;margin-top:10rpx"
-					@click="tap_item(areaList[3].id)">
-					<image :src="areaList[3].path" mode="aspectFill"
-						style="position: absolute; z-index: -999;width: 100%;height: 100%;">
-					</image>
-				</view> -->
 			</view>
 			<view class="title">POPULAR GOODS</view>
 			<view class="title_bottom">
@@ -90,7 +72,7 @@
 				<view>优选好物 | 价格实惠</view>
 			</view>
 			<view class="main">
-				<view class="block3" v-for="item in infoList" :key="index" @click="toDetail(item.id)">
+				<view class="block3" v-for="item in infoList" :key="item.id" @click="toDetail(item.id)">
 					<view style="display: block;">
 						<image :src="item.path" mode="" class="image"></image>
 						<view style="width: 96%;margin: 0 auto;font-size: 24rpx;">
@@ -226,7 +208,8 @@ const getData = () => {
 		uni.setStorageSync('history', [])
 	}
 	historyList.value = uni.getStorageSync('history')
-	get_goods_list({ page }).then(res => {
+	get_goods_list({ page: 1 }).then(res => {
+		page = 1
 		infoList.value = res.data.data
 	})
 }
