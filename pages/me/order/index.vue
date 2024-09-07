@@ -28,7 +28,7 @@
 				<view style="margin-right: 30rpx;">订单编号：{{ card.id }}</view>
 				<view v-if="card.state === 2"> 物流单号：{{ card.transport_number }} </view>
 			</view>
-			<view class="tn-flex-center-between tn-mt-lg" v-for="good in card.order_com">
+			<view class="tn-flex-center-between tn-mt-lg" v-for="good in card.order_com" :key="good.id">
 				<image :src="good.path" mode="scaleToFill" style="width:160rpx;height:160rpx;border-radius: 15rpx;" />
 				<view class="main">
 					<view class="good">
@@ -51,17 +51,6 @@
 							{{ tag }}
 						</TnTag>
 					</view>
-					<!-- <view class="tn-flex-center-center tn-flex-column">
-              <view class="price">
-                实付款：￥{{ good.price }}
-              </view>
-              <view v-if="good.price !== good.should_price" class="old_price">
-                原价：￥{{ good.should_price }}
-              </view>
-              <view class="price">
-                运费：￥{{ good.freight }}
-              </view>
-            </view> -->
 				</view>
 			</view>
 			<view v-if="[0, 2, 5, 7, 8].includes(card.state) || (card.state === 3 && card.is_refund)"
