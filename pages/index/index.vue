@@ -1,75 +1,84 @@
 <template>
-	<view v-if="!isSearching" style="background-color: #FEF0D6;">
-		<TnSwiper loop autoplay :data="swiperData" width="100%" height="900" indicator indicator-type="dot">
-			<template #default="{ data }">
-				<view class="swiper-data">
-					<image style="width: 750rpx;height: 850rpx;" :src="data.path" mode="scaleToFill"
-						@click="toWeb(data.path)"></image>
-				</view>
-			</template>
-		</TnSwiper>
-	</view>
-
-	<view v-if="!isSearching" class="white_boxs">
-		<view style="width: 92%;margin: 0 auto;">
-			<view class=" tab">
+	<view class="all">
+		<image
+			src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSVIHwxfRM3wibsshXu5Wh1aanKIwgD6RgKjISicMREfe4cYpZGbfkQqgYMwHqOkI5DMHWckibTYCeJA/0?wx_fmt=png"
+			mode="aspectFit" class="background" />
+		<view class="contain">
+			<view class="map">
+				<TnIcon name="map" size="40" />
+				{{ address.address }}
+				<TnIcon name="down" size="40" />
+			</view>
+			<view class="tab">
 				<view class="pic">
-					<image
-						:src="user.userInfo ? user.userInfo.avatar : 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png'">
-					</image>
+					<image src="/static/index/title.png" mode="scaleToFill" />
 				</view>
-				<view style="width: 580rpx;height: 50rpx;">
-					<uni-section title="图标" type="line" padding>
-						<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" :styles="styles"
-							@focus="inputFocus"></uni-easyinput>
-					</uni-section>
-				</view>
-			</view>
-			<view class="function">
-				<view class="tofunction" v-for="(item, index) in funList" :key="'fun' + index"
-					@click="top_button(index)">
-					<view class="img">
-						<image :src="item.icon" alt="" mode="aspectFill" />
+				<view class="search" @click="toSearch">
+					<view style="flex:1">
+						<TnIcon name="search" size="40" />
 					</view>
-					<view style="font-size: 22rpx;">
-						{{ item.name }}
+					<input style="flex:auto" type="text" disabled />
+					<view class="flex:1">
+						<TnButton type="success" size="small">搜索</TnButton>
 					</view>
 				</view>
 			</view>
-
-			<view class="title">
-				{{ recommend }}
-			</view>
-			<view class="title_bottom">
-				<view class="tag">微信小程序下单已上线</view>
-				<view></view>
-			</view>
-			<view class="area">
-				<view style="width:100%;height:300rpx;display:flex;justify-content:space-between;align-items:center">
-					<view class="toarea" style="width:50%;height:100%" @click="tap_item(areaList[0].id)">
-						<image :src="areaList[0].path" mode="aspectFill"
-							style="position: absolute; z-index: -999;width: 100%;height: 100%;">
-						</image>
+			<TnSwiper loop autoplay :data="swiperData" width="100%" height="280" indicator indicator-type="dot"
+				indicator-active-bg-color="#FFF" indicator-bg-color="rgba(255,255,255,0.6)">
+				<template #default="{ data }">
+					<view class="swiper-data">
+						<image style="width: 710rpx;height: 274rpx;" :src="data.path" mode="scaleToFill"
+							@click="toWeb(data.path)"></image>
 					</view>
-					<view
-						style="width:49%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between">
-						<view class="toarea" style="width:100%;height:49%" @click="tap_item(areaList[1].id)">
-							<image :src="areaList[1].path" mode="aspectFill"
-								style="position: absolute; z-index: -999;width: 100%;height: 100%;">
-							</image>
+				</template>
+			</TnSwiper>
+			<view class="desc">
+				<view class="item">
+					<TnIcon name="/static/index/self.png" size="25" />
+					<view style="margin-left:20rpx">
+						官方自营
+					</view>
+				</view>
+				<view class="item">
+					<TnIcon name="/static/index/time.png" size="25" />
+					<view style="margin-left:20rpx">
+						同城30分钟达
+					</view>
+				</view>
+				<view class="item">
+					<TnIcon name="/static/index/sale.png" size="25" />
+					<view style="margin-left:20rpx">
+						售后无忧
+					</view>
+				</view>
+			</view>
+			<view class="functions">
+				<image class="item" v-for="(_, index) in 4" :src="`/static/index/item${index}.png`" :key="index"
+					@click="top_button(index)" />
+			</view>
+			<view class="seckill">
+				<image src="/static/index/seckill.png" mode="scaleToFill" class="seckill-background" />
+				<view class="top">
+					<view style="z-index:2">全场低价秒</view>
+					<TnButton type="success" size="mini" shape="round">去看看></TnButton>
+				</view>
+				<view class="items">
+					<view v-for="card in seckill_list" :key="card.id" class="item">
+						<image :src="card.path" mode="scaleToFill" class="image" />
+						<view class="flash">
+							<image src="/static/index/price.png" mode="scaleToFill" class="flash-background" />
+							<view style="z-index:3">
+								￥{{ card.flash_price }}
+							</view>
 						</view>
-						<view class="toarea" style="width:100%;height:49%" @click="tap_item(areaList[2].id)">
-							<image :src="areaList[2].path" mode="aspectFill"
-								style="position: absolute; z-index: -999;width: 100%;height: 100%;">
-							</image>
+						<view class="old">
+							￥{{ card.price }}
 						</view>
 					</view>
 				</view>
 			</view>
-			<view class="title">POPULAR GOODS</view>
-			<view class="title_bottom">
-				<view class="tag">点击购买，48小时内配货</view>
-				<view>优选好物 | 价格实惠</view>
+			<view class="today">
+				<image src="/static/index/today.png" mode="scaleToFill" class="today-background" />
 			</view>
 			<view class="main">
 				<view class="block3" v-for="item in infoList" :key="item.id" @click="toDetail(item.id)">
@@ -88,107 +97,47 @@
 			</view>
 		</view>
 	</view>
-
-	<view v-if="isSearching" style="width:95%;margin: 180rpx auto 0;">
-		<view class="tn-flex-center-start">
-			<TnIcon name="left" size="50" color="#C7BAA7" @click="isSearching = false"
-				:custom-style="{ marginRight: '20rpx' }">
-			</TnIcon>
-			<uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" :styles="styles"
-				@focus="inputFocus" @change="search">
-				<template #right>
-					<TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="90" height="50"
-						:custom-style="{ marginRight: '10rpx' }" @click="search" shape="round">搜索</TnButton>
-				</template>
-			</uni-easyinput>
-		</view>
-		<view class="history">
-			历史搜索
-		</view>
-		<view class="history_tag">
-			<TnTag v-for="(item, index) in historyList" :key="index" shape="round" bg-color="#E7E3E1"
-				text-color="#949494" :custom-style="{ marginRight: '20rpx', marginTop: '30rpx' }" @click="search(item)">
-				{{ item }}</TnTag>
-		</view>
-	</view>
 </template>
 
 <script setup>
 import TnSwiper from '@/uni_modules/tuniaoui-vue3/components/swiper/src/swiper.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
-import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
-import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
+import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import { ref } from 'vue'
-import { onHide, onLoad, onShow, onReachBottom, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
-import { UserStore } from '@/store'
-import { get_home } from '@/api/index'
-import { get_goods_list } from '@/api/goods/goods'
+import { onShow, onReachBottom, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 
-const user = UserStore()
+import { AddressStore } from '@/store'
+import { get_home, get_commodity } from '@/api/index'
+import { get_goods_list } from '@/api/index/seckill/seckill'
 
-let recommend = 'RECOMMEND FOR YOU'
-
-// 判断是否为搜索页
-const isSearching = ref(false)
-// 轮播图数据
+const address = AddressStore()
+// 轮播图数据	
 const swiperData = ref([])
 
-// 历史搜索数据
-const historyList = ref([])
-
-let funList = [
-	{
-		name: '限时秒杀',
-		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60syLs1fACHZWQW3HGlicCWjxHocAllod7ceklU8PPCgWuyCzdicULVAjicg/0?wx_fmt=png'
-	}, {
-		name: '今日开团',
-		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60s2E0Ey2Kg4KYhwWice4m1QuLwO2wa3u0zWCcucVmlibQrSbfm1o7BuANA/0?wx_fmt=png'
-	}, {
-		name: '领券中心',
-		icon: 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60srm92zvWgCkNp5ruHn4AaRbRHavgKOsw1kWIARx9kIttxNYnvaIO5ww/0?wx_fmt=png'
-	},
-]
-const areaList = ref([])
-let value = ref('');
-let styles = ref({
-	color: 'rgba(182, 176, 167, 1)',
-	borderColor: 'rgba(182, 176, 167, 1)'
+const toWeb = path => uni.navigateTo({
+	url: '/pages/web/index?src=' + path
 })
 
-const toWeb = (path) => {
-	uni.navigateTo({
-		url: '/pages/web/index?src=' + path
-	})
-}
 
 // 顶部的按钮
 const top_button = (index) => {
 	if (index == 0) {
-		uni.navigateTo({
-			url: '/pages/index/seckill/index'
-		})
 	}
 	if (index == 1) {
-		uni.navigateTo({
-			url: '/pages/index/today/index'
-		})
 	}
 	if (index == 2) {
+	}
+	if (index === 3)
 		uni.navigateTo({
 			url: '/pages/index/coupon/index'
 		})
-	}
 }
 
-// 底部的图片按钮
-const tap_item = (index) => {
-	uni.switchTab({
-		url: '/pages/goods/goods?',
-	})
-	uni.setStorageSync('t_id', index)
-}
+// 秒杀商品
+const seckill_list = ref([])
 
+// 底部推荐商品
 const infoList = ref()
 
 const toDetail = (id) => {
@@ -197,71 +146,71 @@ const toDetail = (id) => {
 	})
 }
 
-let page = 1
-
 const getData = () => {
 	get_home().then(res => {
 		swiperData.value = res.data.swiper
-		areaList.value = res.data.news
 	})
-	if (!uni.getStorageSync('history')) {
-		uni.setStorageSync('history', [])
-	}
-	historyList.value = uni.getStorageSync('history')
-	get_goods_list({ page: 1 }).then(res => {
-		page = 1
+	get_commodity({ ids: [] }).then(res => {
 		infoList.value = res.data.data
 	})
+	// 静态数据
+	seckill_list.value = [
+		{
+			id: 1,
+			name: '商品1',
+			path: 'https://loremflickr.com/100/100',
+			price: '20.00',
+			flash_price: '15.00'
+		},
+		{
+			id: 2,
+			name: '商品1',
+			path: 'https://loremflickr.com/100/100',
+			price: '20.00',
+			flash_price: '15.00'
+		},
+		{
+			id: 3,
+			name: '商品1',
+			path: 'https://loremflickr.com/100/100',
+			price: '20.00',
+			flash_price: '15.00'
+		},
+		{
+			id: 4,
+			name: '商品1',
+			path: 'https://loremflickr.com/100/100',
+			price: '20.00',
+			flash_price: '15.00'
+		},
+	]
+	// get_goods_list(1).then(res => {
+	// 	console.log(res)
+	// 	seckill_list.value = res.data.data
+	// })
 }
 
 // 点击输入框
-const inputFocus = () => {
-	isSearching.value = true
-	getData()
-}
-
-// 进行搜索
-const search = (searching = undefined) => {
-	if (searching) {
-		value.value = searching
-	}
-	uni.setStorageSync('searchInfo', value.value)
-	if (!Array.isArray(historyList.value)) {
-		historyList.value = []
-	}
-	if (!value.value || value.value === '') {
-		return
-	}
-	if (historyList.value.includes(value.value))
-		historyList.value.splice(historyList.value.indexOf(value.value), 1)
-	// 保存搜索历史并把value作为第一项
-	historyList.value.unshift(value.value)
-	// 只保留5条历史记录
-	if (historyList.value.length > 5) {
-		historyList.value.pop()
-	}
-	uni.setStorageSync('history', historyList.value)
-	value.value = undefined
-	uni.switchTab({
-		url: '/pages/goods/goods'
+const toSearch = () => {
+	uni.navigateTo({
+		url: '/pages/index/search/index'
 	})
 }
-
-onHide(() => {
-	isSearching.value = false
-})
 
 onShow(() => {
 	getData()
 })
 onReachBottom(() => {
-	page++
-	get_goods_list({ page }).then(res => {
-		if (res.data.data.length > 0) {
-			infoList.value = infoList.value.concat(res.data.data)
-		} else {
-			page--
-		}
+	const data = {
+		ids: infoList.value.map(item => item.id)
+	}
+	get_commodity(data).then(res => {
+		infoList.value = res.data.data
+		// 将页面滚动到数据顶部
+		uni.pageScrollTo({
+			selector: '.title',
+			duration: 100
+		})
 	})
 })
 
@@ -281,6 +230,55 @@ onShareTimeline(() => {
 </script>
 
 <style lang="scss" scoped>
+.all {
+	width: 100%;
+	min-height: 100vh;
+	background: #F6F6F6;
+	z-index: -1;
+}
+
+.background {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 500rpx;
+	z-index: 0;
+}
+
+.contain {
+	margin: 0 20rpx;
+	background: transparent;
+	z-index: 2;
+}
+
+.map {
+	margin-top: 114rpx;
+}
+
+.tab {
+	width: 100%;
+	margin: 36rpx 0 20rpx;
+	display: flex;
+	align-items: center;
+
+	.pic {
+		width: 162rpx;
+		height: 40rpx;
+		margin-right: 17rpx;
+	}
+
+	.search {
+		display: flex;
+		align-items: center;
+		width: 530rpx;
+		background: #FFF;
+		border-radius: 40rpx;
+		z-index: 2;
+		padding: 10rpx 20rpx;
+	}
+
+}
+
 .swiper-container {
 	width: 100%;
 	height: 320rpx;
@@ -288,7 +286,7 @@ onShareTimeline(() => {
 	.swiper-data {
 		width: 100%;
 		height: 100%;
-		border-radius: 30rpx;
+		border-radius: 25rpx;
 
 		.image {
 			width: 100%;
@@ -298,224 +296,173 @@ onShareTimeline(() => {
 	}
 }
 
-.white_boxs {
-	width: 100%;
-	height: 70vh;
-	background-color: rgba(248, 248, 248, 1);
-	margin-top: -55rpx;
-	border-radius: 40rpx 40rpx 0 0;
-	position: relative;
-	z-index: 999;
+.desc {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 22rpx 0;
+	color: #878787;
 
-	.tab {
-		height: 100rpx;
-		padding-top: 22rpx;
+	.item {
+		vertical-align: middle;
 		display: flex;
+		align-items: center;
+		font-size: 25rpx;
+	}
+}
 
-		.pic {
-			width: 32px;
-			height: 32px;
-			margin-right: 20rpx;
-			border-radius: 50rpx;
-		}
+.functions {
+	display: flex;
+	text-align: center;
+	justify-content: space-around;
 
+	.item {
+		width: 162rpx;
+		height: 202rpx;
+	}
+}
+
+.seckill {
+	margin: 20rpx 0;
+	width: 709rpx;
+	height: 289rpx;
+	position: relative;
+
+	.seckill-background {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 0;
 	}
 
 	.top {
 		display: flex;
-		flex-direction: row;
-	}
-
-	.function {
-		margin-top: 50rpx;
-		display: flex;
-		text-align: center;
-		justify-content: space-between;
-	}
-
-	.tofunction {
-		box-shadow: 0rpx 0rpx 6rpx 0rpx rgba(67, 57, 41, 0.15);
-		background-color: rgba(255, 255, 255, 1);
-		border-radius: 6rpx;
-		width: 200rpx;
-		height: 160rpx;
-
-		.img {
-			width: 60rpx;
-			height: 60rpx;
-			text-align: center;
-			margin: 0 auto;
-			margin-top: 35rpx;
-			margin-bottom: 25rpx;
-		}
-	}
-
-	.show_words {
-		display: flex;
-		justify-content: space-between;
 		align-items: center;
-		margin-top: 25rpx;
-
-		.words_left {
-			width: 30%;
-			font-size: 20px;
-			color: rgba(223, 165, 42, 1);
-			font-family: Microsoft YaHei UI-Bold;
-			font-weight: 700;
-		}
-
-		.words_right1 {
-			overflow-wrap: break-word;
-			color: rgba(255, 197, 48, 1);
-			font-family: Modern Antiqua-Regular;
-			;
-			font-size: 20px;
-			overflow-wrap: break-word;
-			font-weight: normal;
-			white-space: nowrap;
-		}
-
-		.words_right2 {
-			overflow-wrap: break-word;
-			color: rgba(176, 176, 176, 1);
-			font-size: 20rpx;
-			font-family: Inter-Regular;
-			font-weight: normal;
-			white-space: nowrap;
-			line-height: 30px;
-		}
+		justify-content: space-between;
+		padding: 17rpx 20rpx 20rpx 180rpx;
+		color: #EB2F0F;
+		font-size: 24rpx;
+		z-index: 2;
 	}
 
-	.area {
+	.items {
 		width: 100%;
-		margin-top: 10rpx;
+		z-index: 2;
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
 
-		.toarea {
-			border-radius: 20rpx;
-			position: relative;
+		.item {
+			width: 130rpx;
 			display: flex;
-			justify-content: center;
+			flex-direction: column;
 			align-items: center;
-			color: #FFFFFF;
 
-			.name {
-				font-size: 35rpx;
+
+			.image {
+				width: 105rpx;
+				height: 105rpx;
+				margin-bottom: 15rpx;
+			}
+
+			.flash {
+				width: 100%;
+				height: 32rpx;
+				margin-bottom: 3rpx;
+				display: flex;
+				align-items: center;
+				justify-content: flex-end;
+				margin-right: 16rpx;
+				color: #FFF;
+				z-index: 2;
+				position: relative;
+
+				.flash-background {
+					width: 130rpx;
+					height: 100%;
+					position: absolute;
+					z-index: 1;
+				}
+			}
+
+			.old {
+				color: #999;
+				text-decoration: line-through;
+				z-index: 2;
 			}
 		}
 	}
+}
 
-	.title {
+.today {
+	width: 100%;
+	height: 585rpx;
+
+	.today-background {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.main {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.block3 {
+	display: flex;
+	margin-bottom: 20rpx;
+	margin-right: 25rpx;
+
+	.image {
+		width: 330rpx;
+		height: 330rpx;
+		border-radius: 13rpx 13rpx 13rpx 13rpx;
+	}
+
+	.text1 {
 		font-family: Inter, Inter;
 		font-weight: 600;
-		font-size: 46rpx;
-		color: #A09D85;
-		line-height: 60rpx;
-		text-align: left;
-		font-style: normal;
-		text-transform: none;
-		margin-top: 30rpx;
+		font-size: 33rpx;
+		color: #834820;
+		line-height: 46rpx;
 	}
 
-	.title_bottom {
-		margin: 20rpx 0;
+	.text2 {
 		font-family: Inter, Inter;
-		font-weight: 400;
-		font-size: 25rpx;
-		color: #B0B0B0;
-		line-height: 35rpx;
-		text-align: left;
-		font-style: normal;
-		text-transform: none;
-		width: 100%;
-		display: flex;
-		justify-content: space-between;
-
-		.tag {
-			text-align: center;
-			padding: 0 10rpx;
-			color: #FFFFFF;
-			background: #C7BAA5;
-			border-radius: 10rpx;
-		}
+		font-weight: 500;
+		font-size: 23rpx;
+		color: #8D8D8D;
+		margin-top: 5rpx;
+		line-height: 50rpx;
 	}
-
-	.main {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-	}
-
-	.block3 {
-		display: flex;
-		margin-bottom: 20rpx;
-		margin-right: 25rpx;
-
-		.image {
-			width: 330rpx;
-			height: 330rpx;
-			border-radius: 13rpx 13rpx 13rpx 13rpx;
-		}
-
-		.text1 {
-			font-family: Inter, Inter;
-			font-weight: 600;
-			font-size: 33rpx;
-			color: #834820;
-			line-height: 46rpx;
-		}
-
-		.text2 {
-			font-family: Inter, Inter;
-			font-weight: 500;
-			font-size: 23rpx;
-			color: #8D8D8D;
-			margin-top: 5rpx;
-			line-height: 50rpx;
-		}
-	}
-
-	.search {
-		display: flex;
-		width: 610rpx;
-		height: 72rpx;
-		margin-top: 20rpx;
-
-		border-radius: 20rpx;
-		justify-content: space-between;
-		border: 1.5px solid rgba(182, 176, 167, 1);
-
-		.pic1 {
-			margin-left: 20rpx;
-			width: 40rpx;
-			height: 40rpx;
-			display: block;
-		}
-
-		.pic2 {
-			background-color: #a9abff;
-			width: 80rpx;
-			height: 80rpx;
-			margin-right: 20rpx;
-			display: block;
-		}
-	}
-
 }
 
-.history {
-	margin-top: 30rpx;
-	font-family: Inter, Inter;
-	font-weight: 800;
-	font-size: 30rpx;
-	color: #000000;
-	text-align: left;
-	font-style: normal;
-	text-transform: none;
-}
+.search {
+	display: flex;
+	width: 610rpx;
+	height: 72rpx;
+	margin-top: 20rpx;
 
-.history_tag {
-	width: 90%;
-	display: gird;
-	grid-template-columns: repeat(auto-fit, minmax(100rpx, 1fr));
-	grid-gap: 20rpx;
+	border-radius: 20rpx;
+	justify-content: space-between;
+	border: 1.5px solid rgba(182, 176, 167, 1);
+
+	.pic1 {
+		margin-left: 20rpx;
+		width: 40rpx;
+		height: 40rpx;
+		display: block;
+	}
+
+	.pic2 {
+		background-color: #a9abff;
+		width: 80rpx;
+		height: 80rpx;
+		margin-right: 20rpx;
+		display: block;
+	}
 }
 </style>

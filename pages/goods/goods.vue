@@ -263,7 +263,7 @@ page {
 	margin: 0 auto;
 	padding-top: 110rpx;
 	height: 209rpx;
-	padding-buttom: 24rpx;
+	padding-bottom: 24rpx;
 	display: flex;
 	background: #ffffff;
 	z-index: 3333333;

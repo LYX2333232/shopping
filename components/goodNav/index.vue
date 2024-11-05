@@ -19,13 +19,13 @@
                 text-color="tn-red" />
             <button style="border-radius: 50rpx;width: 300rpx;font-size: 40rpx;margin: 0 20rpx;"
                 :class="normal ? 'normal' : 'cart'" @click="onButtonClick">{{ normal ?
-                '加入购物车' : '立即购买' }} </button>
+                    '加入购物车' : '立即购买' }} </button>
         </view>
     </view>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed } from 'vue'
+import { computed } from 'vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnCountDown from '@/uni_modules/tuniaoui-vue3/components/count-down/src/count-down.vue'
 import { set_favorite } from '@/api/goods/goods'

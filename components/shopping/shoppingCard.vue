@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, defineEmits } from 'vue'
+import { computed } from 'vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 import TnNumberBox from '@/uni_modules/tuniaoui-vue3/components/number-box/src/number-box.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
@@ -114,7 +114,7 @@ const changeNum = (e, i) => {
   }
 }
 
-.item-name{
+.item-name {
   width: 200rpx;
   text-align: center;
   background-color: #F3F3F3;

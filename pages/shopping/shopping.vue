@@ -16,7 +16,7 @@
 			<TnIcon name="down"></TnIcon>
 		</view>
 
-		<shoppingCard v-for="(data, index) in dataList" :index="index" :data="data" :edit="edit" @del="del"
+		<shoppingCard v-for="(data, index) in dataList" :key="index" :index="index" :data="data" :edit="edit" @del="del"
 			@change="change" @changeNum="changeNum"></shoppingCard>
 	</view>
 
@@ -84,7 +84,7 @@
 				</view>
 			</view>
 			<view class="detail_address" style="font-size:35rpx;" v-else @click="addressChange">请先选择地址</view>
-			<view v-for="good in select_goods" class="good">
+			<view v-for="good in select_goods" class="good" :key="good.id">
 				<image :src="good.path" style="width: 100rpx; height: 100rpx;margin-left: 30rpx;" mode="scaleToFill" />
 				<view>
 					{{ good.name }}

@@ -1,7 +1,7 @@
 <template>
 	<Header />
 	<swiper :indicator-dots="false" autoplay circular style="height:780rpx;">
-		<swiper-item v-for="(item, index) in swiperImg" :key="'swiper' + index">
+		<swiper-item v-for="item in swiperImg" :key="'swiperImg' + item.id">
 			<image :src="item.path" mode="aspectFill" style="width: 100%;height: 750rpx;" @click="toWeb(item.path)">
 			</image>
 		</swiper-item>
@@ -22,7 +22,7 @@
 				{{ name }}
 			</view>
 			<view style="display: flex;">
-				<view class="type" v-for="item in typelist">
+				<view class="type" v-for="item in typelist" :key="item.id">
 					{{ item }}
 				</view>
 			</view>
@@ -56,10 +56,12 @@
 		<view class="text1" style="width: 90%;margin: 0 auto;">
 			<text>商品详情</text>
 		</view>
+		<view v-for="item in swiperVideo" :key="'swiperVideo' + item.id" style="width: 90%;margin: 0 auto;">
+			<video style="width:100%" :src="'https://senmei.top/' + item.url"></video>
+		</view>
 		<view style="width: 90%;margin: 10rpx 5%;">
 			<rich-text :nodes="content"></rich-text>
 		</view>
-		<!-- <video style="width: 922px; height: 461px;" controls="controls" width="922" height="461"><source src="https://mpvideo.qpic.cn/0bf2guaaoaaabean5xombzpfanoda42qabya.f10002.mp4?dis_k=a5f90bc0dbc726c4b2ac5b32a0821cca&amp;dis_t=1715919994&amp;play_scene=10120&amp;auth_info=f4Pqm+MDFwMyz/eloHQQBGFKBBVyJW9ZZR5YP1l5d25BVTVgAw1KbFA5aEJjVwc+aw==&amp;auth_key=dd4be7dc4502ca6325fb6791d7dee054&amp;vid=wxv_1357125600510820355&amp;format_id=10002&amp;support_redirect=0&amp;mmversion=false"></video> -->
 	</view>
 
 	<GoodNav :id="c_id" :like="like" :normal="true" @buttonClick="buttonClick" @changeLike="changeLike" />
@@ -75,6 +77,7 @@ import Header from '@/components/header.vue'
 import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
 import GoodNav from '@/components/goodNav'
 
+const swiperVideo = ref([])
 const swiperImg = ref([])
 
 const c_id = ref('')
@@ -128,6 +131,8 @@ onLoad((options) => {
 	get_goods_detail({ id: options.id }).then(res => {
 		// 轮播图
 		swiperImg.value = res.data.paths
+		// 视频轮播图
+		swiperVideo.value = res.data.videost
 
 		c_id.value = res.data.id
 
@@ -151,14 +156,6 @@ onLoad((options) => {
 		like.value = res.data.is_like
 
 		sell.value = res.data.volume
-
-		// get_evaluation_list(c_id, 1).then(e => {
-		// 	commentList.value = e.data.data.map(item => {
-		// 		// 将json转为数组
-		// 		item.paths = JSON.parse(item.paths)
-		// 		return item
-		// 	})
-		// })
 	})
 })
 </script>

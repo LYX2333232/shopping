@@ -113,6 +113,12 @@
 			</view>
 
 		</view>
+		<view style="display:flex">
+			<text>您的备案号：</text>
+			<!-- 样式与a标签相同 -->
+			<uni-link href="https://beian.miit.gov.cn/" text="粤ICP备2024204458号" color="#007aff"
+				fontSize="12"></uni-link>
+		</view>
 
 		<TnPopup v-model="feedback" bg-color="#FFFFFF" width="660" @close="cancelFeedback">
 			<view style="margin: 30rpx">
