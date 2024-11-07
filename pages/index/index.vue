@@ -1,13 +1,10 @@
 <template>
 	<view class="all">
-		<!-- <image
-			src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSVIHwxfRM3wibsshXu5Wh1aanKIwgD6RgKjISicMREfe4cYpZGbfkQqgYMwHqOkI5DMHWckibTYCeJA/0?wx_fmt=png"
-			mode="aspectFit" class="background" /> -->
 		<view class="contain">
 			<view class="map" @click="toEditAddress">
 				<TnIcon name="map" size="40" />
 				<view class="text">
-					{{ address.address }}
+					{{ address.address ?? '定位失败' }}
 				</view>
 				<TnIcon name="down" size="40" />
 			</view>
@@ -21,7 +18,7 @@
 					</view>
 					<input style="flex:auto" type="text" disabled />
 					<view class="flex:1">
-						<TnButton type="success" size="small">搜索</TnButton>
+						<TnButton type="success" shape="round">搜索</TnButton>
 					</view>
 				</view>
 			</view>
@@ -61,7 +58,7 @@
 			<view class="seckill" v-if="seckill_list.length > 0">
 				<view class="top">
 					<view style="z-index:2">全场低价秒</view>
-					<TnButton type="success" size="mini" shape="round">去看看></TnButton>
+					<TnButton type="success" shape="round">去看看></TnButton>
 				</view>
 				<view class="items">
 					<view v-for="card in seckill_list" :key="card.id" class="item">
@@ -89,9 +86,9 @@
 							{{ item.name }}
 						</view>
 						<view class="doing">
-							<image :src="image" mode="scaleToFill" v-for="(image, index) in item.list"
-								:key="'avatar' + index" class="avatar" />
-							已有{{ item.total }}人拼团
+							<image :src="image.avatar" mode="scaleToFill" v-for="image in item.seng" :key="image.id"
+								class="avatar" />
+							已有{{ item.seng_count }}人拼团
 						</view>
 						<TnTag font-size="22" border bg-color="transparent" text-color="#FF1F25" border-color="#FF1F25"
 							shape="circle">
@@ -128,13 +125,11 @@
 								<view class="price">
 									¥{{ item.price }}
 								</view>
-								<view v-if="item.old" class="old">
-									￥{{ item.old }}
+								<view v-if="item.or_price" class="old">
+									￥{{ item.or_price }}
 								</view>
 							</view>
-							<view class="cart">
-								<TnIcon name="cart" size="35" color="#FFF" />
-							</view>
+							<TnButton icon="cart" type="success" shape="circle" font-size="40"></TnButton>
 						</view>
 					</view>
 				</template>
@@ -152,13 +147,11 @@
 								<view class="price">
 									¥{{ item.price }}
 								</view>
-								<view v-if="item.old" class="old">
-									￥{{ item.old }}
+								<view v-if="item.or_price" class="old">
+									￥{{ item.or_price }}
 								</view>
 							</view>
-							<view class="cart">
-								<TnIcon name="cart" size="35" color="#FFF" />
-							</view>
+							<TnButton icon="cart" type="success" shape="circle" font-size="40"></TnButton>
 						</view>
 					</view>
 				</template>
@@ -319,7 +312,7 @@ onShareTimeline(() => {
 	align-items: center;
 
 	.text {
-		width: 333rpx;
+		max-width: 333rpx;
 		//设置超出长度时用省略号表示
 		white-space: nowrap;
 		overflow: hidden;
@@ -346,7 +339,6 @@ onShareTimeline(() => {
 		width: 530rpx;
 		background: #FFF;
 		border-radius: 40rpx;
-		z-index: 2;
 		padding: 10rpx 20rpx;
 	}
 
@@ -662,16 +654,6 @@ onShareTimeline(() => {
 				font-style: normal;
 				text-decoration-line: line-through;
 			}
-		}
-
-		.cart {
-			width: 56rpx;
-			height: 56rpx;
-			border-radius: 20rpx;
-			background: #14bf20;
-			display: flex;
-			align-items: center;
-			justify-content: center;
 		}
 	}
 }
