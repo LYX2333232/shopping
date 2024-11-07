@@ -95,7 +95,7 @@
 			}
 		},
 		{
-			"path": "pages/shopping/selectAddress/index",
+			"path": "pages/selectAddress/index",
 			"style": {
 				"navigationStyle": "custom"
 			}

@@ -132,7 +132,6 @@ import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import { get_cart_list, del_cart, get_coupon } from '@/api/cart/cart'
 import { new_order, get_order_price } from '@/api/order/order'
-import { get_default_address } from '@/api/address/address'
 import { AddressStore } from '@/store'
 
 const address = AddressStore()
@@ -146,7 +145,7 @@ const changeEdit = (e) => {
 
 const addressChange = () => {
 	uni.navigateTo({
-		url: '/pages/shopping/selectAddress/index'
+		url: '/pages/selectAddress/index'
 	})
 }
 
@@ -409,12 +408,6 @@ onShow(() => {
 		option.coupon_id = select_coupon.value.coupon_id
 	get_order_price(option).then(res => {
 		detail_price.value = res.data
-	})
-})
-
-onLoad(() => {
-	get_default_address().then(res => {
-		address.setAddress(JSON.parse(res.data.address).join('-') + '-' + res.data.detail, res.data.name, res.data.phone, res.data.id)
 	})
 })
 

@@ -1,12 +1,14 @@
 <template>
 	<view class="all">
-		<image
+		<!-- <image
 			src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSVIHwxfRM3wibsshXu5Wh1aanKIwgD6RgKjISicMREfe4cYpZGbfkQqgYMwHqOkI5DMHWckibTYCeJA/0?wx_fmt=png"
-			mode="aspectFit" class="background" />
+			mode="aspectFit" class="background" /> -->
 		<view class="contain">
-			<view class="map">
+			<view class="map" @click="toEditAddress">
 				<TnIcon name="map" size="40" />
-				{{ address.address }}
+				<view class="text">
+					{{ address.address }}
+				</view>
 				<TnIcon name="down" size="40" />
 			</view>
 			<view class="tab">
@@ -56,8 +58,7 @@
 				<image class="item" v-for="(_, index) in 4" :src="`/static/index/item${index}.png`" :key="index"
 					@click="top_button(index)" />
 			</view>
-			<view class="seckill">
-				<image src="/static/index/seckill.png" mode="scaleToFill" class="seckill-background" />
+			<view class="seckill" v-if="seckill_list.length > 0">
 				<view class="top">
 					<view style="z-index:2">全场低价秒</view>
 					<TnButton type="success" size="mini" shape="round">去看看></TnButton>
@@ -66,10 +67,7 @@
 					<view v-for="card in seckill_list" :key="card.id" class="item">
 						<image :src="card.path" mode="scaleToFill" class="image" />
 						<view class="flash">
-							<image src="/static/index/price.png" mode="scaleToFill" class="flash-background" />
-							<view style="z-index:3">
-								￥{{ card.flash_price }}
-							</view>
+							￥{{ card.flash_price }}
 						</view>
 						<view class="old">
 							￥{{ card.price }}
@@ -77,24 +75,94 @@
 					</view>
 				</view>
 			</view>
-			<view class="today">
-				<image src="/static/index/today.png" mode="scaleToFill" class="today-background" />
-			</view>
-			<view class="main">
-				<view class="block3" v-for="item in infoList" :key="item.id" @click="toDetail(item.id)">
-					<view style="display: block;">
-						<image :src="item.path" mode="" class="image"></image>
-						<view style="width: 96%;margin: 0 auto;font-size: 24rpx;">
+			<view class="today" v-if="today_list.length > 0">
+				<view class="more">
+					<view style="z-index:2">
+						查看更多
+					</view>
+					<view class="icon">></view>
+				</view>
+				<view class="item" v-for="item in today_list" :key="item.id">
+					<image :src="item.path" mode="scaleToFill" class="image" />
+					<view>
+						<view class="name">
 							{{ item.name }}
 						</view>
-						<view style="display: flex;justify-content: space-between;width: 94%;margin-top: 15rpx;">
-							<view class="text1">
-								¥{{ item.price }}
+						<view class="doing">
+							<image :src="image" mode="scaleToFill" v-for="(image, index) in item.list"
+								:key="'avatar' + index" class="avatar" />
+							已有{{ item.total }}人拼团
+						</view>
+						<TnTag font-size="22" border bg-color="transparent" text-color="#FF1F25" border-color="#FF1F25"
+							shape="circle">
+							立省{{ (item.teamwork_price - item.price).toFixed(2) }}元
+						</TnTag>
+						<view class="bottom">
+							<view class="left">
+								<view class="price">
+									拼团价￥ <text style="font-size:25rpx;">{{ item.price }}</text>
+								</view>
+								<view class="old">
+									￥{{ item.teamwork_price }}
+								</view>
+							</view>
+							<view class="button">
+								立即拼团
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
+			<TnWaterFall :data="infoList" mode="calc">
+				<template #left="{ item }">
+					<view class="block3" @click="toDetail(item.id)">
+						<image :src="item.path" mode="aspectFit" class="image"></image>
+						<view class="name">
+							{{ item.name }}
+						</view>
+						<view class="good-desc">
+							{{ item.desc }}
+						</view>
+						<view class="bottom">
+							<view class="left">
+								<view class="price">
+									¥{{ item.price }}
+								</view>
+								<view v-if="item.old" class="old">
+									￥{{ item.old }}
+								</view>
+							</view>
+							<view class="cart">
+								<TnIcon name="cart" size="35" color="#FFF" />
+							</view>
+						</view>
+					</view>
+				</template>
+				<template #right="{ item }">
+					<view class="block3" @click="toDetail(item.id)">
+						<image :src="item.path" mode="aspectFit" class="image"></image>
+						<view class="name">
+							{{ item.name }}
+						</view>
+						<view class="good-desc">
+							{{ item.desc }}
+						</view>
+						<view class="bottom">
+							<view class="left">
+								<view class="price">
+									¥{{ item.price }}
+								</view>
+								<view v-if="item.old" class="old">
+									￥{{ item.old }}
+								</view>
+							</view>
+							<view class="cart">
+								<TnIcon name="cart" size="35" color="#FFF" />
+							</view>
+						</view>
+					</view>
+				</template>
+			</TnWaterFall>
 		</view>
 	</view>
 </template>
@@ -104,13 +172,17 @@ import TnSwiper from '@/uni_modules/tuniaoui-vue3/components/swiper/src/swiper.v
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import { ref } from 'vue'
 import { onShow, onReachBottom, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 
-import { AddressStore } from '@/store'
+import { AddressStore, UserStore } from '@/store'
 import { get_home, get_commodity } from '@/api/index'
 import { get_goods_list } from '@/api/index/seckill/seckill'
+import { get_today_list } from '@/api/index/today/today'
+import { get_default_address } from '@/api/address/address'
 
+const user = UserStore()
 const address = AddressStore()
 // 轮播图数据	
 const swiperData = ref([])
@@ -119,6 +191,7 @@ const toWeb = path => uni.navigateTo({
 	url: '/pages/web/index?src=' + path
 })
 
+const toEditAddress = () => uni.navigateTo({ url: '/pages/selectAddress/index' })
 
 // 顶部的按钮
 const top_button = (index) => {
@@ -137,6 +210,9 @@ const top_button = (index) => {
 // 秒杀商品
 const seckill_list = ref([])
 
+// 今日开团商品
+const today_list = ref([])
+
 // 底部推荐商品
 const infoList = ref()
 
@@ -153,41 +229,21 @@ const getData = () => {
 	get_commodity({ ids: [] }).then(res => {
 		infoList.value = res.data.data
 	})
-	// 静态数据
-	seckill_list.value = [
-		{
-			id: 1,
-			name: '商品1',
-			path: 'https://loremflickr.com/100/100',
-			price: '20.00',
-			flash_price: '15.00'
-		},
-		{
-			id: 2,
-			name: '商品1',
-			path: 'https://loremflickr.com/100/100',
-			price: '20.00',
-			flash_price: '15.00'
-		},
-		{
-			id: 3,
-			name: '商品1',
-			path: 'https://loremflickr.com/100/100',
-			price: '20.00',
-			flash_price: '15.00'
-		},
-		{
-			id: 4,
-			name: '商品1',
-			path: 'https://loremflickr.com/100/100',
-			price: '20.00',
-			flash_price: '15.00'
-		},
-	]
-	// get_goods_list(1).then(res => {
-	// 	console.log(res)
-	// 	seckill_list.value = res.data.data
-	// })
+	if (!address.address_id && user.userInfo)
+		get_default_address().then(res => {
+			console.log(res)
+			const { address_name, detail, name, phone, id } = res.data
+			console.log(address_name, detail, name, phone, id);
+			address.setAddress(address_name + detail, name, phone, id)
+		})
+	get_goods_list(1).then(res => {
+		// 获取最多4个
+		seckill_list.value = res.data.data.slice(0, 4)
+	})
+	get_today_list(1).then(res => {
+		// 最多获取两个
+		today_list.value = res.data.data.slice(0, 2)
+	})
 }
 
 // 点击输入框
@@ -233,16 +289,23 @@ onShareTimeline(() => {
 .all {
 	width: 100%;
 	min-height: 100vh;
+	padding-top: 114rpx;
+	position: relative;
 	background: #F6F6F6;
-	z-index: -1;
+	//background: linear-gradient(to bottom, url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSVIHwxfRM3wibsshXu5Wh1aanKIwgD6RgKjISicMREfe4cYpZGbfkQqgYMwHqOkI5DMHWckibTYCeJA/0?wx_fmt=png') 0%, url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSVIHwxfRM3wibsshXu5Wh1aanKIwgD6RgKjISicMREfe4cYpZGbfkQqgYMwHqOkI5DMHWckibTYCeJA/0?wx_fmt=png') 100%);
+	z-index: 0;
 }
 
-.background {
+.all::before {
+	content: "";
 	position: absolute;
 	top: 0;
+	left: 0;
 	width: 100%;
 	height: 500rpx;
-	z-index: 0;
+	background: url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSVIHwxfRM3wibsshXu5Wh1aanKIwgD6RgKjISicMREfe4cYpZGbfkQqgYMwHqOkI5DMHWckibTYCeJA/0?wx_fmt=png') no-repeat;
+	background-size: 100% auto;
+	z-index: -1;
 }
 
 .contain {
@@ -252,7 +315,17 @@ onShareTimeline(() => {
 }
 
 .map {
-	margin-top: 114rpx;
+	display: flex;
+	align-items: center;
+
+	.text {
+		width: 333rpx;
+		//设置超出长度时用省略号表示
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		z-index: 1;
+	}
 }
 
 .tab {
@@ -327,15 +400,8 @@ onShareTimeline(() => {
 	width: 709rpx;
 	height: 289rpx;
 	position: relative;
-
-	.seckill-background {
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		left: 0;
-		z-index: 0;
-	}
+	background: url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQALAl1LiaicbL5icnESbI4SrzibNddNnPdXOx9x0xhMQ0qZqC16ib9gS6UibSa3kbofcg2cYEVj58NU3gw/0?wx_fmt=png') no-repeat center center;
+	background-size: 100% 100%;
 
 	.top {
 		display: flex;
@@ -344,12 +410,10 @@ onShareTimeline(() => {
 		padding: 17rpx 20rpx 20rpx 180rpx;
 		color: #EB2F0F;
 		font-size: 24rpx;
-		z-index: 2;
 	}
 
 	.items {
 		width: 100%;
-		z-index: 2;
 		display: flex;
 		align-items: center;
 		justify-content: space-around;
@@ -369,28 +433,22 @@ onShareTimeline(() => {
 
 			.flash {
 				width: 100%;
-				height: 32rpx;
+				height: 38rpx;
 				margin-bottom: 3rpx;
 				display: flex;
 				align-items: center;
 				justify-content: flex-end;
-				margin-right: 16rpx;
+				padding-right: 7rpx;
 				color: #FFF;
-				z-index: 2;
-				position: relative;
-
-				.flash-background {
-					width: 130rpx;
-					height: 100%;
-					position: absolute;
-					z-index: 1;
-				}
+				background: url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQALAl1LiaicbL5icnESbI4SrzuVcyntEnqUiaRv9BMl49AngVibkzPuf503duiadsAP36sIxQJSc6ja5PA/0?wx_fmt=png') no-repeat center center;
+				background-size: 100% 100%;
+				font-size: 26rpx;
 			}
 
 			.old {
 				color: #999;
 				text-decoration: line-through;
-				z-index: 2;
+				font-size: 22rpx;
 			}
 		}
 	}
@@ -398,11 +456,130 @@ onShareTimeline(() => {
 
 .today {
 	width: 100%;
-	height: 585rpx;
+	padding-bottom: 20rpx;
+	margin: 20rpx 0;
+	position: relative;
+	//background: url('/static/index/today.png') no-repeat;
+	background: url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQALAl1LiaicbL5icnESbI4SrzswCuasDY4EnFHhbW5wsBg1ne1icRDZno0yojCJRJLsux4EI3LNd080A/0?wx_fmt=png') no-repeat top center;
+	background-size: 100% 584rpx;
+	overflow: hidden;
 
-	.today-background {
-		width: 100%;
-		height: 100%;
+	.more {
+		margin: 20rpx 55rpx 34rpx 518rpx;
+		display: flex;
+		align-items: center;
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 26rpx;
+		color: #FFFFFF;
+		line-height: 37rpx;
+		text-align: justify;
+		font-style: normal;
+
+		.icon {
+			width: 30rpx;
+			height: 30rpx;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+			background: #FFF;
+			color: #14BF20;
+			z-index: 2;
+			margin-left: 5rpx;
+		}
+	}
+
+	.item {
+		width: 680rpx;
+		height: 230rpx;
+		display: flex;
+		margin: 20rpx;
+		border-radius: 10rpx;
+		background: #FFF;
+
+		.image {
+			width: 230rpx;
+			height: 230rpx;
+			margin-right: 16rpx;
+		}
+
+		.name {
+			font-family: PingFangSC, PingFang SC;
+			font-weight: bold;
+			font-size: 28rpx;
+			color: #333333;
+			line-height: 40rpx;
+			text-align: left;
+			font-style: normal;
+			margin: 16rpx 0 10rpx;
+		}
+
+		.doing {
+			display: flex;
+			align-items: center;
+			font-family: PingFangSC, PingFang SC;
+			font-weight: 400;
+			font-size: 22rpx;
+			color: #666666;
+			line-height: 30rpx;
+			text-align: left;
+			font-style: normal;
+			margin-bottom: 28rpx;
+
+			.avatar {
+				width: 40rpx;
+				height: 40rpx;
+				border-radius: 50%;
+			}
+
+			.avatar:nth-child(n+1) {
+				margin-left: -10rpx;
+			}
+		}
+
+		.bottom {
+			margin-bottom: 14rpx;
+			width: 422rpx;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.left {
+				display: flex;
+				align-items: center;
+
+				.price {
+					font-family: PingFangSC, PingFang SC;
+					font-weight: 600;
+					font-size: 20rpx;
+					color: #EE2532;
+				}
+
+				.old {
+					font-family: PingFangSC, PingFang SC;
+					font-weight: 400;
+					font-size: 20rpx;
+					color: #999999;
+					line-height: 33rpx;
+					text-align: left;
+					font-style: normal;
+					text-decoration-line: line-through;
+					margin-left: 10rpx;
+				}
+			}
+
+			.button {
+				width: 150rpx;
+				height: 56rpx;
+				background: url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQALAl1LiaicbL5icnESbI4SrzEvfywYPjxhicmSNNdFtlQdvwZ2ojtAVpkf77sQ1qsXQ7rXxsjaonk1A/0?wx_fmt=png') no-repeat;
+				background-size: 100% 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: #FFF;
+			}
+		}
 	}
 }
 
@@ -412,31 +589,90 @@ onShareTimeline(() => {
 }
 
 .block3 {
-	display: flex;
+	width: 345rpx;
+	background: #FFF;
 	margin-bottom: 20rpx;
-	margin-right: 25rpx;
+	border-radius: 20rpx;
 
 	.image {
-		width: 330rpx;
-		height: 330rpx;
-		border-radius: 13rpx 13rpx 13rpx 13rpx;
+		width: 345rpx;
+		height: 345rpx;
 	}
 
-	.text1 {
-		font-family: Inter, Inter;
-		font-weight: 600;
-		font-size: 33rpx;
-		color: #834820;
-		line-height: 46rpx;
-	}
-
-	.text2 {
-		font-family: Inter, Inter;
+	.name {
+		margin: 14rpx;
+		width: 317rpx;
+		font-family: PingFangSC, PingFang SC;
 		font-weight: 500;
-		font-size: 23rpx;
-		color: #8D8D8D;
-		margin-top: 5rpx;
-		line-height: 50rpx;
+		font-size: 28rpx;
+		color: #333333;
+		line-height: 40rpx;
+		text-align: left;
+		font-style: normal;
+		//最多两行显示
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.good-desc {
+		width: 308rpx;
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 22rpx;
+		color: #999999;
+		line-height: 30rpx;
+		text-align: left;
+		font-style: normal;
+		white-space: no-wrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.bottom {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 14rpx 14rpx 20rpx;
+
+		.left {
+			display: flex;
+			align-items: center;
+
+			.price {
+				font-family: PingFangSC, PingFang SC;
+				font-weight: 600;
+				font-size: 36rpx;
+				color: #EE2532;
+				line-height: 50rpx;
+				text-align: left;
+				font-style: normal;
+			}
+
+			.old {
+				font-family: PingFangSC, PingFang SC;
+				font-weight: 400;
+				font-size: 24rpx;
+				color: #999999;
+				line-height: 33rpx;
+				text-align: left;
+				font-style: normal;
+				text-decoration-line: line-through;
+			}
+		}
+
+		.cart {
+			width: 56rpx;
+			height: 56rpx;
+			border-radius: 20rpx;
+			background: #14bf20;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 }
 

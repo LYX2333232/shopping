@@ -4,7 +4,7 @@
     <TnListItem width="750">
       <view class="tn-flex-center-start">
         <view class="label">姓名</view>
-        <TnInput maxlength="10" :border="false" type="text" placeholder="请输入姓名" v-model="name"></TnInput>
+        <TnInput :maxlength="10" :border="false" type="text" placeholder="请输入姓名" v-model="name"></TnInput>
       </view>
     </TnListItem>
     <TnListItem width="750">
@@ -14,19 +14,20 @@
       </view>
     </TnListItem>
     <TnListItem width="750">
-      <view class="tn-flex-center-start">
+      <view class="tn-flex-center-start" @click="onRegionChange">
         <view class="label">选择地区</view>
-        <picker mode="region" :value="region" @change="onRegionChange">
-          <view class="tn-flex-center-start">
-            {{ region.join('-') }}
-          </view>
-        </picker>
+        <view class="tn-flex-center-start">
+          {{ address.address }}
+        </view>
       </view>
     </TnListItem>
     <TnListItem width="750">
-      <view class="tn-flex-center-start">
+      <view class="tn-flex-start-start">
         <view class="label">详细地址</view>
-        <TnInput :border="false" type="text" placeholder="街道、楼牌号等" v-model="detail"></TnInput>
+        <view style="width:100%">
+          <TnInput :border="false" type="textarea" placeholder="街道、楼牌号等" v-model="address.detail">
+          </TnInput>
+        </view>
       </view>
     </TnListItem>
     <TnListItem width="750">
@@ -60,29 +61,42 @@ const name = ref('')
 
 const phone = ref('')
 
+const address = ref({
+  address: '',
+  detail: '',
+  lat: undefined,
+  lng: undefined
+})
+
 const region = ref(['北京市', '市辖区', '东城区'])
 
-const code = ref(["110000", "110100", "110101"])
-
 const onRegionChange = (e) => {
-  region.value = e.detail.value
-  code.value = e.detail.code
+  uni.chooseLocation({
+    success: (res) => {
+      console.log(res);
+      address.value = {
+        address: res.address,
+        address_name: res.name,
+        lat: res.latitude,
+        lng: res.longitude
+      }
+    },
+  })
 }
-
-const detail = ref('')
 
 const isDefault = ref(false)
 
 const save = () => {
-  add_address({
+  const data = {
     id,
     name: name.value,
     phone: phone.value,
-    address: region.value,
-    detail: detail.value,
+    ...address.value,
     default: isDefault.value ? 1 : 0,
-    code: JSON.stringify(code.value)
-  }).then((res) => {
+  }
+  console.log(data);
+  add_address(data).then((res) => {
+    console.log(res);
     if (res.code === 200) {
       uni.showToast({
         title: '保存成功',
@@ -104,6 +118,7 @@ onLoad((options) => {
     title.value = '编辑地址'
     id = parseInt(options.index)
     get_address_detail(id).then(res => {
+      const { name, phone, detail, address } = res.data
       name.value = res.data.name
       phone.value = res.data.phone
       region.value = JSON.parse(res.data.address)
@@ -126,7 +141,7 @@ onLoad((options) => {
   padding-top: 200rpx;
 
   .label {
-    width: 150rpx;
+    width: 180rpx;
     font-family: Inter, Inter;
     font-weight: 600;
     font-size: 35rpx;
