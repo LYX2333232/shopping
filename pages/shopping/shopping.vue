@@ -1,39 +1,120 @@
 <template>
+	<view class="top">
+		<view class="map" @click="toEditAddress">
+			<TnIcon name="map" size="40" />
+			<view class="text">
+				{{ address.address ?? '定位失败' }}
+			</view>
+			<TnIcon name="down" size="40" />
+		</view>
+		<view class="tn-flex-center-between">
+			<view class="title">
+				购物车
+			</view>
+			<view class="delete">
+				删除
+			</view>
+		</view>
+	</view>
 	<view class="all">
-		<view style="display: flex; margin-left: 30rpx;">
-			<text style="font-size: 38rpx;font-weight: 600;">购物车</text>
-			<view v-if="!edit" class="control" @click="changeEdit(true)">
-				管理
-			</view>
-			<view v-else class="control" @click="changeEdit(false)">
-				退出管理
-			</view>
+		<view v-if="dataList.length > 0" class="card">
+			<shoppingCard v-for="(data, index) in dataList" :key="index" :index="index" :data="data" @change="change"
+				@changeNum="changeNum"></shoppingCard>
 		</view>
-		<view style="margin-left: 30rpx;display:flex;" @click="addressChange">
-			<view class="address">
-				地址：{{ address.address ?? '请选择地址' }}
-			</view>
-			<TnIcon name="down"></TnIcon>
+		<view v-if="deleteList.length > 0" class="card">
+			<deleteCard v-for="(data, index) in deleteList" :key="index" :data="data" />
 		</view>
-
-		<shoppingCard v-for="(data, index) in dataList" :key="index" :index="index" :data="data" :edit="edit" @del="del"
-			@change="change" @changeNum="changeNum"></shoppingCard>
+		<view v-if="dataList.length === 0" class="empty">
+			<TnEmpty mode="cart">
+				<template #icon>
+					<image
+						src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhTcBKpUgwer5OCCic51cf2LcV60EdpTKrgv3dLu4wuOFc8iapxtqboZT3lFKDKrgqic8JOzmdT0nQevg/0?wx_fmt=png"
+						mode=" scaleToFill" />
+				</template>
+				<template #tips>
+					<view>
+						您还没有添加商品
+					</view>
+				</template>
+			</TnEmpty>
+		</view>
+		<view v-if="dataList.length > 0" class="suggest">
+			<image
+				src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhTcBKpUgwer5OCCic51cf2LcTZxA5rVFQEGxtVt0kIP1dxic6tTEgrte4Uelyw6FcO7HaVDicj9RUnqA/0?wx_fmt=png"
+				mode="scaleToFill" class="logo" />
+			<TnWaterFall :data="infoList" mode="calc">
+				<template #left="{ item }">
+					<view class="block3" @click="toDetail(item.id)">
+						<image :src="item.path" mode="aspectFit" class="image"></image>
+						<view class="name">
+							{{ item.name }}
+						</view>
+						<view class="good-desc">
+							{{ item.desc }}
+						</view>
+						<view class="bottom">
+							<view class="left">
+								<view class="price">
+									¥{{ item.price }}
+								</view>
+								<view v-if="item.or_price" class="old">
+									￥{{ item.or_price }}
+								</view>
+							</view>
+							<TnButton icon="cart" type="success" shape="circle" font-size="40"></TnButton>
+						</view>
+					</view>
+				</template>
+				<template #right="{ item }">
+					<view class="block3" @click="toDetail(item.id)">
+						<image :src="item.path" mode="aspectFit" class="image"></image>
+						<view class="name">
+							{{ item.name }}
+						</view>
+						<view class="good-desc">
+							{{ item.desc }}
+						</view>
+						<view class="bottom">
+							<view class="left">
+								<view class="price">
+									¥{{ item.price }}
+								</view>
+								<view v-if="item.or_price" class="old">
+									￥{{ item.or_price }}
+								</view>
+							</view>
+							<TnButton icon="cart" type="success" shape="circle" font-size="40"></TnButton>
+						</view>
+					</view>
+				</template>
+			</TnWaterFall>
+		</view>
 	</view>
 
-	<view class="bottom">
-		<view style="width:90%;display: flex;justify-content: space-between;margin: 30rpx auto;">
+	<view class="fix-bottom">
+		<!-- <view style="width:90%;display: flex;justify-content: space-between;margin: 30rpx auto;">
 			<view>{{ select_coupon !== undefined ? select_coupon.name : '暂无优惠券' }} </view>
 			<text style="color: #C7BAA5;text-decoration: underline;" @click="openPopup">选择优惠券></text>
-		</view>
-		<view style="width: 90%;margin: 10rpx auto;display: flex;align-items: center;">
-			<TnCheckbox v-model="orderAll" :indeterminate="ordertSome" @change="changeOrderAll" checked-shape="circle"
-				size="lg" active-color="#C7BAA5"></TnCheckbox>
-
-			<view class="text2">全选</view>
-			<view class="text3">总计</view>
-			<view class="text4">¥{{ total.toFixed(2) }} </view>
-			<view class="button" @click="tocaculate">
-				结算
+		</view> -->
+		<view class="bottom">
+			<view class="tn-flex-center-start">
+				<TnCheckbox v-model="orderAll" :indeterminate="orderSome" @change="changeOrderAll"
+					checked-shape="circle" size="lg" active-color="#14bf20"></TnCheckbox>
+				<view class="button">全选</view>
+			</view>
+			<view class="right">
+				<view class="text-price">
+					<view class="tn-flex-center-start">
+						<view class="text">总计</view>
+						<view class="price">¥{{ total.toFixed(2) }} </view>
+					</view>
+					<view class="coupon">
+						优惠券
+					</view>
+				</view>
+				<TnButton width="220" type="success" shape="round" font-size="30" @click="tocaculate">
+					结算（{{ select_goods.length }}）
+				</TnButton>
 			</view>
 		</view>
 	</view>
@@ -120,16 +201,21 @@
 			</view>
 		</view>
 	</TnPopup>
-
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { onShow, onLoad, onReachBottom } from '@dcloudio/uni-app'
-import shoppingCard from '@/components/shopping/shoppingCard.vue'
+import { onShow, onReachBottom } from '@dcloudio/uni-app'
+
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
+import TnEmpty from '@/uni_modules/tuniaoui-vue3/components/empty/src/empty.vue'
+import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
+import deleteCard from '@/components/shopping/deleteCard.vue'
+import shoppingCard from '@/components/shopping/shoppingCard.vue'
+import { get_commodity } from '@/api/index/index'
 import { get_cart_list, del_cart, get_coupon } from '@/api/cart/cart'
 import { new_order, get_order_price } from '@/api/order/order'
 import { AddressStore } from '@/store'
@@ -137,13 +223,7 @@ import { AddressStore } from '@/store'
 const address = AddressStore()
 let page = 1
 
-const edit = ref(false)
-
-const changeEdit = (e) => {
-	edit.value = e
-}
-
-const addressChange = () => {
+const toEditAddress = () => {
 	uni.navigateTo({
 		url: '/pages/selectAddress/index'
 	})
@@ -152,6 +232,11 @@ const addressChange = () => {
 const dataList = ref([])
 
 const select_goods = ref([])
+
+const deleteList = ref([])
+
+const infoList = ref([])
+
 
 const updateTotal = () => {
 	let temp = 0
@@ -178,12 +263,6 @@ const updateTotal = () => {
 
 // 改变选中状态
 const change = (e, i, j) => {
-	// if (e)
-	// 	dataList.value.forEach((item, index) => {
-	// 		if (index !== j) {
-	// 			item.order = false
-	// 		}
-	// 	})
 	dataList.value[j].order = e
 	if (select_coupon.value) {
 		uni.showToast({
@@ -219,7 +298,7 @@ const orderAll = computed({
 })
 
 // 部分选中
-const ordertSome = computed(() => {
+const orderSome = computed(() => {
 	return dataList.value.some(item => item.order)
 })
 
@@ -356,7 +435,6 @@ const couponList = ref([])
 const couponVisible = ref(false)
 
 const openPopup = () => {
-	// const item = dataList.value.find(item => item.order)
 	if (select_goods.value.length === 0) {
 		uni.showToast({
 			title: '先请选择商品',
@@ -394,21 +472,30 @@ const getData = () => {
 				order: false
 			}
 		})
+		deleteList.value = res.data.data.map(item => {
+			return {
+				...item,
+				order: false
+			}
+		})
+	})
+	get_commodity({ ids: infoList.value.map(item => item.id) }).then(res => {
+		infoList.value = res.data.data
 	})
 }
 onShow(() => {
 	getData()
 	// 用以在选择地址后更新地址
-	const option = {
-		address_id: address.address_id,
-		com_id: select_good.value.item_id,
-		com_cont: select_good.value.cont
-	}
-	if (select_coupon.value)
-		option.coupon_id = select_coupon.value.coupon_id
-	get_order_price(option).then(res => {
-		detail_price.value = res.data
-	})
+	// const option = {
+	// 	address_id: address.address_id,
+	// 	com_id: select_good.value.item_id,
+	// 	com_cont: select_good.value.cont
+	// }
+	// if (select_coupon.value)
+	// 	option.coupon_id = select_coupon.value.coupon_id
+	// get_order_price(option).then(res => {
+	// 	detail_price.value = res.data
+	// })
 })
 
 onReachBottom(() => {
@@ -421,94 +508,251 @@ onReachBottom(() => {
 			}
 		}))
 	})
+	get_commodity({ ids: infoList.value.map(item => item.id) }).then(res => {
+		infoList.value = res.data.data
+	})
 })
 </script>
 
 <style lang="scss" scoped>
-page {
-	background-color: rgba(247, 247, 247, 1);
-	padding-top: 100rpx;
+.top {
+	padding: 0 20rpx 20rpx;
+	width: 100%;
+	height: 20vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: #FFF;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	z-index: 999;
+
+	.map {
+		display: flex;
+		align-items: center;
+		margin-bottom: 45rpx;
+
+		.text {
+			max-width: 333rpx;
+			//设置超出长度时用省略号表示
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			z-index: 1;
+			color: #0A3C0B;
+		}
+	}
+
+	.title {
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 600;
+		font-size: 36rpx;
+		color: #333333;
+		line-height: 50rpx;
+		text-align: left;
+		font-style: normal;
+	}
+
+	.delete {
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 28rpx;
+		color: #666666;
+		line-height: 40rpx;
+		text-align: left;
+		font-style: normal;
+	}
 }
 
 .all {
-	margin-top: 100rpx;
-	padding-bottom: 100rpx;
+	margin-top: 20vh;
+	padding: 20rpx 40rpx 200rpx;
+	background: #F7F7F7;
+	min-height: 80vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.card {
+		margin: 20rpx 0;
+		width: 100%;
+		padding: 20rpx;
+		background: #FFFFFF;
+		border-radius: 13rpx;
+	}
+
+	.empty {
+		margin-top: 150rpx;
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 30rpx;
+		color: #666666;
+		line-height: 42rpx;
+
+		image {
+			width: 240rpx;
+			height: 240rpx;
+		}
+	}
 }
 
-.address {
-	font-family: Inter, Inter;
-	font-weight: 400;
-	font-size: 23rpx;
-	color: #666666;
-	line-height: 35rpx;
-	text-align: left;
-	font-style: normal;
-	text-transform: none;
-	max-width: 200rpx;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+.suggest {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.logo {
+		width: 225rpx;
+		height: 30rpx;
+		margin: 40rpx;
+	}
+
+	.block3 {
+		width: 90%;
+		background: #FFF;
+		margin-bottom: 20rpx;
+		border-radius: 20rpx;
+
+		.image {
+			width: 300rpx;
+			height: 300rpx;
+		}
+
+		.name {
+			margin: 14rpx;
+			width: 300rpx;
+			font-family: PingFangSC, PingFang SC;
+			font-weight: 500;
+			font-size: 28rpx;
+			color: #333333;
+			line-height: 40rpx;
+			text-align: left;
+			font-style: normal;
+			//最多两行显示
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.good-desc {
+			width: 300rpx;
+			font-family: PingFangSC, PingFang SC;
+			font-weight: 400;
+			font-size: 22rpx;
+			color: #999999;
+			line-height: 30rpx;
+			text-align: left;
+			font-style: normal;
+			white-space: no-wrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.bottom {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 14rpx 14rpx 20rpx;
+
+			.left {
+				display: flex;
+				align-items: center;
+
+				.price {
+					font-family: PingFangSC, PingFang SC;
+					font-weight: 600;
+					font-size: 36rpx;
+					color: #EE2532;
+					line-height: 50rpx;
+					text-align: left;
+					font-style: normal;
+				}
+
+				.old {
+					font-family: PingFangSC, PingFang SC;
+					font-weight: 400;
+					font-size: 24rpx;
+					color: #999999;
+					line-height: 33rpx;
+					text-align: left;
+					font-style: normal;
+					text-decoration-line: line-through;
+				}
+			}
+		}
+	}
 }
 
-.control {
-	height: 38rpx;
-	background: #E2D6BF;
-	border-radius: 98rpx;
-	font-family: Inter, Inter;
-	font-weight: 400;
-	font-size: 21rpx;
-	color: rgba(255, 255, 255, 1);
-	line-height: 36rpx;
-	text-align: center;
-	margin-left: 20rpx;
-	margin-top: 8rpx;
-	margin-bottom: 20rpx;
-	padding: 3rpx 10rpx;
-}
-
-.bottom {
+.fix-bottom {
 	width: 750rpx;
 	background: #FFFFFF;
 	position: fixed;
 	bottom: 0;
 
-	.text2 {
-		color: rgba(153, 153, 153, 1);
-		margin-left: 10rpx;
-	}
-
-	.text3 {
-		margin-left: 90rpx;
-		width: 55rpx;
-		font-family: Inter, Inter;
-		font-weight: 400;
-		font-size: 27rpx;
-		color: #000000;
-	}
-
-	.text4 {
-		width: 119rpx;
-		font-family: Inter, Inter;
-		font-weight: normal;
-		font-size: 38rpx;
-		color: #834820;
-		margin-left: 20rpx;
-	}
-
-	.button {
-		width: 258rpx;
-		height: 71rpx;
-		background: #C8B697;
-		border-radius: 10rpx;
-		font-weight: 500;
-		font-size: 31rpx;
-		color: #FFFFFF;
-		text-align: center;
-		margin-left: 20rpx;
+	.bottom {
+		width: 90%;
+		margin: 10rpx auto;
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: space-between;
+
+		.button {
+			font-family: PingFangSC, PingFang SC;
+			font-weight: 400;
+			font-size: 26rpx;
+			color: #999999;
+			line-height: 37rpx;
+			text-align: center;
+			font-style: normal;
+		}
+
+		.right {
+			display: flex;
+
+			.text-price {
+				display: flex;
+				flex-direction: column;
+				align-items: flex-end;
+				margin-right: 22rpx;
+
+				.text {
+					font-family: PingFangSC, PingFang SC;
+					font-weight: 500;
+					font-size: 24rpx;
+					color: #333333;
+					line-height: 33rpx;
+					text-align: left;
+					font-style: normal;
+				}
+
+				.price {
+					font-family: PingFangSC, PingFang SC;
+					font-weight: 600;
+					font-size: 36rpx;
+					color: #EE2532;
+					line-height: 50rpx;
+					text-align: left;
+					font-style: normal;
+				}
+
+				.coupon {
+					font-family: PingFangSC, PingFang SC;
+					font-weight: 400;
+					font-size: 24rpx;
+					color: #999999;
+					line-height: 33rpx;
+					text-align: left;
+					font-style: normal;
+				}
+			}
+		}
 	}
+
 }
 
 .popup {

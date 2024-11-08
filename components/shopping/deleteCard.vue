@@ -1,9 +1,15 @@
 <template>
   <view class="card">
-    <TnCheckbox v-model="data.order" @change="(e) => change(e, i)" active-color="#14bf20" checked-shape="circle"
-      size="lg">
-    </TnCheckbox>
-    <image :src="data.path" class="image" mode="scaleToFill" />
+    <TnIcon
+      name="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhTcBKpUgwer5OCCic51cf2LcwCdPpIa3dwCRLadgOwB5sn9on8SuVsT7Pia2Zm9WRWpyoFNQ455icFQw/0?wx_fmt=png"
+      size="40" />
+    <view class="image" :style="{ background: `url(${data.path})`, backgroundSize: '100% 100%' }">
+      <view class="mask">
+        <view class="bottom">
+          {{ index % 2 ? '已下架' : '已售罄' }}
+        </view>
+      </view>
+    </view>
     <view class="right">
       <view>
         <view class="title">{{ data.name }}</view>
@@ -11,23 +17,18 @@
           {{ data.item_name }}
         </view>
       </view>
-      <view class="tn-flex-center-between">
-        <view class="tn-flex-center-center">
-          <view class="price">￥{{ data.price }}</view>
-          <view v-if="data.or_price" class="old">￥{{ data.or_price }}</view>
-        </view>
-        <TnNumberBox v-model="data.cont" :min="1" @change="(e) => changeNum(e, i)" />
+      <view class="tn-flex-center-end">
+        <TnButton type="info" plain>删除</TnButton>
       </view>
     </view>
   </view>
 </template>
 
 <script setup>
-import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
-import TnNumberBox from '@/uni_modules/tuniaoui-vue3/components/number-box/src/number-box.vue'
+import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 
-const { index, data } = defineProps({
+defineProps({
   index: {
     type: Number,
     default: 0
@@ -35,24 +36,8 @@ const { index, data } = defineProps({
   data: {
     type: Object,
     default: {}
-  },
-  edit: {
-    type: Boolean,
-    default: false
   }
 })
-
-const emit = defineEmits(['change', 'changeNum'])
-
-// 改变选中状态
-const change = (e, i) => {
-  emit('change', e, i, index)
-}
-
-// 改变数量
-const changeNum = (e, i) => {
-  emit('changeNum', e, i, index)
-}
 </script>
 
 <style lang="scss" scoped>
@@ -68,6 +53,23 @@ const changeNum = (e, i) => {
   height: 170rpx;
   margin: 0 15rpx;
   border-radius: 20rpx;
+
+  .mask {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    .bottom {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      color: #FFF;
+    }
+  }
 }
 
 .right {
@@ -107,26 +109,5 @@ const changeNum = (e, i) => {
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-bottom: 25rpx;
-}
-
-.price {
-  font-family: PingFangSC, PingFang SC;
-  font-weight: 600;
-  font-size: 36rpx;
-  color: #EE2532;
-  line-height: 50rpx;
-  text-align: left;
-  font-style: normal;
-}
-
-.old {
-  font-family: PingFangSC, PingFang SC;
-  font-weight: 400;
-  font-size: 24rpx;
-  color: #999999;
-  line-height: 33rpx;
-  text-align: left;
-  font-style: normal;
-  text-decoration-line: line-through;
 }
 </style>
