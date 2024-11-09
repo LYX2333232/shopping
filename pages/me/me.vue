@@ -1,27 +1,23 @@
 <template>
 	<view class="all">
 		<view class="top">
-			<view class="avatar">
-				<image
-					:src="store.userInfo ? store.userInfo.avatar : 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png'"
-					mode="widthFix" class="image"></image>
-				<view class="tabel"
-					:style="!store.userInfo.is_up ? 'background: linear-gradient(90deg,rgba(255, 232, 184, 0.77) 20%,rgba(250, 197, 82, 1)100%);color: rgba(152, 99, 40, 1);' : 'background: linear-gradient( 90deg, #686464 0%, #423F40 50%, #423F40 100%);color:#FFFFFF'">
-					{{ !store.userInfo.is_up ? '个人买家' : '分销商' }}
-				</view>
-			</view>
-			<view v-if="store.userInfo" style="margin-left:30rpx">
+			<image
+				:src="store.userInfo ? store.userInfo.avatar : 'http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60siayiaB6TSiaibhbOM8bAnxKkpQLG0o0oUJaUw9jf2FOme0iayWCK9O7PCmw/0?wx_fmt=png'"
+				mode="widthFix" class="avatar"></image>
+			<view v-if="store.userInfo">
 				<view class="tn-flex-center-start">
-					<view class="denglu">
+					<view class="name">
 						{{ store.userInfo.name }}
 					</view>
+					<view :class="['label', store.userInfo.is_up ? 'seller' : 'buyer']">
+						{{ store.userInfo.is_up ? '分销商' : '个人买家' }}
+					</view>
 				</view>
-
-				<view class="bianhao">
-					编号：{{ store.userInfo.uid }}
+				<view class="id">
+					ID：{{ store.userInfo.uid }}
 				</view>
 			</view>
-			<view style="margin-left:30rpx;" class="denglu" v-else @click="showLogin">
+			<view style="margin-left:30rpx;" class="name" v-else @click="showLogin">
 				点击授权登录
 			</view>
 		</view>
@@ -520,257 +516,284 @@ onShow(() => {
 
 <style lang="scss" scoped>
 .all {
-	width: 750rpx;
+	width: 100%;
 	min-height: 100vh;
-	//background: linear-gradient(0deg, rgba(240, 240, 240, 1.0) 67.000002%, rgba(240, 224, 198, 1)100.000002%);
-	background: linear-gradient(180deg, #FAEBD9 0%, #F0E0C6 10%, #FBF0E2 20%, #F7F7F7 50%, #F7F7F7 100%);
-	padding-top: 100rpx;
+	padding: 114rpx 20rpx 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
+	background: #F6F6F6;
+	z-index: 0;
+}
+
+.all::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 500rpx;
+	background: url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSVIHwxfRM3wibsshXu5Wh1aanKIwgD6RgKjISicMREfe4cYpZGbfkQqgYMwHqOkI5DMHWckibTYCeJA/0?wx_fmt=png') no-repeat;
+	background-size: 100% auto;
+	z-index: -1;
+}
+
+.top {
+	display: flex;
+	margin-bottom: 40rpx;
+
+	.avatar {
+		width: 150rpx;
+		height: 150rpx;
+		border-radius: 100%;
+		margin-right: 30rpx;
+	}
+
+	.name {
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 500;
+		font-size: 38rpx;
+		color: #0A3C0B;
+		line-height: 53rpx;
+		text-align: left;
+		font-style: normal;
+	}
+
+	.label {
+		border-radius: 18rpx;
+		text-align: center;
+		padding: 2rpx 10rpx;
+		margin-left: 10rpx;
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 22rpx;
+		color: #FFFFFF;
+		line-height: 30rpx;
+		font-style: normal;
+	}
+
+	.buyer {
+		background: #F39503;
+	}
+
+	.seller {
+		background: linear-gradient(90deg, #686464 0%, #423F40 50%, #423F40 100%);
+		color: #FFFFFF;
+	}
+
+	.id {
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 30rpx;
+		color: #0A3C0B;
+		line-height: 42rpx;
+		text-align: left;
+		font-style: normal;
+	}
+}
+
+.middle {
+	width: 100%;
+	height: 140.38rpx;
+	border-radius: 11.54rpx;
+
+	.block {
+		display: flex;
+		padding-top: 10rpx;
+		padding-left: 26rpx;
+		font-family: PingFang SC, PingFang SC;
+
+		.image {
+			width: 30rpx;
+			height: 30rpx;
+			margin-right: 10rpx;
+			margin-top: 30rpx;
+		}
+
+		.p1 {
+			margin-top: 20rpx;
+			font-weight: 500;
+			font-size: 31rpx;
+			color: #FFDFC3;
+			line-height: 46rpx;
+			text-align: left;
+		}
+
+		.p2 {
+			font-weight: 400;
+			font-size: 23rpx;
+			color: #FFDFC3;
+			line-height: 35rpx;
+		}
+
+		.p3 {
+			width: 146rpx;
+			height: 56rpx;
+			background: linear-gradient(96deg, #EDD3A9 0%, #E0B57E 100%);
+			border-radius: 56rpx;
+			text-align: center;
+			font-family: PingFang SC, PingFang SC;
+			font-weight: 500;
+			font-size: 27rpx;
+			color: #835A2C;
+			padding-top: 12rpx;
+			position: absolute;
+			right: 50rpx;
+			top: 375rpx;
+
+		}
+	}
+
+}
+
+.block1 {
+	width: 100%;
+	height: 232.69rpx;
+	background-color: #fff;
+	border-radius: 13.46rpx;
+	margin-top: 15rpx;
+
+	.myorder {
+		font-family: Inter, Inter;
+		font-weight: 600;
+		font-size: 31rpx;
+		color: #000000;
+		line-height: 46rpx;
+		text-align: left;
+		font-style: normal;
+		text-transform: none;
+		padding-left: 20rpx;
+		padding-top: 10rpx;
+	}
+}
+
+.block2 {
+	width: 100%;
+	height: 438.46rpx;
+	background-color: #fff;
+	border-radius: 13.46rpx;
+	margin-top: 15rpx;
+
+	.myorder {
+		font-family: Inter, Inter;
+		font-weight: 600;
+		font-size: 31rpx;
+		color: #000000;
+		line-height: 46rpx;
+		text-align: left;
+		font-style: normal;
+		text-transform: none;
+		padding-left: 20rpx;
+		padding-top: 10rpx;
+	}
+}
+
+.function {
+	margin-top: 15rpx;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.tofunction {
+	background-color: rgba(255, 255, 255, 1);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 
-	.top {
-		width: 90%;
+	.img {
+		position: relative;
+		width: 50rpx;
+		height: 50rpx;
+		text-align: center;
+		margin: 0 auto;
+		margin-top: 35rpx;
+		margin-bottom: 25rpx;
+	}
+}
+
+.user_popup {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.title_border_text {
+		font-size: 33rpx;
+		font-weight: bold;
+		height: 80rpx;
+		margin-top: 10rpx;
+	}
+
+	.user_text {
+		font-size: 26rpx;
+		color: #999;
+	}
+
+	.up_avatar {
 		height: 150rpx;
-		display: flex;
-		margin: 0 0 40rpx;
+		width: 150rpx;
+		border: 4rpx solid #fff;
+		margin-top: 50rpx;
+		border-radius: 100rpx;
+		background: #f8f7f8;
+		box-shadow: 0 0 2.5rem rgba(0, 0, 0, .15);
 
-		.avatar {
-			position: relative;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-
-			.image {
-				width: 150rpx;
-				height: 150rpx;
-				border-radius: 100%;
-			}
-
-			.tabel {
-				position: absolute;
-				height: 36.54rpx;
-				border-radius: 53.85rpx;
-				bottom: -20rpx;
-				text-align: center;
-				padding: 0 20rpx;
-			}
-		}
-
-		.denglu {
-			font-style: Inter-Medium;
-			font-size: 34rpx;
-			margin: 20rpx 0 10rpx;
-		}
-
-		.bianhao {
-			color: #6D6D6D;
-			font-size: 22rpx;
-		}
-	}
-
-	.middle {
-		width: 95%;
-		height: 140.38rpx;
-		border-radius: 11.54rpx;
-
-		.block {
-			display: flex;
-			padding-top: 10rpx;
-			padding-left: 26rpx;
-			font-family: PingFang SC, PingFang SC;
-
-			.image {
-				width: 30rpx;
-				height: 30rpx;
-				margin-right: 10rpx;
-				margin-top: 30rpx;
-			}
-
-			.p1 {
-				margin-top: 20rpx;
-				font-weight: 500;
-				font-size: 31rpx;
-				color: #FFDFC3;
-				line-height: 46rpx;
-				text-align: left;
-			}
-
-			.p2 {
-				font-weight: 400;
-				font-size: 23rpx;
-				color: #FFDFC3;
-				line-height: 35rpx;
-			}
-
-			.p3 {
-				width: 146rpx;
-				height: 56rpx;
-				background: linear-gradient(96deg, #EDD3A9 0%, #E0B57E 100%);
-				border-radius: 56rpx;
-				text-align: center;
-				font-family: PingFang SC, PingFang SC;
-				font-weight: 500;
-				font-size: 27rpx;
-				color: #835A2C;
-				padding-top: 12rpx;
-				position: absolute;
-				right: 50rpx;
-				top: 375rpx;
-
-			}
-		}
-
-	}
-
-	.block1 {
-		width: 95%;
-		height: 232.69rpx;
-		background-color: #fff;
-		border-radius: 13.46rpx;
-		margin-top: 15rpx;
-
-		.myorder {
-			font-family: Inter, Inter;
-			font-weight: 600;
-			font-size: 31rpx;
-			color: #000000;
-			line-height: 46rpx;
-			text-align: left;
-			font-style: normal;
-			text-transform: none;
-			padding-left: 20rpx;
-			padding-top: 10rpx;
-		}
-	}
-
-	.block2 {
-		width: 95%;
-		height: 438.46rpx;
-		background-color: #fff;
-		border-radius: 13.46rpx;
-		margin-top: 15rpx;
-
-		.myorder {
-			font-family: Inter, Inter;
-			font-weight: 600;
-			font-size: 31rpx;
-			color: #000000;
-			line-height: 46rpx;
-			text-align: left;
-			font-style: normal;
-			text-transform: none;
-			padding-left: 20rpx;
-			padding-top: 10rpx;
-		}
-	}
-
-	.function {
-		margin-top: 15rpx;
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-	}
-
-	.tofunction {
-		background-color: rgba(255, 255, 255, 1);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-
-		.img {
-			position: relative;
-			width: 50rpx;
-			height: 50rpx;
-			text-align: center;
-			margin: 0 auto;
-			margin-top: 35rpx;
-			margin-bottom: 25rpx;
-		}
-	}
-
-	.user_popup {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-
-		.title_border_text {
-			font-size: 33rpx;
-			font-weight: bold;
-			height: 80rpx;
-			margin-top: 10rpx;
-		}
-
-		.user_text {
-			font-size: 26rpx;
-			color: #999;
-		}
-
-		.up_avatar {
+		image {
 			height: 150rpx;
 			width: 150rpx;
-			border: 4rpx solid #fff;
-			margin-top: 50rpx;
-			border-radius: 100rpx;
-			background: #f8f7f8;
-			box-shadow: 0 0 2.5rem rgba(0, 0, 0, .15);
-
-			image {
-				height: 150rpx;
-				width: 150rpx;
-				border-radius: 50%;
-				margin-left: -30rpx;
-			}
-		}
-
-		.user_name {
-			height: 80rpx;
-			margin-top: 50rpx;
-			border-radius: 10rpx;
-			background: #f8f7f8;
-
-			input {
-				width: 650rpx;
-				height: 100%;
-				margin: 0 auto;
-			}
-		}
-
-		.login {
-			height: 80rpx;
-			border-radius: 10rpx;
-			background: #e6e6e6;
-			margin-top: 70rpx;
+			border-radius: 50%;
+			margin-left: -30rpx;
 		}
 	}
 
-	.title {
-		font-family: PingFang SC, PingFang SC;
-		font-weight: 500;
-		font-size: 38rpx;
-		color: #474747;
-		line-height: 45rpx;
-		text-align: left;
-		font-style: normal;
-		text-transform: none;
+	.user_name {
+		height: 80rpx;
+		margin-top: 50rpx;
+		border-radius: 10rpx;
+		background: #f8f7f8;
+
+		input {
+			width: 650rpx;
+			height: 100%;
+			margin: 0 auto;
+		}
 	}
 
-	.content {
-		font-family: Inter, Inter;
-		font-weight: 400;
-		font-size: 27rpx;
-		color: #474747;
-		line-height: 32rpx;
-		text-align: left;
-		font-style: normal;
-		text-transform: none;
-		margin: 30rpx 0;
+	.login {
+		height: 80rpx;
+		border-radius: 10rpx;
+		background: #e6e6e6;
+		margin-top: 70rpx;
 	}
+}
 
-	.footer {
-		width: 100%;
-		display: flex;
-		justify-content: space-around;
-		align-items: center;
-	}
+.title {
+	font-family: PingFang SC, PingFang SC;
+	font-weight: 500;
+	font-size: 38rpx;
+	color: #474747;
+	line-height: 45rpx;
+	text-align: left;
+	font-style: normal;
+	text-transform: none;
+}
+
+.content {
+	font-family: Inter, Inter;
+	font-weight: 400;
+	font-size: 27rpx;
+	color: #474747;
+	line-height: 32rpx;
+	text-align: left;
+	font-style: normal;
+	text-transform: none;
+	margin: 30rpx 0;
+}
+
+.footer {
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
 }
 </style>
