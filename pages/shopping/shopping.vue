@@ -24,7 +24,7 @@
 		<view v-if="deleteList.length > 0" class="card">
 			<deleteCard v-for="(data, index) in deleteList" :key="index" :data="data" />
 		</view>
-		<view v-if="dataList.length === 0" class="empty">
+		<view v-if="is_empty" class="empty">
 			<TnEmpty mode="cart">
 				<template #icon>
 					<image
@@ -222,6 +222,9 @@ import { AddressStore } from '@/store'
 
 const address = AddressStore()
 let page = 1
+
+// 用来标记是否要显示没有购物车数据，避免用户已进入先看到空
+const is_empty = ref(false)
 
 const toEditAddress = () => {
 	uni.navigateTo({
@@ -466,13 +469,17 @@ const openPopup = () => {
 const getData = () => {
 	get_cart_list(1).then(res => {
 		page = 1
-		dataList.value = res.data.data.map(item => {
+		if (res.data.data.length === 0) {
+			is_empty.value = true
+			return
+		}
+		dataList.value = res.data.data.filter(item => !item.is_deleted).map(item => {
 			return {
 				...item,
 				order: false
 			}
 		})
-		deleteList.value = res.data.data.map(item => {
+		deleteList.value = res.data.data.filter(item => item.is_deleted).map(item => {
 			return {
 				...item,
 				order: false

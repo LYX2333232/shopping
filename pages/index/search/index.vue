@@ -1,23 +1,34 @@
 <template>
-  <view style="width:95%;margin: 180rpx auto 0;">
-    <view class="tn-flex-center-start">
-      <TnIcon name="left" size="50" color="#C7BAA7" @click="back" :custom-style="{ marginRight: '20rpx' }">
-      </TnIcon>
-      <uni-easyinput prefixIcon="search" v-model="value" placeholder="请输入商品关键词" :styles="styles" @focus="inputFocus"
-        @change="search">
-        <template #right>
-          <TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="90" height="50"
-            :custom-style="{ marginRight: '10rpx' }" @click="search" shape="round">搜索</TnButton>
-        </template>
-      </uni-easyinput>
+  <Header title="搜索" />
+  <view class="all">
+    <view class="search">
+      <view class="input">
+        <view>
+          <TnIcon name="search" size="40" />
+        </view>
+        <input style="flex:auto" type="text" v-model="value" @confirm="search(value)" />
+      </view>
+      <view style="margin-left:20rpx">
+        <TnButton type="success" shape="round" width="130" height="64" @click="search(value)">搜索</TnButton>
+      </view>
     </view>
-    <view class="history">
-      历史搜索
-    </view>
-    <view class="history_tag">
-      <TnTag v-for="(item, index) in historyList" :key="index" shape="round" bg-color="#E7E3E1" text-color="#949494"
-        :custom-style="{ marginRight: '20rpx', marginTop: '30rpx' }" @click="search(item)">
-        {{ item }}</TnTag>
+    <view class="main">
+      <view class="title">
+        历史搜索
+      </view>
+      <view class="tags">
+        <TnTag v-for="(item, index) in historyList" :key="index" shape="round" bg-color="#F7F7F7" text-color="#333"
+          :custom-style="{ margin: '20rpx' }" @click="search(item)">
+          {{ item }}</TnTag>
+      </view>
+      <view class="title">
+        热门搜索
+      </view>
+      <view class="tags">
+        <TnTag v-for="(item, index) in hotList" :key="index" shape="round" bg-color="#F7F7F7" text-color="#333"
+          :custom-style="{ margin: '20rpx' }" @click="search(item)">
+          {{ item }}</TnTag>
+      </view>
     </view>
   </view>
 </template>
@@ -28,17 +39,14 @@ import { onLoad } from '@dcloudio/uni-app'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
-
-const back = () => uni.navigateBack()
+import Header from '@/components/header.vue'
 
 // 历史搜索数据
 const historyList = ref([])
+// 热门搜索数据
+const hotList = ref([])
 
 const value = ref('');
-const styles = ref({
-  color: 'rgba(182, 176, 167, 1)',
-  borderColor: 'rgba(182, 176, 167, 1)'
-})
 // 进行搜索
 const search = (searching = undefined) => {
   if (searching) {
@@ -70,6 +78,7 @@ const getData = () => {
     uni.setStorageSync('history', [])
   }
   historyList.value = uni.getStorageSync('history')
+  hotList.value = ['土豆', '苹果', '香蕉', '橙子', '西瓜', '葡萄', '草莓', '樱桃', '蓝莓', '草莓']
 }
 onLoad(() => {
   getData()
@@ -77,21 +86,54 @@ onLoad(() => {
 </script>
 
 <style lang="scss" scoped>
-.history {
-  margin-top: 30rpx;
-  font-family: Inter, Inter;
-  font-weight: 800;
-  font-size: 30rpx;
-  color: #000000;
-  text-align: left;
-  font-style: normal;
-  text-transform: none;
+.all {
+  width: 100%;
+  padding-top: 180rpx;
+  min-height: 100vh;
+  background: #F6F6F6;
 }
 
-.history_tag {
-  width: 90%;
-  display: gird;
-  grid-template-columns: repeat(auto-fit, minmax(100rpx, 1fr));
-  grid-gap: 20rpx;
+.search {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20rpx;
+
+  .input {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background: #FFF;
+    border-radius: 40rpx;
+    border: 2rpx solid #14BF20;
+    padding: 10rpx 20rpx;
+  }
+}
+
+.main {
+  width: 100%;
+  min-height: 80vh;
+  background: #FFF;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 30rpx;
+
+  .title {
+    margin-top: 60rpx;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: bold;
+    font-size: 35rpx;
+    color: #131313;
+    line-height: 45rpx;
+    text-align: left;
+    font-style: normal;
+  }
+
+  .tags {
+    width: 90%;
+    display: gird;
+    grid-template-columns: repeat(auto-fit, minmax(100rpx, 1fr));
+    grid-gap: 20rpx;
+  }
 }
 </style>

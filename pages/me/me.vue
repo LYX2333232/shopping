@@ -23,14 +23,18 @@
 		</view>
 
 		<view v-if="!store.userInfo.is_up" class="middle" @click="addUsVisible = true">
-			<image
-				src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQBUncZc0XfkLMM4nGSp60sSmjibpjv8Z5qibB903ribzg1FcHicDLicj8dvleS7ib7E2Ae9H1Me6kcJEdw/0?wx_fmt=png"
-				mode="aspectFill" style="width: 100%;height: 140rpx;border-radius: 11.54rpx;">
-			</image>
-
+			<view class="left">
+				<image
+					src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRLY56BxV7ZNNfJwiaWD9b15icgAoTnUsjf6QDWQCicQXzibZ5VATjQLWcgRZUDum3TbT0X8sicSqXOqkQ/0?wx_fmt=png"
+					mode="scaleToFill" />
+				<view>
+					多重好礼任你选，各种特权
+				</view>
+			</view>
+			<TnButton type="success" width="170" height="60" shape="round">立即加盟</TnButton>
 		</view>
 
-		<view v-else class="block1">
+		<view v-else class="orders">
 			<view style="display: flex;justify-content: space-between;">
 				<view class="myorder">
 					分销中心
@@ -50,16 +54,14 @@
 			</view>
 		</view>
 
-		<view class="block1">
-			<view style="display: flex;justify-content: space-between;">
-				<view class="myorder">
+		<view class="orders">
+			<view class="top" style="display: flex;justify-content: space-between;">
+				<view class="title">
 					我的订单
 				</view>
-				<view style="padding-top: 15rpx;color: rgba(124, 124, 124, 1);margin-right: 20rpx;"
-					@click="tap_order(-1)">
-					全部订单
-					<uni-icons type="right" size="14" color=" rgba(124, 124, 124, 1)"
-						style="margin-left: -5rpx;"></uni-icons>
+				<view class="right" @click="tap_order(-1)">
+					查看全部
+					<uni-icons type="right" size="14" color="#666" style="margin-left: -5rpx;"></uni-icons>
 				</view>
 			</view>
 			<view class="function">
@@ -68,7 +70,7 @@
 					<view class="img">
 						<TnBadge :value="order_count[index] > 0 ? order_count[index] : ''" :max="99" type="danger"
 							size="40" />
-						<img :src="item.icon" alt="" mode="aspectFill" />
+						<image :src="item.icon" alt="" mode="aspectFill" />
 					</view>
 					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
 						{{ item.name }}
@@ -78,9 +80,9 @@
 			</view>
 		</view>
 
-		<view class="block2">
+		<view class="apply">
 
-			<view class="myorder">
+			<view class="title">
 				我的应用
 			</view>
 
@@ -180,27 +182,12 @@
 </template>
 
 <script setup>
-import {
-	onMounted,
-	ref
-} from 'vue'
-import {
-	onShow
-} from '@dcloudio/uni-app'
-import {
-	UserStore
-} from '@/store'
-import {
-	uploadImage,
-	Login,
-	add_us
-} from '@/api/user/user'
-import {
-	get_order_count
-} from '@/api/order/order'
-import {
-	post_feedback
-} from '@/api/feedback/feedback'
+import { onMounted, ref } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
+import { UserStore } from '@/store'
+import { uploadImage, Login, add_us } from '@/api/user/user'
+import { get_order_count } from '@/api/order/order'
+import { post_feedback } from '@/api/feedback/feedback'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnForm from '@/uni_modules/tuniaoui-vue3/components/form/src/form.vue'
@@ -540,6 +527,7 @@ onShow(() => {
 }
 
 .top {
+	width: 100%;
 	display: flex;
 	margin-bottom: 40rpx;
 
@@ -594,98 +582,84 @@ onShow(() => {
 }
 
 .middle {
-	width: 100%;
-	height: 140.38rpx;
-	border-radius: 11.54rpx;
+	width: 710rpx;
+	height: 180rpx;
+	background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRLY56BxV7ZNNfJwiaWD9b15rP8A37lkCxic6Cj6WGsTjfOXcaboWzhHv30RMqHukCJWdJ7HxKSliblg/0?wx_fmt=png") no-repeat center center;
+	background-size: 100% 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
 
-	.block {
-		display: flex;
-		padding-top: 10rpx;
-		padding-left: 26rpx;
-		font-family: PingFang SC, PingFang SC;
+	.left {
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 26rpx;
+		color: #FFFFFF;
+		line-height: 37rpx;
+		text-align: left;
+		font-style: normal;
 
-		.image {
-			width: 30rpx;
-			height: 30rpx;
-			margin-right: 10rpx;
-			margin-top: 30rpx;
+		image {
+			width: 342rpx;
+			height: 44rpx;
+			margin-bottom: 20rpx;
 		}
+	}
 
-		.p1 {
-			margin-top: 20rpx;
-			font-weight: 500;
+}
+
+.orders {
+	width: 712rpx;
+	background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRLY56BxV7ZNNfJwiaWD9b15QIibNfTk3fgib5kiaJeKiaKXzzhkL4ibQLTLUf14EWQ6ajTfM0u5vYlHaXQ/0?wx_fmt=png") no-repeat center center;
+	background-size: 100% 100%;
+	margin: 20rpx 0;
+	padding: 25rpx 20rpx;
+
+	.top {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 25rpx 20rpx 0;
+
+		.title {
+			font-family: Inter, Inter;
+			font-weight: 600;
 			font-size: 31rpx;
-			color: #FFDFC3;
+			color: #000000;
 			line-height: 46rpx;
 			text-align: left;
+			font-style: normal;
+			text-transform: none;
 		}
 
-		.p2 {
+		.right {
+			font-family: PingFangSC, PingFang SC;
 			font-weight: 400;
-			font-size: 23rpx;
-			color: #FFDFC3;
-			line-height: 35rpx;
-		}
-
-		.p3 {
-			width: 146rpx;
-			height: 56rpx;
-			background: linear-gradient(96deg, #EDD3A9 0%, #E0B57E 100%);
-			border-radius: 56rpx;
+			font-size: 24rpx;
+			color: #666666;
+			line-height: 33rpx;
 			text-align: center;
-			font-family: PingFang SC, PingFang SC;
-			font-weight: 500;
-			font-size: 27rpx;
-			color: #835A2C;
-			padding-top: 12rpx;
-			position: absolute;
-			right: 50rpx;
-			top: 375rpx;
-
+			font-style: normal;
 		}
 	}
-
 }
 
-.block1 {
+.apply {
 	width: 100%;
-	height: 232.69rpx;
 	background-color: #fff;
-	border-radius: 13.46rpx;
-	margin-top: 15rpx;
+	border-radius: 20rpx;
+	margin: 20rpx 0;
+	padding: 25rpx 20rpx;
 
-	.myorder {
-		font-family: Inter, Inter;
+	.title {
+		font-family: PingFangSC, PingFang SC;
 		font-weight: 600;
-		font-size: 31rpx;
-		color: #000000;
-		line-height: 46rpx;
+		font-size: 30rpx;
+		color: #0F0D0D;
+		line-height: 42rpx;
 		text-align: left;
 		font-style: normal;
-		text-transform: none;
-		padding-left: 20rpx;
-		padding-top: 10rpx;
-	}
-}
-
-.block2 {
-	width: 100%;
-	height: 438.46rpx;
-	background-color: #fff;
-	border-radius: 13.46rpx;
-	margin-top: 15rpx;
-
-	.myorder {
-		font-family: Inter, Inter;
-		font-weight: 600;
-		font-size: 31rpx;
-		color: #000000;
-		line-height: 46rpx;
-		text-align: left;
-		font-style: normal;
-		text-transform: none;
-		padding-left: 20rpx;
-		padding-top: 10rpx;
 	}
 }
 
@@ -696,15 +670,14 @@ onShow(() => {
 }
 
 .tofunction {
-	background-color: rgba(255, 255, 255, 1);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 
 	.img {
 		position: relative;
-		width: 50rpx;
-		height: 50rpx;
+		width: 60rpx;
+		height: 60rpx;
 		text-align: center;
 		margin: 0 auto;
 		margin-top: 35rpx;

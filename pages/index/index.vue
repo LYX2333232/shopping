@@ -17,7 +17,7 @@
 						<TnIcon name="search" size="40" />
 					</view>
 					<input style="flex:auto" type="text" disabled />
-					<view class="flex:1">
+					<view>
 						<TnButton type="success" shape="round">搜索</TnButton>
 					</view>
 				</view>

@@ -6,7 +6,7 @@
 			</view>
 			<input style="flex:auto" type="text" v-model="searchInfo" @confirm="search" />
 			<view class="flex:1">
-				<TnButton type="success" shape="round">搜索</TnButton>
+				<TnButton type="success" shape="round" @click="search">搜索</TnButton>
 			</view>
 		</view>
 		<view class="indexs">
@@ -71,6 +71,10 @@ import { get_type_list, get_goods_list } from '@/api/goods/goods'
 let t_id = undefined
 
 const searchInfo = ref('')
+const search = () => {
+	page = 1
+	getGoodsList()
+}
 
 const indexs = ref([])
 const indexs_index = ref(0)
