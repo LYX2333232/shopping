@@ -35,10 +35,11 @@
 		</view>
 
 		<view v-else class="orders">
-			<view style="display: flex;justify-content: space-between;">
-				<view class="myorder">
+			<view class="top">
+				<view class="title">
 					分销中心
 				</view>
+				<view></view>
 			</view>
 			<view class="function">
 				<view class="tofunction" v-for="(item, index) in funList0" :key="'function0' + index"
@@ -49,7 +50,6 @@
 					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
 						{{ item.name }}
 					</view>
-
 				</view>
 			</view>
 		</view>
@@ -463,30 +463,31 @@ const addUs = () => {
 }
 
 const getData = () => {
-	const list = [{
-		name: '收货地址',
-		icon: '../../static/icon/me/location.png'
-	},
-	{
-		name: '联系客服',
-		icon: '../../static/icon/me/service.png'
-	},
-	{
-		name: '我的优惠券',
-		icon: '../../static/icon/me/money.png'
-	},
-	{
-		name: '意见反馈',
-		icon: '../../static/icon/me/feedback.png'
-	},
-	{
-		name: '收藏商品',
-		icon: '../../static/icon/me/star.png'
-	},
-	{
-		name: '退出登录',
-		icon: '../../static/icon/me/logout.png'
-	}
+	const list = [
+		{
+			name: '收货地址',
+			icon: '../../static/icon/me/location.png'
+		},
+		{
+			name: '联系客服',
+			icon: '../../static/icon/me/service.png'
+		},
+		{
+			name: '我的优惠券',
+			icon: '../../static/icon/me/money.png'
+		},
+		{
+			name: '意见反馈',
+			icon: '../../static/icon/me/feedback.png'
+		},
+		{
+			name: '收藏商品',
+			icon: '../../static/icon/me/star.png'
+		},
+		{
+			name: '退出登录',
+			icon: '../../static/icon/me/logout.png'
+		}
 	]
 	funList1.value = list
 
@@ -552,7 +553,7 @@ onShow(() => {
 		border-radius: 18rpx;
 		text-align: center;
 		padding: 2rpx 10rpx;
-		margin-left: 10rpx;
+		margin-left: 20rpx;
 		font-family: PingFangSC, PingFang SC;
 		font-weight: 400;
 		font-size: 22rpx;
@@ -566,7 +567,7 @@ onShow(() => {
 	}
 
 	.seller {
-		background: linear-gradient(90deg, #686464 0%, #423F40 50%, #423F40 100%);
+		background: #1A1D7B;
 		color: #FFFFFF;
 	}
 
@@ -613,14 +614,14 @@ onShow(() => {
 	background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRLY56BxV7ZNNfJwiaWD9b15QIibNfTk3fgib5kiaJeKiaKXzzhkL4ibQLTLUf14EWQ6ajTfM0u5vYlHaXQ/0?wx_fmt=png") no-repeat center center;
 	background-size: 100% 100%;
 	margin: 20rpx 0;
-	padding: 25rpx 20rpx;
+	padding: 20rpx;
 
 	.top {
 		width: 100%;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 25rpx 20rpx 0;
+		padding: 15rpx 20rpx 0;
 
 		.title {
 			font-family: Inter, Inter;
@@ -646,25 +647,25 @@ onShow(() => {
 }
 
 .apply {
-	width: 100%;
+	width: 712rpx;
 	background-color: #fff;
-	border-radius: 20rpx;
 	margin: 20rpx 0;
-	padding: 25rpx 20rpx;
+	border-radius: 20rpx;
+	padding: 20rpx;
 
 	.title {
-		font-family: PingFangSC, PingFang SC;
+		font-family: Inter, Inter;
 		font-weight: 600;
-		font-size: 30rpx;
-		color: #0F0D0D;
-		line-height: 42rpx;
+		font-size: 31rpx;
+		color: #000000;
+		line-height: 46rpx;
 		text-align: left;
 		font-style: normal;
+		text-transform: none;
 	}
 }
 
 .function {
-	margin-top: 15rpx;
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 }
@@ -680,7 +681,6 @@ onShow(() => {
 		height: 60rpx;
 		text-align: center;
 		margin: 0 auto;
-		margin-top: 35rpx;
 		margin-bottom: 25rpx;
 	}
 }
