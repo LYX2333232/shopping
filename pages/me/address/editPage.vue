@@ -1,54 +1,71 @@
 <template>
   <Header :title="title" />
   <view class="all">
-    <TnListItem width="750">
-      <view class="tn-flex-center-start">
-        <view class="label">姓名</view>
-        <TnInput :maxlength="10" :border="false" type="text" placeholder="请输入姓名" v-model="name"></TnInput>
-      </view>
-    </TnListItem>
-    <TnListItem width="750">
-      <view class="tn-flex-center-start">
-        <view class="label">手机号</view>
-        <TnInput :border="false" type="number" :maxlength="11" placeholder="请输入手机号" v-model="phone"></TnInput>
-      </view>
-    </TnListItem>
-    <TnListItem width="750">
-      <view class="tn-flex-center-start" @click="onRegionChange">
-        <view class="label">选择地区</view>
+    <view class="card">
+      <TnListItem width="100%">
+        <view class="tn-flex-center-start" @click="onRegionChange">
+          <view class="label">选择地区</view>
+          <view class="tn-flex-center-start" style="flex:auto">
+            {{ form.address }}
+          </view>
+          <TnIcon name="down" />
+        </view>
+      </TnListItem>
+      <TnListItem width="100%">
+        <view class="tn-flex-start-start">
+          <view class="label">详细地址</view>
+          <view style="width:100%">
+            <TnInput :border="false" type="textarea" placeholder="街道、楼牌号等" v-model="form.detail">
+            </TnInput>
+          </view>
+        </view>
+      </TnListItem>
+      <TnListItem width="100%">
         <view class="tn-flex-center-start">
-          {{ address.address }}
+          <view class="label">联系人</view>
+          <TnInput :maxlength="10" :border="false" type="text" placeholder="请输入姓名" v-model="form.name"></TnInput>
         </view>
-      </view>
-    </TnListItem>
-    <TnListItem width="750">
-      <view class="tn-flex-start-start">
-        <view class="label">详细地址</view>
-        <view style="width:100%">
-          <TnInput :border="false" type="textarea" placeholder="街道、楼牌号等" v-model="address.detail">
-          </TnInput>
+      </TnListItem>
+      <TnListItem width="100%">
+        <view class="tn-flex-center-start">
+          <view class="label">手机号</view>
+          <TnInput :border="false" type="number" :maxlength="11" placeholder="请输入手机号" v-model="form.phone"></TnInput>
         </view>
-      </view>
-    </TnListItem>
-    <TnListItem width="750">
-      <view class="tn-flex-center-between">
-        <view class="default">设为默认地址</view>
-        <TnSwitch v-model="isDefault" width="80" active-color="#D8CCB5"></TnSwitch>
-      </view>
-    </TnListItem>
-    <TnButton width="623" height="100" bg-color="#D8CCB5" text-color="#FFFFFF"
-      :custom-style="{ position: 'fixed', bottom: '20px' }" shape="round" @click="save()">
+      </TnListItem>
+      <TnListItem width="100%">
+        <view class="tn-flex-start-start">
+          <view class="label">地址标签</view>
+          <view class="tags">
+            <TnTag shape="round" :bg-color="form.tag === tag ? '#14BF20' : '#F7F7F7'"
+              :text-color="form.tag === tag ? '#FFF' : '#333'" font-size="28" v-for="(tag, index) in tags" :key="index"
+              :custom-style="{ marginRight: '20rpx', padding: '10rpx' }" @click="form.tag = tag">
+              {{ tag }}
+            </TnTag>
+          </view>
+        </view>
+      </TnListItem>
+      <TnListItem width="100%">
+        <view class="tn-flex-center-between">
+          <view class="default">设为默认收货地址</view>
+          <TnSwitch v-model="form.default" width="80" active-color="#14BF20"></TnSwitch>
+        </view>
+      </TnListItem>
+    </view>
+    <TnButton width="623" height="100" :bg-color="can_save ? 'rgba(20, 191, 32, 1)' : 'rgba(20, 191, 32, 0.3)'"
+      text-color="#fff" font-size="32" shape="round" @click="save">
       保存使用
     </TnButton>
   </view>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import Header from '@/components/header.vue'
 import TnListItem from '@/uni_modules/tuniaoui-vue3/components/list/src/list-item.vue'
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
+import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import TnTag from '@tuniao/tnui-vue3-uniapp/components/tag/src/tag.vue'
 import TnSwitch from '@/uni_modules/tuniaoui-vue3/components/switch/src/switch.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import { add_address, get_address_detail } from '@/api/address/address'
@@ -57,26 +74,18 @@ const title = ref('')
 
 let id = undefined
 
-const name = ref('')
+const form = ref({})
 
-const phone = ref('')
-
-const address = ref({
-  address: '',
-  detail: '',
-  lat: undefined,
-  lng: undefined
-})
-
-const region = ref(['北京市', '市辖区', '东城区'])
+const tags = ['家', '公司', '学校', '父母家', '朋友家']
 
 const onRegionChange = (e) => {
   uni.chooseLocation({
     success: (res) => {
       console.log(res);
-      address.value = {
+      form.value = {
+        ...form.value,
         address: res.address,
-        address_name: res.name,
+        detail: res.name,
         lat: res.latitude,
         lng: res.longitude
       }
@@ -84,18 +93,13 @@ const onRegionChange = (e) => {
   })
 }
 
-const isDefault = ref(false)
+const can_save = computed(() => {
+  return form.value.name && form.value.phone && form.value.address && form.value.detail
+})
 
 const save = () => {
-  const data = {
-    id,
-    name: name.value,
-    phone: phone.value,
-    ...address.value,
-    default: isDefault.value ? 1 : 0,
-  }
-  console.log(data);
-  add_address(data).then((res) => {
+  console.log(form.value);
+  add_address({ ...form.value, default: form.default ? 1 : 0 }).then((res) => {
     console.log(res);
     if (res.code === 200) {
       uni.showToast({
@@ -118,12 +122,7 @@ onLoad((options) => {
     title.value = '编辑地址'
     id = parseInt(options.index)
     get_address_detail(id).then(res => {
-      const { name, phone, detail, address } = res.data
-      name.value = res.data.name
-      phone.value = res.data.phone
-      region.value = JSON.parse(res.data.address)
-      detail.value = res.data.detail
-      isDefault.value = res.data.default === 1
+      form.value = { ...res.data, default: !!res.data.default }
     })
   }
 })
@@ -138,19 +137,30 @@ onLoad((options) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 200rpx;
+  padding: 200rpx 20rpx 0;
+}
+
+.card {
+  width: 100%;
+  background: #FFFFFF;
+  margin: 20rpx;
 
   .label {
-    width: 180rpx;
-    font-family: Inter, Inter;
-    font-weight: 600;
-    font-size: 35rpx;
-    color: #292929;
-    line-height: 32rpx;
-    text-align: right;
+    width: 150rpx;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: bold;
+    font-size: 30rpx;
+    color: #111111;
+    line-height: 42rpx;
+    text-align: left;
     font-style: normal;
-    text-transform: none;
     margin-right: 30rpx;
+  }
+
+  .tags {
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 </style>

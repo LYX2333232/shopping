@@ -55,7 +55,7 @@
 		</view>
 
 		<view class="orders">
-			<view class="top" style="display: flex;justify-content: space-between;">
+			<view class="top">
 				<view class="title">
 					我的订单
 				</view>
@@ -70,7 +70,7 @@
 					<view class="img">
 						<TnBadge :value="order_count[index] > 0 ? order_count[index] : ''" :max="99" type="danger"
 							size="40" />
-						<image :src="item.icon" alt="" mode="aspectFill" />
+						<image :src="item.icon" alt="" mode="scaleToFill" />
 					</view>
 					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
 						{{ item.name }}
@@ -81,32 +81,29 @@
 		</view>
 
 		<view class="apply">
-
-			<view class="title">
-				我的应用
+			<view class="top">
+				<view class="title">
+					我的应用
+				</view>
 			</view>
+
 
 			<view class="function">
 				<view class="tofunction" v-for="(item, index) in funList1" :key="'function2' + index"
 					@click="tap_application(index)">
 					<!-- button删除原有样式，改为view -->
-					<button v-if="index === 1" open-type="contact"
-						style="background:none;border:none;padding:0;margin:-15rpx;width:100%;height:120%;">
-						<view class="img">
-							<img :src="item.icon" alt="" mode="aspectFill" />
-						</view>
-						<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
+					<button v-if="index === 1" open-type="contact" style="background:none;border:none;padding:0;">
+						<img class="img" :src="item.icon" alt="" mode="scaleToFill" />
+						<view class="text" style="margin-top:-30rpx">
 							{{ item.name }}
 						</view>
 					</button>
-					<view v-else>
-						<view class="img">
-							<img :src="item.icon" alt="" mode="aspectFill" />
-						</view>
-						<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
+					<button v-else style="background:none;border:none;padding:0;" @click="tap_application(index)">
+						<img class="img" :src="item.icon" alt="" mode="scaleToFill" />
+						<view class="text" style="margin-top:-30rpx">
 							{{ item.name }}
 						</view>
-					</view>
+					</button>
 				</view>
 			</view>
 
@@ -282,7 +279,7 @@ const compare = (a, b) => {
 }
 
 // 点击分销
-const tap_item = (index) => {
+const tap_item = index => {
 	if (index === 0) {
 		uni.navigateTo({
 			url: '/pages/me/surplus/surplus',
@@ -306,14 +303,14 @@ const tap_item = (index) => {
 }
 
 // 点击订单
-const tap_order = (index) => {
+const tap_order = index => {
 	uni.navigateTo({
 		url: '/pages/me/order/index?index=' + index
 	})
 }
 
 // 点击我的应用的内容
-const tap_application = (index) => {
+const tap_application = index => {
 	// 收货地址
 	if (index === 0) {
 		uni.navigateTo({
@@ -653,16 +650,21 @@ onShow(() => {
 	border-radius: 20rpx;
 	padding: 20rpx;
 
-	.title {
-		font-family: Inter, Inter;
-		font-weight: 600;
-		font-size: 31rpx;
-		color: #000000;
-		line-height: 46rpx;
-		text-align: left;
-		font-style: normal;
-		text-transform: none;
+	.top {
+		padding: 15rpx 20rpx 0;
+
+		.title {
+			font-family: Inter, Inter;
+			font-weight: 600;
+			font-size: 31rpx;
+			color: #000000;
+			line-height: 46rpx;
+			text-align: left;
+			font-style: normal;
+			text-transform: none;
+		}
 	}
+
 }
 
 .function {
@@ -674,14 +676,21 @@ onShow(() => {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	margin: 10rpx 0;
 
 	.img {
-		position: relative;
 		width: 60rpx;
 		height: 60rpx;
-		text-align: center;
-		margin: 0 auto;
-		margin-bottom: 25rpx;
+	}
+
+	.text {
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 24rpx;
+		color: #666666;
+		line-height: 33rpx;
+		text-align: right;
+		font-style: normal;
 	}
 }
 

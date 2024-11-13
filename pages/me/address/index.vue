@@ -1,24 +1,32 @@
 <template>
   <Header title="收货地址" />
   <view class="all">
-    <view class="card" v-for="item in addressList" :key="item.id">
-      <view class="left">
-        <text class="address">{{ JSON.parse(item.address).join('-') + ' ' + item.detail }}</text>
-        <view class="info">
-          <view style="width: 100rpx;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">{{
-      item.name }} </view>
-          <view style="margin-left: 30rpx">{{ item.phone }}</view>
+    <view class="header">所有收货地址</view>
+    <view class="list">
+      <view class="card" v-for="item in addressList" :key="item.id">
+        <view class="left">
+          <TnTag v-if="item.tag" bg-color="#fff2ef" text-color="tn-red">
+            {{ item.tag }}
+          </TnTag>
+          <text class="address">{{ item.address_name + ' ' + item.detail }}</text>
+          <view class="info">
+            <view class="name">
+              {{ item.name }}
+            </view>
+            <view>{{ item.phone }}</view>
+          </view>
+          <TnTag v-if="item.default" bg-color="#fff2ef" text-color="tn-red">
+            默认地址
+          </TnTag>
         </view>
-      </view>
-      <view style="display: flex;flex-direction: column;align-items: center;">
-        <TnIcon name="edit-write" size="60" @click="toEdit(item.id)"></TnIcon>
-        <TnIcon name="delete" size="60" type="danger" @click="deleteAddress(item.id)"></TnIcon>
+        <TnIcon name="edit-write" size="56" @click="toEdit(item.id)"></TnIcon>
       </view>
     </view>
-    <TnButton width="623" height="100" bg-color="#D8CCB5" text-color="#FFFFFF" :custom-style="{ marginTop: '50rpx' }"
-      shape="round" @click="toEdit(-1)">
-      新增地址
-    </TnButton>
+    <view class="btns">
+      <TnButton width="650" height="90" type="success" shape="round" @click="toEdit(-1)">
+        新增地址
+      </TnButton>
+    </view>
   </view>
 </template>
 
@@ -28,6 +36,7 @@ import { onShow } from '@dcloudio/uni-app'
 import { get_address_list, delete_address } from '@/api/address/address.js'
 import Header from '@/components/header.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import TnTag from '@tuniao/tnui-vue3-uniapp/components/tag/src/tag.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 
 const addressList = ref([])
@@ -58,6 +67,7 @@ const deleteAddress = (id) => {
 
 const getData = () => {
   get_address_list().then(res => {
+    console.log(res)
     addressList.value = res.data.data
   })
 }
@@ -71,63 +81,87 @@ onShow(() => {
 .all {
   width: 100%;
   min-height: 100vh;
-  background-color: #F7F7F7;
+  background-color: #F6F6F6;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 180rpx 0 20rpx;
 
-  .card {
-    width: 95%;
-    margin-top: 20rpx;
-    border-radius: 10rpx;
-    padding: 30rpx 40rpx;
-    background: #FFFFFF;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  .header {
+    width: 90%;
+    margin: 25rpx;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 400;
+    font-size: 28rpx;
+    color: #666666;
+  }
 
-    .left {
-      height: 100rpx;
+  .list {
+    width: 100%;
+    background: #FFF;
+    padding: 0 30rpx;
+
+    .card {
+      width: 100%;
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: space-between;
+      padding: 30rpx 0;
 
-      .address {
-        font-family: Inter, Inter;
-        font-weight: 400;
-        font-size: 31rpx;
-        color: #000000;
-        line-height: 36rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
-        margin-bottom: 20rpx;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 550rpx;
-      }
-
-      .info {
+      .left {
         display: flex;
-        font-family: Inter, Inter;
-        font-weight: 400;
-        font-size: 27rpx;
-        color: #AFAFAF;
-        line-height: 32rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
+        flex-direction: column;
+        justify-content: space-between;
 
-        .name {
-          width: 200rpx;
+        .address {
+          margin: 10rpx 0;
+          font-family: PingFangSC, PingFang SC;
+          font-weight: bold;
+          font-size: 32rpx;
+          color: #131313;
+          line-height: 45rpx;
+          text-align: left;
+          font-style: normal;
+          margin-bottom: 10rpx;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          width: 550rpx;
+        }
+
+        .info {
+          margin: 10rpx 0;
+          display: flex;
+          align-items: center;
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 400;
+          font-size: 28rpx;
+          color: #666666;
+          line-height: 40rpx;
+          text-align: left;
+          font-style: normal;
+
+          .name {
+            margin-right: 20rpx;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
         }
       }
     }
+
+    .card:nth-child(n+2) {
+      border-top: 1rpx solid #DEDEDE;
+    }
   }
+
+}
+
+.btns {
+  position: fixed;
+  bottom: 30rpx;
+  display: flex;
+  justify-content: center;
 }
 </style>

@@ -94,13 +94,12 @@ export default {
 }
 
 .title {
-	font-family: FZYaoTi, FZYaoTi;
-	font-weight: 400;
-	font-size: 46rpx;
-	color: #000000;
-	line-height: 69rpx;
-	text-align: left;
+	font-family: PingFangSC, PingFang SC;
+	font-weight: 600;
+	font-size: 36rpx;
+	color: #111111;
+	line-height: 50rpx;
+	text-align: right;
 	font-style: normal;
-	text-transform: none;
 }
 </style>
