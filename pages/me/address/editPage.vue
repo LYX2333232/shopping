@@ -55,6 +55,7 @@
       text-color="#fff" font-size="32" shape="round" @click="save">
       保存使用
     </TnButton>
+    <view v-if="id" class="delete" @click="delete_address(id)">删除收货地址</view>
   </view>
 </template>
 
@@ -68,11 +69,11 @@ import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnTag from '@tuniao/tnui-vue3-uniapp/components/tag/src/tag.vue'
 import TnSwitch from '@/uni_modules/tuniaoui-vue3/components/switch/src/switch.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
-import { add_address, get_address_detail } from '@/api/address/address'
+import { add_address, get_address_detail, delete_address } from '@/api/address/address'
 
 const title = ref('')
 
-let id = undefined
+let id = ref(undefined)
 
 const form = ref({})
 
@@ -96,23 +97,24 @@ const onRegionChange = (e) => {
 const can_save = computed(() => {
   return form.value.name && form.value.phone && form.value.address && form.value.detail
 })
+console.log(can_save);
 
 const save = () => {
-  console.log(form.value);
-  add_address({ ...form.value, default: form.default ? 1 : 0 }).then((res) => {
-    console.log(res);
-    if (res.code === 200) {
-      uni.showToast({
-        title: '保存成功',
-        icon: 'none'
-      })
-      setTimeout(() => {
-        uni.navigateBack({
-          delta: 1
+  if (can_save.value)
+    add_address({ ...form.value, default: form.default ? 1 : 0 }).then((res) => {
+      console.log(res);
+      if (res.code === 200) {
+        uni.showToast({
+          title: '保存成功',
+          icon: 'none'
         })
-      }, 500);
-    }
-  })
+        setTimeout(() => {
+          uni.navigateBack({
+            delta: 1
+          })
+        }, 500);
+      }
+    })
 }
 
 onLoad((options) => {
@@ -120,8 +122,8 @@ onLoad((options) => {
     title.value = '新增地址'
   } else {
     title.value = '编辑地址'
-    id = parseInt(options.index)
-    get_address_detail(id).then(res => {
+    id.value = parseInt(options.index)
+    get_address_detail(id.value).then(res => {
       form.value = { ...res.data, default: !!res.data.default }
     })
   }
@@ -162,5 +164,16 @@ onLoad((options) => {
     display: flex;
     flex-wrap: wrap;
   }
+}
+
+.delete {
+  margin-top: 40rpx;
+  font-family: PingFangSC, PingFang SC;
+  font-weight: 400;
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 40rpx;
+  text-align: left;
+  font-style: normal;
 }
 </style>

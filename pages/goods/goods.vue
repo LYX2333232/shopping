@@ -190,7 +190,7 @@ onReachBottom(() => {
 .header {
 	width: 100%;
 	padding: 100rpx 20rpx 0;
-	height: 30vh;
+	height: 25vh;
 	background: linear-gradient(180deg, #F1FFE9 0%, #E0FFE3 100%);
 
 	.search {
