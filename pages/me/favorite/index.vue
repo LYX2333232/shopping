@@ -1,26 +1,56 @@
 <template>
   <Header title="我的收藏" />
   <view class="all">
-    <view class="item" v-for="item in list" :key="item.id">
-      <image :src="item.path" style="height:100%;max-width:200rpx;border-radius:15rpx;margin-right:30rpx;"
-        mode="scaleToFill" />
-      <view class="right">
-        <view style="margin-bottom:50rpx;">
-          <view class="title">{{ item.name }} </view>
-          <view class="number">{{ item.collection_count }}人已收藏 </view>
-        </view>
-        <view class="tn-flex-center-between" style="width:380rpx;">
-          <view>
-            <TnTag :custom-style="{ marginRight: '10rpx' }" v-for="tag in item.tags" :key="tag.id" bg-color="#FAEBD9"
-              text-color="#A79A77" width="100">
-              {{ tag }}
-            </TnTag>
+    <TnWaterFall :data="list" mode="calc">
+      <template #left="{ item }">
+        <view class="item">
+          <image :src="item.path" class="image" mode="aspectFit" />
+          <view class="title">
+            <text v-if="true" class="group">三人团 | </text>
+            {{ item.name }}
           </view>
-          <view class="price">
-            ￥ {{ item.price }}
+          <view class="bottom">
+            <view class="left">
+              <view v-if="true" class="text">拼团价</view>
+              <view class="price">
+                ￥{{ item.price }}
+              </view>
+              <view v-if="item.or_price" class="old">
+                ￥{{ item.or_price }}
+              </view>
+            </view>
+            <TnBadge value="1" type="danger">
+              <image class="btn" :src="cart" mode="scaleToFill" />
+            </TnBadge>
           </view>
         </view>
-      </view>
+      </template>
+      <template #right="{ item }">
+        <view class="item">
+          <image :src="item.path" class="image" mode="aspectFit" />
+          <view class="title">
+            <text v-if="true" class="group">三人团 | </text>
+            {{ item.name }}
+          </view>
+          <view class="bottom">
+            <view class="left">
+              <view v-if="true" class="text">拼团价</view>
+              <view class="price">
+                ￥{{ item.price }}
+              </view>
+              <view v-if="item.or_price" class="old">
+                ￥{{ item.or_price }}
+              </view>
+            </view>
+            <image class="btn" :src="cart" mode="scaleToFill" />
+          </view>
+        </view>
+      </template>
+    </TnWaterFall>
+    <view class="cart">
+      <TnBadge value="1" type="danger">
+        <TnIcon name="cart" color="#999" size="40" />
+      </TnBadge>
     </view>
   </view>
 </template>
@@ -28,11 +58,17 @@
 <script setup>
 import { ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
+
+import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import TnBadge from '@tuniao/tnui-vue3-uniapp/components/badge/src/badge.vue'
+import TnWaterFall from '@tuniao/tnui-vue3-uniapp/components/water-fall/src/water-fall.vue'
 import Header from '@/components/header.vue'
-import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import { get_favorite_list } from '@/api/goods/goods'
 
 const list = ref([])
+
+const cart = ref("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhTI3ZyKPRVmOb7uAqavN1ZFiaiacKOZnOm4M1rUUamiczAoMHWz01FWia5lpS2X83Oicn4zoN5655zDBrw/0?wx_fmt=png")
+const ping = ref("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhTI3ZyKPRVmOb7uAqavN1ZFbGE4iapWDl1A7oNfJfoc8FTdVSTo0BpMFlwACIb2pWs1hWwdHdeIFyw/0?wx_fmt=png")
 
 const getData = () => {
   get_favorite_list().then(res => {
@@ -49,57 +85,88 @@ onShow(() => {
 .all {
   width: 100%;
   min-height: 100vh;
-  background: #F7F7F7;
-  padding-top: 200rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  background: #F6F6F6;
+  padding: 200rpx 20rpx 0;
 
   .item {
-    width: 90%;
-    display: flex;
-    align-items: stretch;
+    width: 345rpx;
     background: #FFF;
     margin-bottom: 20rpx;
-    padding: 30rpx;
     border-radius: 15rpx;
 
-    .right {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+    image {
+      width: 350rpx;
+      height: 350rpx;
+    }
 
+    .title {
+      margin: 15rpx;
+      width: 320rpx;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: bold;
+      font-size: 28rpx;
+      color: #333333;
+      line-height: 40rpx;
+      text-align: left;
+      font-style: normal;
+      //最多两行显示
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-clamp: 2;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
-      .title {
-        font-family: Inter, Inter;
-        font-weight: 800;
-        font-size: 30rpx;
-        color: #000000;
-        text-align: left;
-      }
-
-      .number {
-        font-family: Inter, Inter;
-        font-weight: 400;
-        font-size: 20rpx;
-        color: #9F9F9F;
-        line-height: 38rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
-      }
-
-      .price {
-        font-family: Inter, Inter;
-        font-weight: 500;
-        font-size: 40rpx;
-        color: #834820;
-        line-height: 40rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
+      .group {
+        color: #14BF20;
       }
     }
+
+    .bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14rpx;
+
+      .left {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        color: #EE2532;
+
+        .text {
+          font-size: 24rpx;
+        }
+
+        .price {
+          font-size: 36rpx;
+        }
+
+        .old {
+          font-size: 24rpx;
+          color: #999999;
+          text-decoration-line: line-through;
+        }
+      }
+
+      .btn {
+        width: 56rpx;
+        height: 56rpx;
+      }
+
+    }
+  }
+
+  .cart {
+    position: fixed;
+    left: 10rpx;
+    bottom: 20vh;
+    background: #FFF;
+    border-radius: 50%;
+    padding: 10rpx;
+    box-shadow: 3rpx 3rpx 5rpx #999999;
   }
 }
 </style>

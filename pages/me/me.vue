@@ -490,7 +490,6 @@ const getData = () => {
 
 	get_order_count().then(res => {
 		order_count.value = [res.data.pay, res.data.delivery, res.data.collect, 0]
-		console.log(order_count.value, "order_count.value")
 	})
 }
 
