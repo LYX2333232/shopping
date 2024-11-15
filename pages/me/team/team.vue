@@ -8,7 +8,7 @@
           style="width: 100rpx;height: 100rpx;border-radius: 50%;margin-right: 20rpx;" />
         <text class="name">{{ item.name }}</text>
       </view>
-      <TnTag v-if="item.referee" bg-color="#C8B697" text-color="#fff" shape="round" width="100" height="40">推荐人</TnTag>
+      <TnTag v-if="item.referee" type="success" shape="circle" width="100" height="40">推荐人</TnTag>
     </view>
   </view>
 </template>
@@ -23,33 +23,35 @@ import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 const userList = ref([])
 
 const getData = () => {
-  // const list = [
-  //   {
-  //     avatar: 'https://source.unsplash.com/random?1',
-  //     name: '张三',
-  //     referee: true
-  //   },
-  //   {
-  //     avatar: 'https://source.unsplash.com/random?2',
-  //     name: '李四',
-  //     referee: false
-  //   },
-  //   {
-  //     avatar: 'https://source.unsplash.com/random?3',
-  //     name: '王五',
-  //     referee: false
-  //   },
-  //   {
-  //     avatar: 'https://source.unsplash.com/random?4',
-  //     name: '赵六',
-  //     referee: true
-  //   }
-  // ]
-  get_up_list().then(res => {
-    userList.value.push({
-      ...res.data.up_user,
+  const list = [
+    {
+      avatar: 'https://picsum.photos/50/50',
+      name: '张三',
       referee: true
-    })
+    },
+    {
+      avatar: 'https://picsum.photos/50/50',
+      name: '李四',
+      referee: false
+    },
+    {
+      avatar: 'https://picsum.photos/50/50',
+      name: '王五',
+      referee: false
+    },
+    {
+      avatar: 'https://picsum.photos/50/50',
+      name: '赵六',
+      referee: true
+    }
+  ]
+  userList.value = list
+  get_up_list().then(res => {
+    if (res.data.up_user)
+      userList.value.push({
+        ...res.data.up_user,
+        referee: true
+      })
     // 数组拼接
     userList.value = userList.value.concat(res.data.data.map(item => {
       return {
@@ -58,7 +60,6 @@ const getData = () => {
       }
     }))
   })
-  // userList.value = list
 }
 
 onShow(() => {
@@ -68,14 +69,16 @@ onShow(() => {
 
 <style lang="scss" scoped>
 .all {
-  padding-top: 80rpx;
+  padding: 80rpx 30rpx 0;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #F6F6F6;
 
   .user {
-    width: 90%;
-    margin: 10rpx;
+    width: 100%;
+    margin: 40rpx 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
