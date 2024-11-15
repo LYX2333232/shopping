@@ -1,7 +1,29 @@
 <template>
-  <Header title="限时秒杀" />
+  <Header />
   <view class="all">
-    <view class="background" />
+    <image class="background"
+      src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhS8PmdQBKx8ibh5O3dju5VYEanKbAXP1GiayrWu3KLQPtian8UECGxjfNtf7eqnlKrloxNriaAQ5AuglQ/0?wx_fmt=png"
+      mode="scaleToFill" />
+    <TnScrollList :indicator="false">
+      <view class="tn-flex-center-start indexs">
+        <view v-for="(item, index) in indexs" :key="item" @click="active_index = index">
+          <view v-if="item.start < new Date()" :class="['item', 'doing', active_index === index ? 'active' : '']">
+            <CountDown :time="item.end - new Date()" @finish="getIndexs" />
+            <view style="margin-top: 20rpx;">
+              {{ item.hour }}点{{ item.min ? '半' : '' }}场
+            </view>
+          </view>
+          <view v-else :class="['item', 'wait', active_index === index ? 'active' : '']">
+            <view>
+              {{ formatTime(item.start, 'h:m') }}
+            </view>
+            <view style="margin-top:20rpx;">
+              整点秒杀
+            </view>
+          </view>
+        </view>
+      </view>
+    </TnScrollList>
     <view v-for="(item, index) in items" :key="'item' + index" class="item">
       <image :src="item.path" mode="scaleToFill" style="width:200rpx;height:160rpx" />
       <view class="right">
@@ -34,9 +56,49 @@
 <script setup>
 import { ref } from 'vue'
 import { onShow, onReachBottom } from '@dcloudio/uni-app'
-import Header from '@/components/header.vue'
+
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import TnScrollList from '@tuniao/tnui-vue3-uniapp/components/scroll-list/src/scroll-list.vue'
+import TnCountDown from '@tuniao/tnui-vue3-uniapp/components/count-down/src/count-down.vue'
+import Header from '@/components/header.vue'
+import CountDown from '@/components/CountDown'
 import { get_goods_list } from '@/api/index/seckill/seckill'
+import { setTime, formatTime } from '@/utils/format'
+
+// 顶部选项框
+const indexs = ref([])
+const active_index = ref(0)
+const getIndexs = () => {
+  const list = [
+    {
+      start: '15 15:00',
+      end: '15 20:00',
+      list: []
+    },
+    {
+      start: '16 8:00',
+      end: '16 10:00',
+      list: []
+    },
+    {
+      start: '16 10:30',
+      end: '16 11:00',
+      list: []
+    },
+    {
+      start: '16 11:00',
+      end: '16 12:00',
+      list: []
+    }
+  ]
+  indexs.value = list.map(item => {
+    const start = setTime(item.start)
+    console.log(start);
+    const hour = start.getHours()
+    const min = start.getMinutes()
+    return { ...item, hour, min, start, end: setTime(item.end) }
+  })
+}
 
 // 底部的数据
 const items = ref([])
@@ -57,6 +119,7 @@ const getData = () => {
 }
 
 onShow(() => {
+  getIndexs()
   getData()
 })
 
@@ -81,7 +144,7 @@ onReachBottom(() => {
   position: relative;
   width: 100vw;
   min-height: 100vh;
-  padding: 200rpx 0 0;
+  padding: 340rpx 0 0;
   background: transparent;
   z-index: 0;
 }
@@ -89,116 +152,42 @@ onReachBottom(() => {
 .background {
   position: fixed;
   top: 0;
-  width: 100%;
-  height: 100vh;
-  background: linear-gradient(to bottom, #F9E9CC 0%, #FFFFFF 100%);
+  width: 750rpx;
+  height: 494rpx;
   z-index: -1;
 }
 
-.top {
-  width: 100vw;
-  background: none;
+.indexs {
+  width: 750rpx;
+  background: #fd745a;
+  font-family: PingFangSC, PingFang SC;
+  font-weight: 400;
+  font-size: 24rpx;
+  line-height: 33rpx;
+  text-align: left;
+  font-style: normal;
+  color: #FFF;
 
-  .item-container {
-    position: relative;
-    width: fit-content;
+  .item {
+    padding: 20rpx 20rpx 10rpx;
+  }
+
+  .wait {
+    width: 180rpx;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    flex-wrap: nowrap;
   }
 
-  .main {
-    margin-left: 20rpx;
-    width: 300rpx;
-    background: #FFFFFF;
-
-    .mainText {
-      width: 200rpx;
-      text-align: left;
-
-      .main_title {
-        font-family: Inter, Inter;
-        font-weight: 500;
-        font-size: 19rpx;
-        color: #000000;
-        line-height: 29rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .main_price {
-        font-family: Inter, Inter;
-        font-weight: normal;
-        font-size: 19rpx;
-        color: #834820;
-        line-height: 29rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
-      }
-
-      .main_done {
-        font-family: Inter, Inter;
-        font-weight: 500;
-        font-size: 10rpx;
-        color: #834820;
-        line-height: 14rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
-      }
-    }
+  .doing {
+    width: 180rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .sub {
-    margin-left: 20rpx;
-    width: 240rpx;
-    background: #FFFFFF;
-
-    .subText {
-      width: 180rpx;
-      text-align: left;
-
-      .sub_title {
-        font-family: Inter, Inter;
-        font-weight: 500;
-        font-size: 15rpx;
-        color: #000000;
-        line-height: 29rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .sub_price {
-        font-family: Inter, Inter;
-        font-weight: normal;
-        font-size: 15rpx;
-        color: #834820;
-        line-height: 29rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
-      }
-
-      .sub_done {
-        font-family: Inter, Inter;
-        font-weight: 500;
-        font-size: 6rpx;
-        color: #834820;
-        line-height: 14rpx;
-        text-align: left;
-        font-style: normal;
-        text-transform: none;
-      }
-    }
+  .active {
+    color: #14BF20;
   }
 }
 

@@ -14,7 +14,7 @@
           </view>
           <text class="text">邀请您加入小程序</text>
         </view>
-        <image :src="QR" mode="scaleToFill" style="width:150rpx;height:150rpx;border-radius: 50%" />
+        <image :src="QR" mode="scaleToFill" style="width:200rpx;height:200rpx;border-radius: 50%" />
       </view>
     </view>
     <!-- <view class="share">

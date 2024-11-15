@@ -22,7 +22,7 @@
 			</view>
 		</view>
 
-		<view v-if="store.userInfo.is_up" class="middle" @click="addUsVisible = true">
+		<view v-if="!store.userInfo.is_up" class="middle" @click="addUsVisible = true">
 			<view class="left">
 				<image
 					src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRLY56BxV7ZNNfJwiaWD9b15icgAoTnUsjf6QDWQCicQXzibZ5VATjQLWcgRZUDum3TbT0X8sicSqXOqkQ/0?wx_fmt=png"

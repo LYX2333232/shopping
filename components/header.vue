@@ -23,8 +23,14 @@
 export default {
 	name: "backPages",
 	props: {
-		backtext: String,
-		title: String,
+		backtext: {
+			type: String,
+			default: ''
+		},
+		title: {
+			type: String,
+			default: ''
+		},
 		color: {
 			type: String,
 			default: '#000'

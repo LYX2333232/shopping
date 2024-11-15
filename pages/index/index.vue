@@ -55,7 +55,7 @@
 				<image class="item" v-for="(_, index) in 4" :src="`/static/index/item${index}.png`" :key="index"
 					@click="top_button(index)" />
 			</view>
-			<view class="seckill" v-if="seckill_list.length > 0">
+			<view class="seckill" @click="toSeckill">
 				<view class="top">
 					<view style="z-index:2">全场低价秒</view>
 					<TnButton type="success" shape="round">去看看></TnButton>
@@ -202,6 +202,10 @@ const top_button = (index) => {
 
 // 秒杀商品
 const seckill_list = ref([])
+
+const toSeckill = () => uni.navigateTo({
+	url: '/pages/index/seckill/index'
+})
 
 // 今日开团商品
 const today_list = ref([])
