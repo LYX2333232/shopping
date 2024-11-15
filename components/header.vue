@@ -1,9 +1,9 @@
 <template>
-	<view class="big_out">
+	<view class="big_out" :style="{ color: color }">
 		<!-- 左上角返回按钮 -->
 		<!-- 这里为什么要加4px，是因为这个左箭头<的高度为16rpx需要下降一半，就是8rpx=4px,可以自己试一下，我这里没有问题 -->
-		<view class="back" :style="'margin-top:' + (titletop + 4) + 'px'" @click="back_page">
-			<view class="back_img">
+		<view class="back" :style="'margin-top:' + 4 + 'px'" @click="back_page">
+			<view class="back_img" :style="{ borderColor: color }">
 			</view>
 			<view class="back_text">
 				<slot>
@@ -24,7 +24,11 @@ export default {
 	name: "backPages",
 	props: {
 		backtext: String,
-		title: String
+		title: String,
+		color: {
+			type: String,
+			default: '#000'
+		}
 	},
 
 	//这里原来使用的onLoad一直有bug（不重新进入页面就会错位），
@@ -78,7 +82,7 @@ export default {
 
 .back_img {
 	/* 用border值来控制箭头粗细 */
-	border: 3px solid black;
+	border: 3rpx solid;
 	/* 上、右、下、左  四个边框的宽度 */
 	border-width: 0px 2px 2px 0px;
 	display: inline-block;
@@ -97,7 +101,6 @@ export default {
 	font-family: PingFangSC, PingFang SC;
 	font-weight: 600;
 	font-size: 36rpx;
-	color: #111111;
 	line-height: 50rpx;
 	text-align: right;
 	font-style: normal;

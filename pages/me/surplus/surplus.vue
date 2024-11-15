@@ -1,10 +1,14 @@
 <template>
-  <Header title="账户余额"></Header>
+  <Header title="账户余额" color="#FFF"></Header>
   <view class="all">
+    <view class="background"></view>
     <view class="main">
-      <view class="total">
-        <text class="label">可提现</text>
-        <text>{{ usable }}</text>
+      <view class="top">
+        <view class="total">
+          <text class="label">可提现</text>
+          <text>{{ usable }}</text>
+        </view>
+        <button class="btn" size="mini" @click="priceVisible = true">提现</button>
       </view>
       <view class="bottom">
         <view>
@@ -17,11 +21,10 @@
         </view>
       </view>
     </view>
-    <button class="btn" @click="priceVisible = true">立即提现</button>
     <view class="title">提现记录</view>
     <view class="card" v-for="record in recordList" :key="record.id">
       <view>
-        <view class="name">提现至微信零钱</view>
+        <view class="name">{{ record.name }}</view>
         <view class="time">{{ record.updated_at }}</view>
       </view>
       <view class="price">{{ record.price }}</view>
@@ -132,58 +135,91 @@ onShow(() => {
 .all {
   width: 100%;
   min-height: 100vh;
-  padding-top: 180rpx;
+  padding: 180rpx 20rpx 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #F7F7F7;
+  position: relative;
+  z-index: 0;
+
+  .background {
+    background: #263144;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 405rpx;
+    z-index: -1;
+  }
 
   .main {
-    width: 95%;
-    padding: 50rpx 0 30rpx;
-    background: #C4A37D;
+    width: 100%;
+    padding: 50rpx 40rpx 30rpx;
+    background: linear-gradient(to right, #3BC66E, #30C36B);
     border-radius: 30rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    .total {
+    .top {
+      width: 100%;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      font-family: Sarala, Sarala;
-      font-weight: bold;
-      font-size: 69rpx;
-      color: #FFFFFF;
-      line-height: 104rpx;
-      text-align: center;
-      font-style: normal;
-      text-transform: none;
+      justify-content: space-between;
+
+      .total {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 500;
+        font-size: 56rpx;
+        color: #FFFFFF;
+        line-height: 78rpx;
+        text-align: left;
+        font-style: normal;
+
+        .label {
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 400;
+          font-size: 28rpx;
+          line-height: 40rpx;
+          text-align: left;
+          font-style: normal;
+          margin-bottom: 20rpx;
+        }
+      }
+
+
+      .btn {
+        background: #FFFFFF;
+        color: #14BF20;
+        border-radius: 48rpx;
+        margin-right: 0;
+      }
     }
 
-    .label {
-      font-family: Inter, Inter;
-      font-weight: 400;
-      font-size: 35rpx;
-      color: rgba(255, 255, 255, 0.6);
-      line-height: 46rpx;
-      text-align: center;
-      font-style: normal;
-      text-transform: none;
-      margin-top: 50rpx;
-    }
 
     .bottom {
       width: 100%;
       display: flex;
       justify-content: space-around;
       margin-top: 40rpx;
+      color: #FFFFFF;
+
+      .label {
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 26rpx;
+        line-height: 37rpx;
+        text-align: left;
+        font-style: normal;
+      }
 
       .price {
         font-family: Sarala, Sarala;
         font-weight: 400;
         font-size: 46rpx;
-        color: #FFFFFF;
         line-height: 69rpx;
         text-align: center;
         font-style: normal;
@@ -192,14 +228,7 @@ onShow(() => {
     }
   }
 
-  .btn {
-    width: 60%;
-    height: 100rpx;
-    background: #C4A37D;
-    color: #FFFFFF;
-    margin-top: 60rpx;
-    border-radius: 65rpx;
-  }
+
 
   .title {
     width: 100%;
