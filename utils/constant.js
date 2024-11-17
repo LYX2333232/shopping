@@ -1,0 +1,1 @@
+export const getRandomImage = (w = 100, h = 100) => `https://picsum.photos/${w}/${h}`

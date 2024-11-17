@@ -32,10 +32,11 @@ const props = defineProps({
 })
 
 const emits = defineEmits(['finish'])
-const time = ref()
+const time = ref([])
+var L = Math.floor(props.time / 1000)
 const id = setInterval(() => {
-  var left = props.time
-  left = Math.floor(left / 1000)
+  L--
+  var left = L
   if (left <= 0) {
     emits('finish')
     return 0
@@ -66,19 +67,18 @@ onDeactivated(() => {
 .all {
   display: flex;
   align-items: center;
-  flex-direction: row-reverse;
 }
 
 .item {
-  width: 44rpx;
-  height: 44rpx;
+  width: 35rpx;
+  height: 35rpx;
   border-radius: 4rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: PingFangSC, PingFang SC;
   font-weight: 400;
-  font-size: 30rpx;
+  font-size: 28rpx;
   line-height: 42rpx;
   text-align: right;
   font-style: normal;
