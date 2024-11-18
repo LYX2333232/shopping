@@ -9,7 +9,7 @@
                 <text>购物车</text>
             </button>
             <button class="icon" @click="favorite">
-                <TnIcon name="star" size="50" :color="props.like === 1 ? 'tn-red' : '#000'"
+                <TnIcon :name="props.like === 1?'star-fill':'star'" size="50" :color="props.like === 1 ? 'tn-red' : '#000'"
                     :custom-style="{ height: 0 }" />
                 <text>收藏</text>
             </button>
@@ -138,7 +138,7 @@ const onButtonClick = () => {
     }
 
     .cart {
-        background: linear-gradient(90deg, #F9E3C9 0%, #DDC8A4 63%, #DDC8A4 100%);
+        background: #FF4121;
         color: #fff
     }
 }

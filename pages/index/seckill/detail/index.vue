@@ -112,7 +112,7 @@
       </view>
     </view>
   </view>
-  <GoodNav :id="c_id" :like="like" :normal="true" @buttonClick="buttonClick" @changeLike="changeLike" />
+  <GoodNav :id="c_id" :like="like" :normal="false" @buttonClick="buttonClick" @changeLike="changeLike" />
   <!-- 分享定义在组件goods-nav中 -->
 </template>
 

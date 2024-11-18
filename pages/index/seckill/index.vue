@@ -50,7 +50,7 @@
             限购{{ item.total }}件
           </view>
         </view>
-        <view :class="['buy', indexs[active_index].start < new Date() ? 'doing' : 'wait']">
+        <view :class="['buy', indexs[active_index]?.start < new Date() ? 'doing' : 'wait']">
           <view class="flash">
             秒杀￥ {{ item.flash_price }}
           </view>
@@ -58,21 +58,6 @@
             ￥{{ item.price }}
           </view>
         </view>
-        <!-- <view class="tn-flex-center-between" style="width: 400rpx">
-          <view>
-            <view class="tn-flex-center-start">
-              <view class="item_price">
-                ￥ {{ item.flash_price }}
-              </view>
-              <view class="item_old_price">
-                原价：{{ item.price }}
-              </view>
-            </view>
-          </view>
-          <TnButton width="140" height="60" shape="round" bg-color="#C8B697" text-color="#FFFFFF"
-            @click="toBuy(item.id)">马上抢
-          </TnButton>
-        </view> -->
       </view>
     </view>
   </view>
