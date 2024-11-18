@@ -1,304 +1,416 @@
 <template>
     <Header />
-    <swiper indicator-dots autoplay circular style="height:780rpx;">
-        <swiper-item v-for="(item, index) in swiperImg" :key="'swiper' + index">
-            <image :src="item.path" mode="aspectFill" style="width: 100%;height: 750rpx;" @click="toWeb(item.path)">
-            </image>
-        </swiper-item>
-    </swiper>
-
-    <view class="white_boxs">
-        <view style=" width: 90%;margin: 0 auto;">
-            <view style="display: flex;">
-                <view class="now">
-                    ¥{{ size[sizeIndex].price }}
+    <view style="position: relative;">
+        <swiper :indicator-dots="false" autoplay="false" circular @change="changeSwiper" style="height:750rpx;">
+            <swiper-item v-for="item in swiperImg" :key="'swiperImg' + item.id">
+                <image :src="item.path" mode="aspectFill" style="width: 750rpx;height: 750rpx;"
+                    @click="toWeb(item.path)">
+                </image>
+            </swiper-item>
+        </swiper>
+        <view class="show">
+            <view class="other">
+                <image :src="other.avatar" mode="scaleToFill" class="avatar" />
+                <view>
+                    {{ other.name }}在{{ other.time }}抢购了该商品
                 </view>
             </view>
+            <view class="index">
+                <view class="current">
+                    {{ current }}
+                </view>
+                <view class="total">
+                    {{ swiperImg.length }}
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="all">
+        <view class="flash">
+            <view class="tn-flex-center-start">
+                <view class="now">
+                    ￥{{ size[sizeIndex].price }}
+                </view>
+                <view v-show="size[sizeIndex].or_price" class="old">
+                    ￥{{ size[sizeIndex].or_price }}
+                </view>
+            </view>
+            <view class="right">
+                <view class="tn-flex-center-start">
+                    <view>
+                        距结束
+                    </view>
+                    <CountDown :time="end - new Date()" textColor="#DD1A21" @finish="finish" />
+                </view>
+            </view>
+        </view>
+        <view class="white_boxs">
+
             <view class="info">
                 {{ name }}
             </view>
-            <view style="display: flex;">
-                <view class="type" v-for="item in typelist">
+            <view class="tn-flex-center-start">
+                <view class="type" v-for="item in typeList" :key="item.id">
                     {{ item }}
                 </view>
             </view>
-            <!-- <view class="block1">
-                已售 {{ sell }}+
-            </view> -->
-        </view>
-    </view>
-    <view class="detail">
-        <view style="width: 90%;margin: 0 auto;">
-            <view>
-                规格
+            <view class="sold">
+                已售 {{ sell }}
             </view>
+            <view class="others" v-if="item.seng.length > 0">
+                <image v-for="(path, index) in item.seng" :key="item.id + index" :src="path" mode="scaleToFill"
+                    class="avatar" />
+                已有{{ item.seng.length }}人参团
+            </view>
+        </view>
+        <view class="desc">
+            <image
+                src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQ9xr6k6haSXtWWE8Sa8PIkCRJA3AgMic3n41fiacAVqEYmicaAPWP7XibYp8LKkpQFLnWJsZib6NYQHCA/0?wx_fmt=png"
+                mode="scaleToFill" />
+        </view>
+        <view class="deliver">
+            <view class="label">
+                配送
+            </view>
+            <view class="text">
+                最快{{ arrive_time }}送达
+            </view>
+        </view>
+        <view class="size">
+            <view class="title"> 选择规格 </view>
             <uni-section title="更多样式 - tag" subTitle="使用mode=tag属性使用标签样式" type="line">
                 <view class="uni-px-5">
                     <uni-data-checkbox mode="tag" v-model="sizeIndex" :localdata="size"
-                        selectedColor="rgba(202, 199, 193, 1)"></uni-data-checkbox>
+                        selectedColor="#14BF20"></uni-data-checkbox>
                 </view>
             </uni-section>
-            <view style="display: flex;justify-content: space-between;">
-                <text>数量</text>
+            <view class="tn-flex-center-between">
+                <view class="title">数量</view>
                 <view>
                     <uni-section title="基本用法" type="line" padding>
-                        <uni-number-box v-model="cont" @change="changeValue" :min="1" />
+                        <uni-number-box v-model="cont" :min="1" />
                     </uni-section>
                 </view>
             </view>
         </view>
-    </view>
-    <view class="moredetail">
-        <view class="text1" style="width: 90%;margin: 0 auto;">
-            <text>商品详情</text>
-        </view>
-        <!-- <image v-for="image in detailImg" :src="image" mode="widthFix" style="width: 90%;margin: 10rpx 5%;" /> -->
-        <view style="width: 90%;margin: 10rpx 5%;" v-html="content"></view>
-    </view>
-    <TnPopup v-model="detailVisible" open-direction="bottom" height="80%">
-        <view class="goods">
-            <view style="font-size:45rpx;margin-top:30rpx">订单详细</view>
-            <view class="detail_address" v-if="address.address" @click="selectAddress">
-                <view
-                    style="font-size:35rpx;margin-bottom: 20rpx;max-width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-                    {{ address.address }} </view>
-                <view style="display:flex">
-                    <view style="max-width: 200rpx;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-                        {{ address.name }}
-                    </view>
-                    - {{ address.phone }}
-                </view>
-            </view>
-            <view class="detail_address" style="font-size:35rpx;" v-else @click="selectAddress">请先选择地址</view>
-            <view class="good">
-                <image :src="swiperImg[0].path" mode="scaleToFill"
-                    style="width:100rpx; height:100rpx;margin-left:30rpx" />
-                <view>
-                    {{ name }}
-                </view>
-            </view>
-            <view class="good" style="color:#C7BAA5;">
-                <view>商品价格</view>
-                <view style="display:flex;flex-direction:column;align-items:center;">
-                    <view>
-                        ￥{{ detail_price.price }}
-                    </view>
-                    <view style="text-decoration:line-through;color:black;font-size:20rpx;margin-top:10rpx;"
-                        v-if="detail_price.price != detail_price.show_price">
-                        原价：￥{{ detail_price.show_price }}
+        <view class="param">
+            <view class="title">商品参数</view>
+            <view class="card">
+                <view class="item">
+                    <view class="label">产地</view>
+                    <view class="text">
+                        {{ location }}
                     </view>
                 </view>
-            </view>
-            <view class="good">
-                <view>
-                    运费
-                </view>
-                <view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;">
-                    ￥{{ detail_price.freight }}
-                </view>
-            </view>
-            <view class="btn">
-                <view class="total">
-                    总计：￥{{ (parseFloat(detail_price.freight) + parseFloat(detail_price.price)).toFixed(2) }}
-                </view>
-                <view class="button" @click="order">
-                    确认结算
+                <view class="block"></view>
+                <view class="item">
+                    <view class="label">存储方式</view>
+                    <view class="text">
+                        {{ store_way }}
+                    </view>
                 </view>
             </view>
         </view>
-    </TnPopup>
-
-    <GoodNav :id="c_id" :like="true" :normal="false" @buttonClick="buttonClick" />
+        <view class="detail">
+            <view class="title" style="width: 90%;margin: 0 auto;">
+                <text>商品详情</text>
+            </view>
+            <view v-for="item in swiperVideo" :key="'swiperVideo' + item.id" style="width: 90%;margin: 0 auto;">
+                <video style="width:100%" :src="'https://senmei.top/' + item.url"></video>
+            </view>
+            <view style="width: 90%;margin: 10rpx 5%;">
+                <rich-text :nodes="content"></rich-text>
+            </view>
+        </view>
+    </view>
+    <GoodNav :id="c_id" :like="like" :normal="false" @buttonClick="buttonClick" @changeLike="changeLike" />
     <!-- 分享定义在组件goods-nav中 -->
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad, onShow } from '@dcloudio/uni-app';
-import { get_today_detail } from '@/api/index/today/today'
+import { onLoad, onReady } from '@dcloudio/uni-app'
+
+import { get_goods_detail } from '@/api/goods/goods'
+import { add_to_cart } from '@/api/cart/cart'
 import Header from '@/components/header.vue'
-import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
-import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import GoodNav from '@/components/goodNav'
-import { new_order, get_order_price } from '@/api/order/order'
-import { AddressStore } from '@/store'
+import CountDown from '@/components/CountDown'
+import { setTime } from '@/utils/format'
 
-const address = AddressStore()
-
-const detailVisible = ref(false)
-
-const detail_price = ref({
-    freight: 0,
-    price: 0
-})
-
+// 轮播图相关
+const swiperVideo = ref([])
 const swiperImg = ref([])
+const current = ref(1)
+const changeSwiper = e => {
+    if (e && e.detail && e.detail.current !== undefined) {
+        current.value = e.detail.current + 1
+    } else {
+        console.error('Invalid event object:', e)
+    }
+}
+const toWeb = (path) => {
+    uni.navigateTo({
+        url: '/pages/web/index?src=' + path
+    })
+}
+
+// 其他用户的购买信息
+const other = ref({})
+const getOther = () => {
+    other.value = {
+        avatar: ' https://picsum.photos/40/40',
+        name: '张三',
+        time: '三分钟前'
+    }
+}
 
 const c_id = ref('')
 
-let teamwork_com_id = undefined
+const end = ref(setTime('18:00'))
+const finish = () => {
 
-let sell = ref("150")
+}
+
+// 商品售价
+const sell = ref(0)
 const name = ref('')
-const typelist = ref([])
-// 商品规格
-const size = ref([])
+const typeList = ref([])
 
+// 配送时间
+const arrive_time = ref('')
+
+// 商品规格
+const size = ref([{}])
 const sizeIndex = ref(0)
 
-const content = ref('')
+// 参数
+const location = ref('')
+const store_way = ref('')
+const getParam = () => {
+    location.value = '四川成都'
+    store_way.value = '常温'
+}
 
+// 数量
 const cont = ref(1)
 
-const toWeb = (url) => {
-    uni.navigateTo({
-        url: '/pages/web/index?src=' + url
-    })
+// 详细描述
+const content = ref('')
+
+// 底部信息
+const like = ref(0)
+
+const changeLike = () => {
+    like.value = 1 - like.value
 }
 
-function buttonClick(e) {
-    detailVisible.value = true
-    get_order_price({
-        address_id: address.address_id,
-        teamwork_com_id,
-        com_id: size.value[sizeIndex.value].id,
-        com_cont: cont.value
-    }).then(res => {
-        detail_price.value = res.data
-    })
-}
+function buttonClick() {
+    // 加入购物车
+    add_to_cart(size.value[sizeIndex.value].id, cont.value).then(res => {
+        if (res.code == 200)
+            uni.showToast({
+                title: '加入购物车成功',
+                icon: 'none'
+            })
 
-const selectAddress = () => {
-    uni.navigateTo({
-        url: '/pages/shopping/selectAddress/index'
-    })
-}
+        else
+            uni.showToast({
+                title: res.msg,
+                icon: 'none'
+            })
 
-const order = () => {
-    new_order({
-        com_id: size.value[sizeIndex.value].id,
-        com_cont: cont.value,
-        ids: [{
-            id: size.value[sizeIndex.value].id,
-            cont: cont.value
-        }],
-        address_id: address.address_id,
-        teamwork_com_id,
-        freight: detail_price.value.freight
-    }).then(res => {
-        uni.requestPayment({
-            provider: 'wxpay',
-            timeStamp: res.data.timeStamp,
-            nonceStr: res.data.nonceStr,
-            package: res.data.package,
-            signType: res.data.signType,
-            paySign: res.data.paySign,
-            success: function (res) {
-                if (res.errMsg === 'requestPayment:ok') {
-                    uni.showToast({
-                        title: '支付成功',
-                        icon: 'none'
-                    })
-                }
-            },
-            fail: function (err) {
-                console.log('fail', err)
-            }
-        })
-        detailVisible.value = false
     })
 }
 
 onLoad((options) => {
-    get_today_detail(options.id).then(res => {
+    const that = this
+    get_goods_detail({ id: options.id }).then(res => {
         // 轮播图
         swiperImg.value = res.data.paths
+        // 视频轮播图
+        swiperVideo.value = res.data.videost
 
         c_id.value = res.data.id
 
-        sell.value = res.data.seng_count
-
-        teamwork_com_id = res.data.teamwork_com_id
-
         // 规格
-        size.value = [
-            {
-                ...res.data.item,
-                text: res.data.item.name,
-                value: 0
+        size.value = res.data.items.map((item, index) => {
+            return {
+                ...item,
+                text: item.name,
+                value: index
             }
-        ]
+        })
         sizeIndex.value = 0
 
         // 商品名称
         name.value = res.data.name
 
-        typelist.value = res.data.labels
+        typeList.value = res.data.labels
 
         content.value = res.data.content.replace(/(<img [^>]*)(style="[^"]*")?/gi, '$1 style="width:100%;"')
-    })
-})
 
-onShow(() => {
-    get_order_price({
-        address_id: address.address_id,
-        teamwork_com_id,
-        com_id: size.value[sizeIndex.value].id, com_cont: cont.value
-    }).then(res => {
-        detail_price.value = res.data
+        like.value = res.data.is_like
+
+        sell.value = res.data.volume
     })
+    arrive_time.value = '今日 10:30'
+    getOther()
+    getParam()
 })
 </script>
 
 <style lang="scss" scoped>
 page {
-    background-color: rgba(248, 248, 248, 1);
+    background: #F6F6F6;
+}
+
+
+
+.show {
+    position: absolute;
+    width: 100%;
+    bottom: 20rpx;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .other {
+        background: #000;
+        opacity: 0.6;
+        display: flex;
+        align-items: center;
+        width: 450rpx;
+        height: 60rpx;
+        border-radius: 0 30rpx 30rpx 0;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 24rpx;
+        color: #FFFFFF;
+        line-height: 33rpx;
+        text-align: left;
+        font-style: normal;
+
+        .avatar {
+            margin: 0 20rpx;
+            width: 40rpx;
+            height: 40rpx;
+            border-radius: 50%;
+        }
+    }
+
+    .index {
+        margin-right: 20rpx;
+        background: rgba($color: #000000, $alpha: 0.4);
+        width: 80rpx;
+        height: 40rpx;
+        border-radius: 30rpx;
+        display: flex;
+        align-items: center;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 26rpx;
+        color: #FFFFFF;
+        line-height: 40rpx;
+
+        .current {
+            width: 40rpx;
+            height: 40rpx;
+            text-align: center;
+            border-radius: 30rpx 0 30rpx 30rpx;
+            background: rgba($color: #000000, $alpha: 0.2);
+        }
+
+        .total {
+            width: 40rpx;
+            height: 40rpx;
+            text-align: center;
+        }
+    }
+}
+
+.all {
+    background-color: #F6F6F6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20rpx;
+}
+
+.flash {
+    width: 710rpx;
+    height: 162rpx;
+    margin-bottom: -40rpx;
+    background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQ9xr6k6haSXtWWE8Sa8PIkWm7dWr5Qvu2vBz1tvqN077GSia1LoK2ibI7rNrUIJRauV5tibbjtzJmeQ/0?wx_fmt=png") no-repeat center center;
+    background-size: 100% 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #FFF;
+
+    .now {
+        font-family: WeChat-Sans-Std, WeChat-Sans-Std;
+        font-weight: bold;
+        font-size: 50rpx;
+        text-align: left;
+        font-style: normal;
+        margin: 0 30rpx;
+    }
+
+    .old {
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 26rpx;
+        text-align: left;
+        font-style: normal;
+        text-decoration-line: line-through;
+    }
+
+    .right {
+        margin-right: 30rpx;
+        height: 100rpx;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
 }
 
 .white_boxs {
-    background-color: rgba(255, 255, 255, 1.0);
-    margin-top: -40rpx;
-    border-radius: 19rpx 19rpx 0rpx 0rpx;
-    position: relative;
-    z-index: 10;
+    width: 710rpx;
+    margin: 20rpx;
+    padding: 20rpx;
+    background-color: #FFF;
+    border-radius: 24rpx;
 
-    .now {
-        height: 75rpx;
-        font-family: Inter, Inter;
-        font-weight: 600;
-        font-size: 40rpx;
-        color: #834820;
-        line-height: 46rpx;
-        text-align: left;
-        padding-top: 18rpx;
-        margin-right: 30rpx;
-    }
+
 
     .info {
-        font-family: Inter, Inter;
-        font-weight: 600;
-        font-size: 50rpx;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 500;
+        font-size: 34rpx;
+        color: #131313;
+        line-height: 44rpx;
+        text-align: left;
+        font-style: normal;
+        margin: 20rpx 0;
     }
 
     .type {
-        width: 120rpx;
         height: 35rpx;
         margin-top: 20rpx;
         margin-right: 15rpx;
-        font-size: 19rpx;
-        color: #A79A77;
-        background: #FAEBD9;
+        padding: 5rpx 10rpx;
+        font-size: 25rpx;
+        color: #999;
+        border: 2rpx dotted #999;
         line-height: 35rpx;
-        text-align: center;
-        border-radius: 6rpx 6rpx 6rpx 6rpx;
+        display: flex;
+        align-items: center;
     }
 
-    .block1 {
+    .sold {
+        width: 100%;
         font-family: Inter, Inter;
         font-weight: 400;
         font-size: 23rpx;
@@ -306,19 +418,82 @@ page {
         color: #8A8A8A;
         line-height: 35rpx;
         padding-bottom: 40rpx;
+        text-align: right;
+    }
+
+    .others {
+        display: flex;
+        align-items: center;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 22rpx;
+        color: #EE2532;
+        line-height: 30rpx;
+        text-align: left;
+        font-style: normal;
+
+        .avatar {
+            width: 40rpx;
+            height: 40rpx;
+            border-radius: 50%;
+            margin-left: -10rpx;
+        }
     }
 }
 
-.detail {
-    background-color: #fff;
-    margin-top: 10rpx;
-    padding-top: 20rpx;
-    font-family: Inter, Inter;
-    font-weight: 600;
-    font-size: 27rpx;
-    color: #75694A;
+.desc {
+    width: 711rpx;
+    height: 78rpx;
+    background: #FFF5EA;
+    border-radius: 24rpx;
+    margin: 20rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    image {
+        width: 670rpx;
+        height: 30rpx;
+    }
+}
+
+.deliver {
+    width: 100%;
+    display: flex;
+    background: #FFF;
+    padding: 30rpx 20rpx;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 400;
+    font-size: 28rpx;
+    color: #131313;
     line-height: 40rpx;
     text-align: left;
+    font-style: normal;
+
+    .label {
+        color: #999999;
+    }
+
+    .text {
+        margin-left: 30rpx;
+    }
+}
+
+.size {
+    width: 100%;
+    background-color: #fff;
+    margin: 20rpx;
+    padding: 30rpx 20rpx;
+
+    .title {
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 28rpx;
+        color: #999999;
+        line-height: 40rpx;
+        text-align: left;
+        font-style: normal;
+    }
 
     .uni-px-5 {
         padding-top: 15rpx;
@@ -327,18 +502,82 @@ page {
     }
 }
 
-.moredetail {
+.param {
+    width: 100%;
     background-color: #fff;
-    margin: 20rpx 0 20rpx;
-    padding-bottom: 200rpx;
+    margin: 20rpx;
+    padding: 30rpx 20rpx;
 
-    .text1 {
-        font-family: Inter, Inter;
-        font-weight: 600;
-        font-size: 27rpx;
-        color: #75694A;
+    .title {
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 500;
+        font-size: 28rpx;
+        color: #131313;
         line-height: 40rpx;
         text-align: left;
+        font-style: normal;
+        margin-bottom: 30rpx;
+    }
+
+    .card {
+        border-radius: 16rpx;
+        border: 1rpx solid #D0D0D0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .item {
+            width: 100%;
+            padding: 20rpx;
+            display: flex;
+            align-items: center;
+
+            .label {
+                width: 120rpx;
+                font-family: PingFangSC, PingFang SC;
+                font-weight: 400;
+                font-size: 28rpx;
+                color: #999999;
+                line-height: 40rpx;
+                text-align: left;
+                font-style: normal;
+            }
+
+            .text {
+                font-family: PingFangSC, PingFang SC;
+                font-weight: 400;
+                font-size: 28rpx;
+                color: #131313;
+                line-height: 40rpx;
+                text-align: left;
+                font-style: normal;
+            }
+        }
+
+        .block {
+            width: 100%;
+            margin: 0 20rpx;
+            height: 1rpx;
+            background-color: #EEE;
+        }
+    }
+}
+
+.detail {
+    width: 100%;
+    background-color: #fff;
+    margin: 20rpx;
+    padding-bottom: 150rpx;
+
+    .title {
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 500;
+        font-size: 28rpx;
+        color: #131313;
+        line-height: 40rpx;
+        text-align: left;
+        font-style: normal;
+        margin: 20rpx 30rpx;
     }
 }
 
@@ -395,68 +634,5 @@ page {
     /* #endif */
     bottom: 0;
     z-index: 100;
-}
-
-.goods {
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 150rpx;
-    background: #F5F5F5;
-
-    .detail_address {
-        width: 90%;
-        display: flex;
-        flex-direction: column;
-        margin: 30rpx;
-        padding: 20rpx;
-        background: #FFFFFF;
-    }
-
-    .good {
-        width: 90%;
-        margin: 10rpx auto;
-        padding: 30rpx;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 35rpx;
-    }
-
-    .btn {
-        width: 90%;
-        position: fixed;
-        bottom: 0;
-        margin-bottom: 20rpx;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-
-        .total {
-            font-size: 35rpx;
-            color: #834820;
-            margin-right: 20rpx;
-        }
-
-        .button {
-            width: 258rpx;
-            height: 71rpx;
-            margin-bottom: 20rpx;
-            background: #C8B697;
-            border-radius: 10rpx;
-            font-weight: 500;
-            font-size: 31rpx;
-            color: #FFFFFF;
-            text-align: center;
-            margin-left: 20rpx;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    }
 }
 </style>

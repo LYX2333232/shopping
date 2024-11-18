@@ -72,7 +72,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="today" v-if="today_list.length > 0">
+			<view class="today" v-if="today_list.length > 0" @click="toToday">
 				<view class="more">
 					<view style="z-index:2">
 						查看更多
@@ -209,6 +209,10 @@ const toSeckill = () => uni.navigateTo({
 
 // 今日开团商品
 const today_list = ref([])
+
+const toToday = () => uni.navigateTo({
+	url: '/pages/index/today/index'
+})
 
 // 底部推荐商品
 const infoList = ref()
