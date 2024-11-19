@@ -27,7 +27,7 @@
 				</template>
 			</TnEmpty>
 		</view>
-		<view class="card" v-for="card in orders" :key="card.id">
+		<view class="card" v-for="card in orders" :key="card.id" @click="toDetail">
 			<view class="title">
 				<view class="time">
 					{{ card.time }}
@@ -118,21 +118,21 @@
 <script setup>
 import { ref } from 'vue'
 import { onLoad, onReachBottom } from '@dcloudio/uni-app'
-import Header from '@/components/header.vue'
+
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 import TnEmpty from '@/uni_modules/tuniaoui-vue3/components/empty/src/empty.vue'
 import TnCountDown from '@/uni_modules/tuniaoui-vue3/components/count-down/src/count-down.vue'
+import Header from '@/components/header.vue'
 import { get_order, repay_order, post_refund, post_receive, close_teamwork, post_delete_order } from '@/api/order/order'
 import { get_today_detail } from '@/api/index/today/today'
 import { getRandomImage } from '@/utils/constant'
+import { title } from './constant'
 
 const tab = ref()
 const tabs = ref(['全部', '待付款', '待发货', '待收货', '已完成', '待退货', '拒绝退款', '已退款', '拼团中', '取消拼团', '拼团失败'])
-
-const title = ref(['待付款', '待分享', '待发货', '待收货', '交易成功', '已取消', '交易关闭', '退款中', '退款成功', '退款关闭'])
 
 const deliver = ref(['待接单', '已接单', '已到店', '配送中', '已完成', '已取消', '配送失败', '待收货', '已完成', '待退款', '拒绝退款', '已退款'])
 
@@ -597,6 +597,10 @@ const buttons = ref({
 const orders = ref([])
 
 const select_order = ref({})
+
+const toDetail = () => uni.navigateTo({
+	url: '/pages/me/order/detail'
+})
 
 // 删除订单
 const delete_order = (card) => {
