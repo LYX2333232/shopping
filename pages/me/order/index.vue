@@ -1,77 +1,96 @@
 <template>
 	<Header />
 	<view class="all">
-		<view class="tabs">
-			<view v-for="(item, index) in tabs" :key="index" class="tab"
-				:style="index === tab + 1 ? 'font-weight: 200;font-size: 45rpx;color: #000000;width: 200rpx' : 'font-weight: 800;font-size: 30rpx;color: #717171;width:150rpx;'"
-				@click="switchTab(index)">
-				{{ item }}
+		<view class="header">
+			<view class="search">
+				<TnIcon name="search" />
+				<input type="text" placeholder="搜索订单">
+			</view>
+			<view class="tabs">
+				<view v-for="(item, index) in tabs" :key="index"
+					:class="['tab', index === tab + 1 ? 'active' : 'inactive']" @click="switchTab(index)">
+					{{ item }}
+				</view>
 			</view>
 		</view>
-
+		<view v-if="is_empty" class="empty">
+			<TnEmpty mode="cart">
+				<template #icon>
+					<image
+						src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhTcBKpUgwer5OCCic51cf2LcV60EdpTKrgv3dLu4wuOFc8iapxtqboZT3lFKDKrgqic8JOzmdT0nQevg/0?wx_fmt=png"
+						mode="scaleToFill" />
+				</template>
+				<template #tips>
+					<view>
+						您还没有添加商品
+					</view>
+				</template>
+			</TnEmpty>
+		</view>
 		<view class="card" v-for="card in orders" :key="card.id">
 			<view class="title">
-				<view class="tn-flex-center-start">
-					<TnIcon name="shop" size="50"></TnIcon>
-					<text class="left">{{ card.name }}</text>
+				<view class="time">
+					{{ card.time }}
 				</view>
-				<text class="right">
-					{{ card.state === 0 ? '待付款' : card.state === 1 ? '待发货' : card.state === 2 ? '待收货' : card.state === 3
-						? '已完成'
-						:
-						card.state === 4 ? '待退货' : card.state === 5 ? '拒绝退款' : card.state === 6 ? '已退款' : card.state === 7 ?
-							'拼团中' :
-							card.state === 8 ? '取消拼团' : card.state === 9 ? '拼团失败' : '' }}
+				<text class="right" :style="{ color: card.state === 1 ? '#EE2532' : '#131313' }">
+					{{ title[card.state] }}
 				</text>
 			</view>
-			<view class="order">
+			<!-- <view class="order">
 				<view style="margin-right: 30rpx;">订单编号：{{ card.id }}</view>
 				<view v-if="card.state === 2"> 物流单号：{{ card.transport_number }} </view>
-			</view>
-			<view class="tn-flex-center-between tn-mt-lg" v-for="good in card.order_com" :key="good.id">
-				<image :src="good.path" mode="scaleToFill" style="width:160rpx;height:160rpx;border-radius: 15rpx;" />
-				<view class="main">
-					<view class="good">
-						{{ good.name }}
+			</view> -->
+			<view class="tn-flex-center-start tn-w-full">
+				<view class="goods">
+					<view v-for="good in card.order_com" :key="good.id">
+						<image :src="good.path" mode="scaleToFill" class="image" />
+					</view>
+				</view>
+				<view class="right">
+					<view>
+						共{{ card.order_com.length }}种
 					</view>
 					<view>
-						<text class="size">
-							{{ good.item_name }}
-						</text>
-						<text class="tk" v-if="card.state === 1" @click="applyForRefund(card)">申请退款</text>
-
-					</view>
-
-					<text class="number">
-						x{{ good.com_cont }}
-					</text>
-					<view class="tn-flex-center-start" style="flex-wrap: wrap;">
-						<TnTag v-for="(tag, index) in good.labels" :key="index" width="100" font-size="20" shape="round"
-							bg-color="#C7BAA7" text-color="#FFFFFF" :custom-style="{ marginRight: '20rpx' }">
-							{{ tag }}
-						</TnTag>
+						{{ card.order_com.reduce((total, cur) => total + cur.number, 0) }}件
 					</view>
 				</view>
 			</view>
-			<view v-if="[0, 2, 5, 7, 8].includes(card.state) || (card.state === 3 && card.is_refund)"
-				class="tn-flex-center-between tn-mt-lg">
-				<TnButton v-show="card.state === 0" type="danger" width="150" height="60" @click="delete_order(card)"
-					shape="round">
-					删除订单</TnButton>
-				<view class="price">
-					总价格：￥{{ card.price }}
+			<!-- 待付款：展示订单剩余支付时间 -->
+			<view v-if="card.state === 0" class="toPay">
+				<TnCountDown :time="Math.floor((card.end_time - new Date()) / 1000)" separator-mode="cn"
+					text-color="#EE2532" separator-color="#EE2532" :show-hour="false" />
+				后订单关闭，请及时付款
+			</view>
+			<!-- 待收货，显示送货阶段 -->
+			<view v-if="card.state === 3" class="deliver">
+				<TnIcon name="cart" color="#14BF20" />
+				{{ deliver[card.deliver] }}
+			</view>
+			<view class="tn-flex-center-between">
+				<view>
+					<!-- !条件未写 如果是拼团的 -->
+					<view v-if="card.is_group" class="others">
+						<image v-for="(_, index) in 3" :key="index" :src="getRandomImage(50, 50)" mode="scaleToFill"
+							class="avatar" />
+						<!-- !拼团成功 -->
+						<view v-if="card.state === 1">
+							已有{{ card.people }}人拼团，
+							<text style="color:#EE2532">还差{{ card.need - card.people }}人</text>
+						</view>
+						<view v-else>拼团成功</view>
+					</view>
 				</view>
-				<TnButton v-if="card.state === 5" bg-color="#C7BAA7" text-color="#FFFFFF" width="250" height="60"
-					:custom-style="{ marginRight: '30rpx' }" @click="re_apply(card)" shape="round">
-					再次申请
-				</TnButton>
-				<TnButton bg-color="#C7BAA7" text-color="#FFFFFF" width="150" height="60"
-					:custom-style="{ marginRight: '10rpx' }" @click="order_click(card)" shape="round">
-					{{ card.state === 0 ? '去付款' : card.state === 1 ? '申请退款' : card.state === 2 ? '确认收货' : card.state ===
-						3 ?
-						'申请退款'
-						: card.state === 5 ?
-							'拒绝原因' : card.state === 7 ? '取消拼团' : card.state === 8 || card.state === 9 ? '再次拼团' : '' }}
+				<view class="price">
+					{{ card.state === 0 ? '需付款' : '实付款' }}￥ {{ card.order_com.reduce((total, cur) => total +
+						cur.number
+						*
+						cur.price, 0) }}
+				</view>
+			</view>
+			<view class="tn-flex-center-end tn-w-full tn-mt-lg">
+				<TnButton v-for="(btn, index) in buttons[card.state]" :key="index" :type="btn.type ?? 'info'"
+					:custom-style="{ marginLeft: '20rpx' }" :plain="!btn.type" shape="round" @click="btn.fun">
+					{{ btn.title }}
 				</TnButton>
 			</view>
 		</view>
@@ -97,34 +116,25 @@
 </template>
 
 <script setup>
-import {
-	ref
-} from 'vue'
-import {
-	onLoad,
-	onReachBottom
-} from '@dcloudio/uni-app'
+import { ref } from 'vue'
+import { onLoad, onReachBottom } from '@dcloudio/uni-app'
 import Header from '@/components/header.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
-import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
-import {
-	get_order,
-	repay_order,
-	post_refund,
-	post_receive,
-	close_teamwork,
-	post_delete_order
-} from '@/api/order/order'
-import {
-	get_today_detail
-} from '@/api/index/today/today'
-
+import TnEmpty from '@/uni_modules/tuniaoui-vue3/components/empty/src/empty.vue'
+import TnCountDown from '@/uni_modules/tuniaoui-vue3/components/count-down/src/count-down.vue'
+import { get_order, repay_order, post_refund, post_receive, close_teamwork, post_delete_order } from '@/api/order/order'
+import { get_today_detail } from '@/api/index/today/today'
+import { getRandomImage } from '@/utils/constant'
 
 const tab = ref()
 const tabs = ref(['全部', '待付款', '待发货', '待收货', '已完成', '待退货', '拒绝退款', '已退款', '拼团中', '取消拼团', '拼团失败'])
+
+const title = ref(['待付款', '待分享', '待发货', '待收货', '交易成功', '已取消', '交易关闭', '退款中', '退款成功', '退款关闭'])
+
+const deliver = ref(['待接单', '已接单', '已到店', '配送中', '已完成', '已取消', '配送失败', '待收货', '已完成', '待退款', '拒绝退款', '已退款'])
 
 let page = 1
 
@@ -132,10 +142,457 @@ const switchTab = (index) => {
 	tab.value = index - 1
 	page = 1
 	const i = index - 1
-	get_order(page, i).then(res => {
-		orders.value = res.data.data
-	})
+	// get_order(page, i).then(res => {
+	// 	console.log('res', res);
+	// 	orders.value = res.data.data
+	// 	is_empty.value = !!res.data.data.length
+	// }).catch(err => {
+	// 	console.log('err', err);
+	// 	is_empty.value = true
+	// })
+	orders.value = [
+		{
+			id: 0,
+			name: '订单1',
+			state: 0,
+			transport_number: '1234567890',
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage()
+				},
+				{
+					id: 2,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage()
+				},
+				{
+					id: 3,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage()
+				},
+				{
+					id: 4,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage()
+				},
+				{
+					id: 5,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage()
+				},
+				{
+					id: 6,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage()
+				},
+				{
+					id: 7,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage()
+				},
+				{
+					id: 8,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage()
+				},
+				{
+					id: 9,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage()
+				},
+				{
+					id: 10,
+					name: '商品2',
+					price: 200,
+					number: 2,
+					path: getRandomImage(200, 200)
+				},
+			],
+			price: 100
+		},
+		{
+			id: 1,
+			name: '订单1',
+			state: 1,
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			transport_number: '1234567890',
+			is_group: true,
+			need: 5,
+			people: 2,
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 1,
+					path: getRandomImage()
+				}
+			],
+			price: 100
+		},
+		{
+			id: 2,
+			name: '订单1',
+			state: 2,
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			transport_number: '1234567890',
+			is_group: true,
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 1,
+					path: getRandomImage()
+				}
+			],
+			price: 100
+		},
+		{
+			id: 3,
+			name: '订单1',
+			state: 3,
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			transport_number: '1234567890',
+			deliver: 2,
+			is_group: true,
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 1,
+					path: getRandomImage()
+				}
+			],
+			price: 100
+		},
+		{
+			id: 4,
+			name: '订单1',
+			state: 4,
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			transport_number: '1234567890',
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 1,
+					path: getRandomImage()
+				}
+			],
+			price: 100
+		},
+		{
+			id: 5,
+			name: '订单1',
+			state: 5,
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			transport_number: '1234567890',
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 1,
+					path: getRandomImage()
+				}
+			],
+			price: 100
+		},
+		{
+			id: 6,
+			name: '订单1',
+			state: 6,
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			transport_number: '1234567890',
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 1,
+					path: getRandomImage()
+				}
+			],
+			price: 100
+		},
+		{
+			id: 7,
+			name: '订单1',
+			state: 7,
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			transport_number: '1234567890',
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 1,
+					path: getRandomImage()
+				}
+			],
+			price: 100
+		},
+		{
+			id: 8,
+			name: '订单1',
+			state: 8,
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			transport_number: '1234567890',
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 1,
+					path: getRandomImage()
+				}
+			],
+			price: 100
+		},
+		{
+			id: 9,
+			name: '订单1',
+			state: 9,
+			time: '2024-10-29 13:46',
+			end_time: new Date().setHours(new Date().getHours() + 1),
+			transport_number: '1234567890',
+			order_com: [
+				{
+					id: 0,
+					name: '商品1',
+					item_name: '11',
+					price: 100,
+					number: 1,
+					path: getRandomImage()
+				},
+				{
+					id: 1,
+					name: '商品2',
+					price: 200,
+					number: 1,
+					path: getRandomImage()
+				}
+			],
+			price: 100
+		},
+	]
 }
+
+const is_empty = ref(false)
+
+// 根据不同的状态设定不同的按钮展示
+const buttons = ref({
+	// 待付款
+	0: [
+		{
+			title: '取消订单',
+			fun: delete_order,
+		},
+		{
+			title: '继续支付',
+			fun: toPay,
+			type: 'success'
+		}
+	],
+	// 待分享
+	1: [
+		{
+			title: '取消订单',
+			fun: delete_order
+		},
+		{
+			title: '邀请好友拼单',
+			fun: share,
+			type: 'success'
+		}
+	],
+	// 待发货
+	2: [
+		{
+			title: '申请退款',
+			fun: applyForRefund
+		}
+	],
+	// 待收货
+	3: [
+		{
+			title: '申请售后',
+			fun: applyForAnswer
+		},
+		{
+			title: '确认收货',
+			fun: confirm,
+			type: 'success'
+		}
+	],
+	// 已完成
+	4: [
+		{
+			title: '删除订单',
+			fun: delete_order
+		},
+		{
+			title: '申请售后',
+			fun: applyForAnswer
+		}
+	],
+	// 已取消
+	5: [
+		{
+			title: '删除订单',
+			fun: delete_order
+		}
+	],
+	// 交易关闭
+	6: [
+		{
+			title: '删除订单',
+			fun: delete_order
+		},
+		{
+			title: '申请售后',
+			fun: applyForAnswer
+		}
+	],
+	// 退款中
+	7: [
+		{
+			title: '撤销售后',
+			fun: cancelRefund
+		},
+		{
+			title: '删除订单',
+			fun: delete_order
+		}
+	],
+	// 退款完成
+	8: [
+		{
+			title: '撤销售后',
+			fun: cancelRefund
+		},
+		{
+			title: '售后详情',
+			fun: showRefundDetail
+		}
+	],
+	// 退款关闭
+	9: [
+		{
+			title: '撤销售后',
+			fun: cancelRefund
+		},
+		{
+			title: '删除订单',
+			fun: delete_order
+		}
+	],
+})
 
 const orders = ref([])
 
@@ -158,6 +615,14 @@ const delete_order = (card) => {
 	})
 }
 
+/**
+ * 跳转订单购买页面
+ * @params card 订单信息
+ */
+const toPay = card => {
+	console.log('toPay')
+}
+
 // 确定退款
 const refundVisible = ref(false)
 const refund_reason = ref('')
@@ -178,7 +643,6 @@ const refund_order = () => {
 	})
 }
 
-
 const resetRefund = () => {
 	refundVisible.value = false
 	refund_reason.value = ''
@@ -187,6 +651,31 @@ const resetRefund = () => {
 const applyForRefund = (row) => {
 	select_order.value = row
 	refundVisible.value = true
+}
+const cancelRefund = card => {
+	console.log('cancelRefund');
+}
+const showRefundDetail = card => {
+	console.log('showDetail')
+}
+
+/**
+ * 分享拼团
+ */
+const share = () => {
+	console.log('share');
+}
+
+/**
+ * 确认收货
+ * @param card 订单信息
+ */
+const confirm = card => {
+	console.log('confirm');
+}
+
+const applyForAnswer = card => {
+	console.log('applyForAnswer');
 }
 
 
@@ -314,7 +803,6 @@ onReachBottom(() => {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding-top: 150rpx;
 }
 
 .top {
@@ -324,31 +812,65 @@ onReachBottom(() => {
 	align-items: center;
 }
 
-.tabs {
-	position: relative;
-	width: 100vw;
-	display: flex;
-	flex-wrap: nowrap;
-	overflow: auto;
+
+.header {
+	width: 100%;
+	padding-top: 70rpx;
+	background: #FFF;
+
+	.search {
+		margin-left: 80rpx;
+		display: flex;
+		align-items: center;
+		width: 450rpx;
+		height: 64rpx;
+		background: #F6F6F6;
+		border-radius: 35rpx;
+	}
+
+	.tabs {
+		width: 100vw;
+		display: flex;
+		flex-wrap: nowrap;
+		overflow: auto;
+
+		.tab {
+			flex-grow: 1;
+			flex-shrink: 0;
+			font-family: Inter, Inter;
+			line-height: 46rpx;
+			text-align: center;
+			font-style: normal;
+			text-transform: none;
+			padding: 30rpx 25rpx;
+		}
+
+		.active {
+			font-weight: bold;
+			font-size: 32rpx;
+			color: #000000;
+		}
+
+		.inactive {
+			font-weight: 400;
+			font-size: 28rpx;
+			color: #666666;
+		}
+	}
 }
 
-.tab {
-	flex-grow: 1;
-	flex-shrink: 0;
-	font-family: Inter, Inter;
-	line-height: 46rpx;
-	text-align: center;
-	font-style: normal;
-	text-transform: none;
-	margin: 40rpx 25rpx;
-}
+.empty {
+	margin-top: 150rpx;
+	font-family: PingFangSC, PingFang SC;
+	font-weight: 400;
+	font-size: 30rpx;
+	color: #666666;
+	line-height: 42rpx;
 
-.tk {
-	position: relative;
-	top: 20rpx;
-	left: 60rpx;
-	font-weight: 700;
-	color: #c7baa7;
+	image {
+		width: 240rpx;
+		height: 240rpx;
+	}
 }
 
 .card {
@@ -362,29 +884,32 @@ onReachBottom(() => {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		padding: 30rpx 20rpx;
 
-		.left {
-			margin-left: 15rpx;
-			font-family: Inter, Inter;
-			font-weight: normal;
-			font-size: 31rpx;
-			color: #000000;
-			line-height: 46rpx;
-			text-align: center;
+		.time {
+			font-family: PingFangSC, PingFang SC;
+			font-weight: 400;
+			font-size: 24rpx;
+			color: #999999;
+			line-height: 33rpx;
+			text-align: left;
 			font-style: normal;
-			text-transform: none;
 		}
 
 		.right {
-			font-family: Inter, Inter;
-			font-weight: 400;
-			font-size: 29rpx;
-			color: #834820;
-			line-height: 43rpx;
-			text-align: center;
+			font-family: PingFangSC, PingFang SC;
+			font-weight: 500;
+			font-size: 30rpx;
+			line-height: 42rpx;
+			text-align: left;
 			font-style: normal;
-			text-transform: none;
 		}
+	}
+
+	.goods {
+		width: 100%;
+		display: flex;
+		overflow: auto;
 	}
 
 	.order {
@@ -393,71 +918,92 @@ onReachBottom(() => {
 		margin: 10rpx 0;
 	}
 
-	.main {
-		width: 70%;
+	.image {
+		width: 120rpx;
+		height: 120rpx;
+		border-radius: 20rpx;
+		margin-right: 20rpx;
+	}
+
+	.right {
+		min-width: 100rpx;
+		font-family: PingFangSC, PingFang SC;
+		font-weight: bold;
+		font-size: 24rpx;
+		color: #999999;
+		line-height: 33rpx;
+		text-align: left;
+		font-style: normal;
 		display: flex;
 		flex-direction: column;
-		align-items: start;
+		align-items: center;
+	}
 
-		.good {
-			width: 420rpx;
-			font-family: Inter, Inter;
-			font-weight: normal;
-			font-size: 29rpx;
-			color: #000000;
-			line-height: 43rpx;
-			text-align: left;
-			font-style: normal;
-			text-transform: none;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+	.toPay {
+		width: 100%;
+		height: 64rpx;
+		background: #F6F6F6;
+		border-radius: 16rpx;
+		margin: 20rpx 0;
+		padding-left: 20rpx;
+		display: flex;
+		align-items: center;
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 24rpx;
+		color: #999;
+		line-height: 33rpx;
+		font-style: normal;
+	}
+
+	.deliver {
+		width: 100%;
+		height: 64rpx;
+		background: #F6F6F6;
+		border-radius: 16rpx;
+		margin: 20rpx 0;
+		padding-left: 20rpx;
+		display: flex;
+		align-items: center;
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 24rpx;
+		color: #14BF20;
+		line-height: 33rpx;
+		font-style: normal;
+	}
+
+	.others {
+		display: flex;
+		align-items: center;
+		font-family: PingFangSC, PingFang SC;
+		font-weight: 400;
+		font-size: 22rpx;
+		color: #999999;
+		line-height: 30rpx;
+		text-align: left;
+		font-style: normal;
+
+		.avatar {
+			width: 40rpx;
+			height: 40rpx;
+			border-radius: 50%;
+			margin-left: -10rpx;
 		}
 
-		.size {
-			font-family: Inter, Inter;
-			font-weight: 400;
-			font-size: 25rpx;
-			color: #9F9F9F;
-			text-align: center;
-			font-style: normal;
-			text-transform: none;
-		}
-
-		.number {
-			font-family: Inter, Inter;
-			font-weight: 400;
-			font-size: 25rpx;
-			color: #9F9F9F;
-			line-height: 38rpx;
-			text-align: left;
-			font-style: normal;
-			text-transform: none;
-		}
-
-
-		.old_price {
-			font-family: Inter, Inter;
-			font-weight: normal;
-			font-size: 20rpx;
-			color: #000000;
-			text-decoration: line-through;
-			line-height: 43rpx;
-			text-align: left;
-			font-style: normal;
-			text-transform: none;
+		view {
+			margin-left: 20rpx;
 		}
 	}
 
+
 	.price {
-		font-family: Inter, Inter;
-		font-weight: normal;
-		font-size: 29rpx;
-		color: #834820;
-		line-height: 43rpx;
-		text-align: left;
+		font-family: WeChat-Sans-Std, WeChat-Sans-Std;
+		font-weight: bold;
+		font-size: 34rpx;
+		color: #131313;
+		line-height: 38rpx;
 		font-style: normal;
-		text-transform: none;
 	}
 }
 

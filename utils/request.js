@@ -134,6 +134,7 @@ const request = {
 						duration: 3000,
 						title: `${res.data.message}`
 					});
+					rejected(res.data);
 					// 这里可以做一些状态码判断以及操作
 					// 返回错误信息 
 				} else if (res.data.code == 200) {

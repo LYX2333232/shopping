@@ -48,7 +48,7 @@ export const setTime = T => {
  * @param {string} type 格式化方式 如'h:m:s'表示时:分:秒 Y:年 M:月 D:日 h:小时 m:分钟 s:秒
  * @returns 格式化后的数组
  */
-export const formatTime = (time, type = 'hms') => {
+export const formatTime = (time, type = 'h:m:s') => {
     time = new Date(time)
     var res = ''
     for (var i = 0; i < type.length; i++)
@@ -83,4 +83,45 @@ export const formatTime = (time, type = 'hms') => {
                 res += type[i]
         }
     return res
+}
+/**
+ * 格式化时间，以中文显示
+ * @param {Date} time 传入的时间
+ * @param {string} type 格式化方式 如‘时分’表示xx时xx分
+ * @returns 格式化后的字符串
+ */
+export const formatTimeCN = (time, type = '分秒') => {
+    time = new Date(time)
+    var res = ''
+    for (var i = 0; i < type.length; i++)
+        switch (type[i]) {
+            case '年':
+                res += time.getFullYear() + '年'
+                break
+            case '月':
+                res += (time.getMonth() + 1) + '月'
+                break
+            case '日':
+                res += time.getDate() + '日'
+                break
+            case '时':
+                res += time.getHours() + '时'
+                break
+            case '分':
+                res += time.getMinutes() + '分'
+                break
+            case '秒':
+                res += time.getSeconds() + '秒'
+                break
+        }
+    return res
+}
+/**
+ * 计算时间差，跟当前时间比较
+ * @param {*} time 传入的时间
+ * @param {*} type 格式化方式 如‘时分’表示xx时xx分
+ * @returns 格式化后的字符串
+ */
+export const calculateTime = (time, type = '分秒') => {
+    return formatTimeCN(new Date(time) - new Date(), type)
 }
