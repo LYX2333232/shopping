@@ -3,7 +3,7 @@
     <view class="item" :style="{ color: textColor, background: background }">
       {{ time[0] }}
     </view>
-    <view class="operation" :style="{ color: background }">:</view>
+    <view v-if="time.length < 3" class="operation" :style="{ color: background }">:</view>
     <view class="item" :style="{ color: textColor, background: background }">{{ time[1] ?? 0 }}</view>
     <view class="operation" :style="{ color: background }">:</view>
     <view class="item" :style="{ color: textColor, background: background }">{{ time[2] ?? 0 }}
@@ -43,14 +43,18 @@ const id = setInterval(() => {
   }
   const res = []
   if (left >= 60) {
+    // 秒
     res.push(left % 60)
     left = Math.floor(left / 60)
     if (left >= 60) {
+      // 分
       res.push(left % 60)
       left = Math.floor(left / 60)
       if (left >= 24) {
+        // 时
         res.push(left % 24)
         left = Math.floor(left / 24)
+        // 天
       }
     }
   }

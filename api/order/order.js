@@ -35,3 +35,5 @@ export const get_order_price = (data) => request.post('/order/price_inquiry', da
 export const post_delete_order = (id) => request.post('/order/delete_order', {
 	id
 })
+
+export const get_order_detail = (id) => request.get('/order/detail', { id })

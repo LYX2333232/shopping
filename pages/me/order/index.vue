@@ -27,13 +27,14 @@
 				</template>
 			</TnEmpty>
 		</view>
-		<view class="card" v-for="card in orders" :key="card.id" @click="toDetail">
+		<view class="card" v-for="card in orders" :key="card.id" @click="toDetail(card)">
 			<view class="title">
 				<view class="time">
-					{{ card.time }}
+					{{ card.created_at }}
 				</view>
 				<text class="right" :style="{ color: card.state === 1 ? '#EE2532' : '#131313' }">
-					{{ title[card.state] }}
+					<!-- {{ title.state === 1 && title.teamwork ? '待分享' : title[card.state] }} -->
+					{{ card.statte_text }}
 				</text>
 			</view>
 			<!-- <view class="order">
@@ -51,44 +52,42 @@
 						共{{ card.order_com.length }}种
 					</view>
 					<view>
-						{{ card.order_com.reduce((total, cur) => total + cur.number, 0) }}件
+						{{ card.conts }}件
 					</view>
 				</view>
 			</view>
 			<!-- 待付款：展示订单剩余支付时间 -->
 			<view v-if="card.state === 0" class="toPay">
-				<TnCountDown :time="Math.floor((card.end_time - new Date()) / 1000)" separator-mode="cn"
+				<TnCountDown :time="Math.floor((new Date(card.order_end) - new Date()) / 1000)" separator-mode="cn"
 					text-color="#EE2532" separator-color="#EE2532" :show-hour="false" />
 				后订单关闭，请及时付款
 			</view>
 			<!-- 待收货，显示送货阶段 -->
-			<view v-if="card.state === 3" class="deliver">
+			<view v-if="card.state >= 10" class="deliver">
 				<TnIcon name="cart" color="#14BF20" />
-				{{ deliver[card.deliver] }}
+				{{ deliver[card.state] }}
 			</view>
 			<view class="tn-flex-center-between">
 				<view>
 					<!-- !条件未写 如果是拼团的 -->
-					<view v-if="card.is_group" class="others">
-						<image v-for="(_, index) in 3" :key="index" :src="getRandomImage(50, 50)" mode="scaleToFill"
-							class="avatar" />
+					<view v-if="card.teamwork" class="others">
+						<image v-for="(_, index) in card.teamwork.users" :key="index" :src="getRandomImage(50, 50)"
+							mode="scaleToFill" class="avatar" />
 						<!-- !拼团成功 -->
-						<view v-if="card.state === 1">
-							已有{{ card.people }}人拼团，
-							<text style="color:#EE2532">还差{{ card.need - card.people }}人</text>
+						<view v-if="card.teamwork.state === 0">
+							已有{{ card.teamwork.seng_count }}人拼团，
+							<text style="color:#EE2532">还差{{ card.teamwork.count - card.teamwork.seng_count }}人</text>
 						</view>
-						<view v-else>拼团成功</view>
+						<view v-else-if="card.teamwork.state === 1">拼团成功</view>
+						<view v-else>拼团失败</view>
 					</view>
 				</view>
 				<view class="price">
-					{{ card.state === 0 ? '需付款' : '实付款' }}￥ {{ card.order_com.reduce((total, cur) => total +
-						cur.number
-						*
-						cur.price, 0) }}
+					{{ card.state === 0 ? '需付款' : '实付款' }}￥ {{ card.price }}
 				</view>
 			</view>
 			<view class="tn-flex-center-end tn-w-full tn-mt-lg">
-				<TnButton v-for="(btn, index) in buttons[card.state]" :key="index" :type="btn.type ?? 'info'"
+				<TnButton v-for="(btn, index) in buttons[card.statte_text]" :key="index" :type="btn.type ?? 'info'"
 					:custom-style="{ marginLeft: '20rpx' }" :plain="!btn.type" shape="round" @click="btn.fun">
 					{{ btn.title }}
 				</TnButton>
@@ -129,12 +128,19 @@ import Header from '@/components/header.vue'
 import { get_order, repay_order, post_refund, post_receive, close_teamwork, post_delete_order } from '@/api/order/order'
 import { get_today_detail } from '@/api/index/today/today'
 import { getRandomImage } from '@/utils/constant'
-import { title } from './constant'
 
 const tab = ref()
-const tabs = ref(['全部', '待付款', '待发货', '待收货', '已完成', '待退货', '拒绝退款', '已退款', '拼团中', '取消拼团', '拼团失败'])
+const tabs = ref(['全部', '待付款', '待发货', '待收货', '退款/售后'])
 
-const deliver = ref(['待接单', '已接单', '已到店', '配送中', '已完成', '已取消', '配送失败', '待收货', '已完成', '待退款', '拒绝退款', '已退款'])
+const deliver = ref({
+	10: "待接单",
+	20: '已接单',
+	30: '已到店',
+	40: '配送中',
+	50: '已完成',
+	60: '已取消',
+	70: '配送失败'
+})
 
 let page = 1
 
@@ -142,345 +148,14 @@ const switchTab = (index) => {
 	tab.value = index - 1
 	page = 1
 	const i = index - 1
-	// get_order(page, i).then(res => {
-	// 	console.log('res', res);
-	// 	orders.value = res.data.data
-	// 	is_empty.value = !!res.data.data.length
-	// }).catch(err => {
-	// 	console.log('err', err);
-	// 	is_empty.value = true
-	// })
-	orders.value = [
-		{
-			id: 0,
-			name: '订单1',
-			state: 0,
-			transport_number: '1234567890',
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage()
-				},
-				{
-					id: 2,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage()
-				},
-				{
-					id: 3,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage()
-				},
-				{
-					id: 4,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage()
-				},
-				{
-					id: 5,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage()
-				},
-				{
-					id: 6,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage()
-				},
-				{
-					id: 7,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage()
-				},
-				{
-					id: 8,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage()
-				},
-				{
-					id: 9,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage()
-				},
-				{
-					id: 10,
-					name: '商品2',
-					price: 200,
-					number: 2,
-					path: getRandomImage(200, 200)
-				},
-			],
-			price: 100
-		},
-		{
-			id: 1,
-			name: '订单1',
-			state: 1,
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			transport_number: '1234567890',
-			is_group: true,
-			need: 5,
-			people: 2,
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 1,
-					path: getRandomImage()
-				}
-			],
-			price: 100
-		},
-		{
-			id: 2,
-			name: '订单1',
-			state: 2,
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			transport_number: '1234567890',
-			is_group: true,
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 1,
-					path: getRandomImage()
-				}
-			],
-			price: 100
-		},
-		{
-			id: 3,
-			name: '订单1',
-			state: 3,
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			transport_number: '1234567890',
-			deliver: 2,
-			is_group: true,
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 1,
-					path: getRandomImage()
-				}
-			],
-			price: 100
-		},
-		{
-			id: 4,
-			name: '订单1',
-			state: 4,
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			transport_number: '1234567890',
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 1,
-					path: getRandomImage()
-				}
-			],
-			price: 100
-		},
-		{
-			id: 5,
-			name: '订单1',
-			state: 5,
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			transport_number: '1234567890',
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 1,
-					path: getRandomImage()
-				}
-			],
-			price: 100
-		},
-		{
-			id: 6,
-			name: '订单1',
-			state: 6,
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			transport_number: '1234567890',
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 1,
-					path: getRandomImage()
-				}
-			],
-			price: 100
-		},
-		{
-			id: 7,
-			name: '订单1',
-			state: 7,
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			transport_number: '1234567890',
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 1,
-					path: getRandomImage()
-				}
-			],
-			price: 100
-		},
-		{
-			id: 8,
-			name: '订单1',
-			state: 8,
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			transport_number: '1234567890',
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 1,
-					path: getRandomImage()
-				}
-			],
-			price: 100
-		},
-		{
-			id: 9,
-			name: '订单1',
-			state: 9,
-			time: '2024-10-29 13:46',
-			end_time: new Date().setHours(new Date().getHours() + 1),
-			transport_number: '1234567890',
-			order_com: [
-				{
-					id: 0,
-					name: '商品1',
-					item_name: '11',
-					price: 100,
-					number: 1,
-					path: getRandomImage()
-				},
-				{
-					id: 1,
-					name: '商品2',
-					price: 200,
-					number: 1,
-					path: getRandomImage()
-				}
-			],
-			price: 100
-		},
-	]
+	get_order(page, i).then(res => {
+		console.log('res', res);
+		orders.value = res.data.data
+		is_empty.value = !res.data.data.length
+	}).catch(err => {
+		console.log('err', err);
+		is_empty.value = true
+	})
 }
 
 const is_empty = ref(false)
@@ -488,7 +163,7 @@ const is_empty = ref(false)
 // 根据不同的状态设定不同的按钮展示
 const buttons = ref({
 	// 待付款
-	0: [
+	'待支付': [
 		{
 			title: '取消订单',
 			fun: delete_order,
@@ -500,7 +175,7 @@ const buttons = ref({
 		}
 	],
 	// 待分享
-	1: [
+	'拼团中': [
 		{
 			title: '取消订单',
 			fun: delete_order
@@ -512,14 +187,58 @@ const buttons = ref({
 		}
 	],
 	// 待发货
-	2: [
+	'待发货': [
 		{
 			title: '申请退款',
 			fun: applyForRefund
 		}
 	],
 	// 待收货
-	3: [
+	'待收货': [
+		{
+			title: '申请售后',
+			fun: applyForAnswer
+		},
+		{
+			title: '确认收货',
+			fun: confirm,
+			type: 'success'
+		}
+	],
+	'待接单': [
+		{
+			title: '申请售后',
+			fun: applyForAnswer
+		},
+		{
+			title: '确认收货',
+			fun: confirm,
+			type: 'success'
+		}
+	],
+	'已接单': [
+		{
+			title: '申请售后',
+			fun: applyForAnswer
+		},
+		{
+			title: '确认收货',
+			fun: confirm,
+			type: 'success'
+		}
+	],
+	'已到店': [
+		{
+			title: '申请售后',
+			fun: applyForAnswer
+		},
+		{
+			title: '确认收货',
+			fun: confirm,
+			type: 'success'
+		}
+	],
+	'配送中': [
 		{
 			title: '申请售后',
 			fun: applyForAnswer
@@ -531,7 +250,7 @@ const buttons = ref({
 		}
 	],
 	// 已完成
-	4: [
+	'已完成': [
 		{
 			title: '删除订单',
 			fun: delete_order
@@ -541,15 +260,21 @@ const buttons = ref({
 			fun: applyForAnswer
 		}
 	],
+	'拼团失败': [
+		{
+			title: '删除订单',
+			fun: delete_order
+		}
+	],
 	// 已取消
-	5: [
+	'已取消': [
 		{
 			title: '删除订单',
 			fun: delete_order
 		}
 	],
 	// 交易关闭
-	6: [
+	'交易关闭': [
 		{
 			title: '删除订单',
 			fun: delete_order
@@ -560,7 +285,7 @@ const buttons = ref({
 		}
 	],
 	// 退款中
-	7: [
+	'退款中': [
 		{
 			title: '撤销售后',
 			fun: cancelRefund
@@ -571,7 +296,7 @@ const buttons = ref({
 		}
 	],
 	// 退款完成
-	8: [
+	'退款完成': [
 		{
 			title: '撤销售后',
 			fun: cancelRefund
@@ -582,7 +307,7 @@ const buttons = ref({
 		}
 	],
 	// 退款关闭
-	9: [
+	'退款关闭': [
 		{
 			title: '撤销售后',
 			fun: cancelRefund
@@ -598,8 +323,8 @@ const orders = ref([])
 
 const select_order = ref({})
 
-const toDetail = () => uni.navigateTo({
-	url: '/pages/me/order/detail'
+const toDetail = card => uni.navigateTo({
+	url: '/pages/me/order/detail?id=' + card.id
 })
 
 // 删除订单
