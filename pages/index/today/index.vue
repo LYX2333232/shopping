@@ -62,6 +62,7 @@ const toDetail = (id) => {
 const getData = () => {
   get_today_list(1).then(res => {
     page = 1
+    console.log(res)
     dataList.value = res.data.data
   })
 }

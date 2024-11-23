@@ -1,6 +1,12 @@
 import request from "@/utils/request";
+import { formItemValidateStates } from "../../uni_modules/tuniaoui-vue3";
 
-export const new_order = (data) => request.post('/order/set_pay_order', data)
+export const new_order = (data, setParams = false) => {
+	if (setParams) {
+		return request.post_by_params('/order/new_order', data)
+	}
+	return request.post('/order/set_pay_order', data)
+}
 
 export const get_order = (page, type) => {
 	const params = {

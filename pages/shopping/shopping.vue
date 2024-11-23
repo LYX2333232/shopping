@@ -1,6 +1,6 @@
 <template>
 	<view class="top">
-		<view class="map" @click="toEditAddress">
+		<view class="map" @click="address_visible = true">
 			<TnIcon name="map" size="40" />
 			<view class="text">
 				{{ address.address ?? '定位失败' }}
@@ -11,7 +11,7 @@
 			<view class="title">
 				购物车
 			</view>
-			<view class="delete">
+			<view class="delete" @click="del">
 				删除
 			</view>
 		</view>
@@ -90,12 +90,7 @@
 			</TnWaterFall>
 		</view>
 	</view>
-
 	<view class="fix-bottom">
-		<!-- <view style="width:90%;display: flex;justify-content: space-between;margin: 30rpx auto;">
-			<view>{{ select_coupon !== undefined ? select_coupon.name : '暂无优惠券' }} </view>
-			<text style="color: #C7BAA5;text-decoration: underline;" @click="openPopup">选择优惠券></text>
-		</view> -->
 		<view class="bottom">
 			<view class="tn-flex-center-start">
 				<TnCheckbox v-model="orderAll" :indeterminate="orderSome" @change="changeOrderAll"
@@ -108,99 +103,15 @@
 						<view class="text">总计</view>
 						<view class="price">¥{{ total.toFixed(2) }} </view>
 					</view>
-					<view class="coupon">
-						优惠券
-					</view>
 				</view>
-				<TnButton width="220" type="success" shape="round" font-size="30" @click="tocaculate">
+				<TnButton width="220" height="80" type="success" shape="round" font-size="30" @click="tocaculate">
 					结算（{{ select_goods.length }}）
 				</TnButton>
 			</view>
 		</view>
 	</view>
-
-	<TnPopup v-model="couponVisible" open-direction="bottom" height="60%">
-		<view class="popup">
-			<view class="card" v-for="(coupon, index) in couponList" :key="index">
-				<image :src="coupon.path" mode="scaleToFill" style="width:142rpx; height:142rpx;" />
-				<view class="main">
-					<view class="title" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">{{
-						coupon.name }}</view>
-					<view class="price" :style="coupon.state !== 2 ? 'color:#FFC542' : 'color:#D4D1D4'">
-						<text v-if="coupon.type === 0 || coupon.type === 3">￥{{ coupon.number }}</text>
-						<text v-if="coupon.type === 1">￥{{ coupon.reduce }} </text>
-						<text v-if="coupon.type === 2">{{ '打' + coupon.number + '折' }}</text>
-						<!-- ￥ {{ coupon.reduce }} -->
-					</view>
-					<view class="info" v-if="coupon.type === 0">
-						无门槛立减{{ coupon.number }}
-					</view>
-					<view class="info" v-if="coupon.type === 1">
-						满{{ coupon.full }}减{{ coupon.reduce }}
-					</view>
-					<view class="info" v-if="coupon.type === 2">
-						打{{ coupon.number }}折
-					</view>
-					<view class="info" v-if="coupon.type === 3">
-						{{ coupon.couup.com_type.name }}券
-					</view>
-				</view>
-				<button style="height: 50rpx;background: #C8B697;color:white;font-size:20rpx"
-					@click="select(coupon)">使用</button>
-			</view>
-		</view>
-	</TnPopup>
-	<TnPopup v-model="detailVisible" open-direction="bottom" height="80%">
-		<view class="goods">
-			<view style="font-size:45rpx;margin-top:30rpx">价格详细</view>
-			<view class="detail_address" v-if="address.address" @click="addressChange">
-				<view
-					style="font-size:35rpx;margin-bottom: 20rpx;max-width: 80%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-					{{ address.address }} </view>
-				<view style="display:flex">
-					<view style="max-width: 200rpx;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-						{{ address.name }}
-					</view>
-					- {{ address.phone }}
-				</view>
-			</view>
-			<view class="detail_address" style="font-size:35rpx;" v-else @click="addressChange">请先选择地址</view>
-			<view v-for="good in select_goods" class="good" :key="good.id">
-				<image :src="good.path" style="width: 100rpx; height: 100rpx;margin-left: 30rpx;" mode="scaleToFill" />
-				<view>
-					{{ good.name }}
-				</view>
-			</view>
-			<view class="good" style="color:#C7BAA5;">
-				<view>商品价格</view>
-				<view style="display:flex;flex-direction:column;align-items:center;">
-					<view>
-						￥{{ detail_price.price }}
-					</view>
-					<view style="text-decoration:line-through;color:black;font-size:20rpx;margin-top:10rpx;"
-						v-if="detail_price.price != detail_price.show_price">
-						原价：￥{{ detail_price.show_price }}
-					</view>
-				</view>
-			</view>
-			<view class="good">
-				<view>
-					运费
-				</view>
-				<view style="display:flex;flex-direction:column;align-items:center;color:#C7BAA5;">
-					￥{{ detail_price.freight }}
-				</view>
-			</view>
-			<view class="btn">
-				<view class="total">
-					总计：￥{{ (parseFloat(detail_price.freight) + parseFloat(detail_price.price)).toFixed(2) }}
-				</view>
-				<view class="button" @click="order">
-					确认结算
-				</view>
-			</view>
-		</view>
-	</TnPopup>
+	<AddressPopup :visible="address_visible" :select_id="address.id" @close="address_visible = false"
+		@changeAddress="changeAddress" />
 </template>
 
 <script setup>
@@ -210,27 +121,27 @@ import { onShow, onReachBottom } from '@dcloudio/uni-app'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
-import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnEmpty from '@/uni_modules/tuniaoui-vue3/components/empty/src/empty.vue'
 import TnWaterFall from '@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue'
 import deleteCard from '@/components/shopping/deleteCard.vue'
 import shoppingCard from '@/components/shopping/shoppingCard.vue'
+
+import AddressPopup from '@/components/AddressPopup'
 import { get_commodity } from '@/api/index/index'
-import { get_cart_list, del_cart, get_coupon } from '@/api/cart/cart'
-import { new_order, get_order_price } from '@/api/order/order'
+import { get_cart_list, del_cart } from '@/api/cart/cart'
 import { AddressStore } from '@/store'
 
 const address = AddressStore()
+
+const address_visible = ref(false)
+const changeAddress = item => {
+	address.setAddress(item.address_name + item.detail, item.name, item.phone, item.id)
+}
+
 let page = 1
 
 // 用来标记是否要显示没有购物车数据，避免用户已进入先看到空
 const is_empty = ref(false)
-
-const toEditAddress = () => {
-	uni.navigateTo({
-		url: '/pages/selectAddress/index'
-	})
-}
 
 const dataList = ref([])
 
@@ -239,7 +150,6 @@ const select_goods = ref([])
 const deleteList = ref([])
 
 const infoList = ref([])
-
 
 const updateTotal = () => {
 	let temp = 0
@@ -250,42 +160,17 @@ const updateTotal = () => {
 			temp += item.price * item.cont
 		}
 	})
-	if (select_coupon.value) {
-		if (select_coupon.value.type === 0 || select_coupon.value.type === 3) {
-			temp -= select_coupon.value.number
-		}
-		else if (select_coupon.value.type === 1) {
-			temp -= select_coupon.value.reduce
-		}
-		else if (select_coupon.value.type === 2) {
-			temp *= select_coupon.value.number / 10
-		}
-	}
 	total.value = temp
 }
 
 // 改变选中状态
 const change = (e, i, j) => {
 	dataList.value[j].order = e
-	if (select_coupon.value) {
-		uni.showToast({
-			title: '请重新选择优惠券',
-			icon: 'none'
-		})
-	}
-	select_coupon.value = undefined
 }
 
 // 修改数量
 const changeNum = (e, i, j) => {
 	dataList.value[j].cont = e
-	if (select_coupon.value) {
-		uni.showToast({
-			title: '请重新选择优惠券',
-			icon: 'none'
-		})
-	}
-	select_coupon.value = undefined
 }
 
 // 全选
@@ -310,26 +195,22 @@ const changeOrderAll = (e) => {
 	orderAll.value = e
 }
 
-const del = (id) => {
-	del_cart(id).then(res => {
+const del = () => {
+	const list = []
+	select_goods.value.forEach(item => {
+		list.push(del_cart(item.id))
+	})
+	Promise.all(list).then(res => {
 		if (res.code === 200) {
+			dataList.value = dataList.value.filter(item => !select_goods.value.includes(item))
 			uni.showToast({
 				title: '删除成功',
 				icon: 'none'
 			})
-			dataList.value = dataList.value.filter(item => item.id !== id)
+			select_goods.value = []
 		}
 	})
 }
-
-const detailVisible = ref(false)
-
-const detail_price = ref({
-	// 运费,
-	freight: 0,
-	// 商品价格
-	price: 0,
-})
 
 // 点击结算
 const tocaculate = () => {
@@ -340,131 +221,16 @@ const tocaculate = () => {
 		})
 		return
 	}
-	//! 根据接口改变字段
-	const option = {
-		ids: select_goods.value.map(item => {
-			return {
-				id: item.item_id,
-				cont: item.cont
-			}
-		}),
-		address_id: address.address_id
-	}
-	if (select_coupon.value)
-		option.coupon_id = select_coupon.value.coupon_id
-	get_order_price(option).then(res => {
-		detail_price.value = res.data
-		detailVisible.value = true
+	const ids = select_goods.value.map(item => ({ id: item.item_id, cont: item.cont, shopping_cart_id: item.id }))
+	uni.navigateTo({
+		url: '/pages/me/order/new_order?ids=' + JSON.stringify(ids)// 将选中的商品id传到订单页面
 	})
 }
-
-const order = () => {
-	if (!address.address_id) {
-		uni.showToast({
-			title: '请先选择地址',
-			icon: 'none',
-			duration: 1000
-		}).then(() => {
-			setTimeout(addressChange, 500);
-		})
-		return
-	}
-	new_order({
-		ids: select_goods.value.map(item => {
-			return {
-				id: item.item_id,
-				cont: item.cont
-			}
-		}),
-		address_id: address.address_id,
-		coupon_id: select_coupon ? select_coupon.id : undefined,
-		shopping_cart_ids: select_goods.value.map(item => item.id),
-		freight: detail_price.value.freight,
-	}).then(async res => {
-		await uni.requestPayment({
-			provider: 'wxpay',
-			timeStamp: res.data.timeStamp,
-			nonceStr: res.data.nonceStr,
-			package: res.data.package,
-			signType: res.data.signType,
-			paySign: res.data.paySign,
-			success: function (res) {
-				if (res.errMsg === 'requestPayment:ok') {
-					uni.showToast({
-						title: '支付成功',
-						icon: 'none'
-					})
-					// 删除该商品
-					select_goods.value = []
-					select_coupon.value = undefined
-					detail_price.value = {
-						// 运费,
-						freight: 0,
-						price: 0,
-					}
-					dataList.value = dataList.value.filter(item => !item.order)
-				}
-			},
-			fail: function (err) {
-				console.log('fail', err)
-			},
-			complete: function () {
-				detailVisible.value = false
-			}
-		})
-
-	})
-	return
-
-
-
-}
-
-const select_coupon = ref(undefined)
 
 const total = ref(0)
 watch(dataList, () => {
 	updateTotal()
 }, { deep: true })
-
-const select = (coupon) => {
-	select_coupon.value = coupon
-	updateTotal()
-	couponVisible.value = false
-}
-
-const couponList = ref([])
-
-const couponVisible = ref(false)
-
-const openPopup = () => {
-	if (select_goods.value.length === 0) {
-		uni.showToast({
-			title: '先请选择商品',
-			icon: 'none'
-		})
-		return
-
-	}
-	const ids = select_goods.value.map(item => {
-		return {
-			id: item.item_id,
-			cont: item.cont
-		}
-	})
-	get_coupon(ids).then(res => {
-		couponList.value = res.data.data
-		if (couponList.value.length > 0) {
-			couponVisible.value = true
-		}
-		else {
-			uni.showToast({
-				title: '暂无优惠券',
-				icon: 'none'
-			})
-		}
-	})
-}
 
 const getData = () => {
 	get_cart_list(1).then(res => {
@@ -479,6 +245,7 @@ const getData = () => {
 				order: false
 			}
 		})
+		console.log(dataList.value);
 		deleteList.value = res.data.data.filter(item => item.is_deleted).map(item => {
 			return {
 				...item,
@@ -492,17 +259,6 @@ const getData = () => {
 }
 onShow(() => {
 	getData()
-	// 用以在选择地址后更新地址
-	// const option = {
-	// 	address_id: address.address_id,
-	// 	com_id: select_good.value.item_id,
-	// 	com_cont: select_good.value.cont
-	// }
-	// if (select_coupon.value)
-	// 	option.coupon_id = select_coupon.value.coupon_id
-	// get_order_price(option).then(res => {
-	// 	detail_price.value = res.data
-	// })
 })
 
 onReachBottom(() => {
@@ -720,6 +476,7 @@ onReachBottom(() => {
 
 		.right {
 			display: flex;
+			align-items: center;
 
 			.text-price {
 				display: flex;
@@ -760,69 +517,6 @@ onReachBottom(() => {
 		}
 	}
 
-}
-
-.popup {
-	padding-top: 50rpx;
-	height: 100%;
-	overflow: auto;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	background: #F5F5F5;
-
-	.card {
-		margin-bottom: 40rpx;
-		width: 85%;
-		display: flex;
-		align-items: center;
-		position: relative;
-		background: #FFFFFF;
-		border-radius: 8rpx;
-		padding: 12rpx;
-
-		.main {
-			height: 142rpx;
-			width: 300rpx;
-			margin-left: 20rpx;
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-
-			.title {
-				font-family: Inter, Inter;
-				font-weight: 400;
-				font-size: 35rpx;
-				color: #FFC542;
-				line-height: 35rpx;
-				text-align: left;
-				font-style: normal;
-				text-transform: none;
-			}
-
-			.price {
-				font-family: Inter, Inter;
-				font-weight: 500;
-				font-size: 35rpx;
-				color: #FFC542;
-				line-height: 40rpx;
-				text-align: left;
-				font-style: normal;
-				text-transform: none;
-			}
-
-			.info {
-				font-family: Inter, Inter;
-				font-weight: 400;
-				font-size: 17rpx;
-				color: #999999;
-				line-height: 26rpx;
-				text-align: left;
-				font-style: normal;
-				text-transform: none;
-			}
-		}
-	}
 }
 
 .goods {

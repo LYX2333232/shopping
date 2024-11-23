@@ -1,7 +1,7 @@
 <template>
 	<view class="all">
 		<view class="contain">
-			<view class="map" @click="toEditAddress">
+			<view class="map" @click="address_visible = true">
 				<TnIcon name="map" size="40" />
 				<view class="text">
 					{{ address.address ?? '定位失败' }}
@@ -157,6 +157,8 @@
 				</template>
 			</TnWaterFall>
 		</view>
+		<AddressPopup :visible="address_visible" :select_id="address.id" @changeAddress="changeAddress"
+			@close="address_visible = false" />
 	</view>
 </template>
 
@@ -169,14 +171,16 @@ import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
 import { ref } from 'vue'
 import { onShow, onReachBottom, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 
-import { AddressStore, UserStore } from '@/store'
+import AddressPopup from '@/components/AddressPopup'
+import { AddressStore } from '@/store'
 import { get_home, get_commodity } from '@/api/index'
-import { get_goods_list } from '@/api/index/seckill/seckill'
 import { get_today_list } from '@/api/index/today/today'
-import { get_default_address } from '@/api/address/address'
 
-const user = UserStore()
 const address = AddressStore()
+const address_visible = ref(false)
+const changeAddress = item => {
+	address.setAddress(item.address_name + item.detail, item.name, item.phone, item.id)
+}
 // 轮播图数据	
 const swiperData = ref([])
 
@@ -184,20 +188,18 @@ const toWeb = path => uni.navigateTo({
 	url: '/pages/web/index?src=' + path
 })
 
-const toEditAddress = () => uni.navigateTo({ url: '/pages/selectAddress/index' })
-
 // 顶部的按钮
-const top_button = (index) => {
-	if (index == 0) {
-	}
-	if (index == 1) {
-	}
-	if (index == 2) {
-	}
+const top_button = async index => {
 	if (index === 3)
 		uni.navigateTo({
 			url: '/pages/index/coupon/index'
 		})
+	else {
+		uni.setStorageSync('index', index)
+		uni.switchTab({
+			url: '/pages/goods/goods',
+		})
+	}
 }
 
 // 秒杀商品
@@ -226,20 +228,10 @@ const toDetail = (id) => {
 const getData = () => {
 	get_home().then(res => {
 		swiperData.value = res.data.swiper
+		seckill_list.value = res.data.flash_commodity
 	})
 	get_commodity({ ids: [] }).then(res => {
 		infoList.value = res.data.data
-	})
-	if (!address.address_id && user.userInfo)
-		get_default_address().then(res => {
-			console.log(res)
-			const { address_name, detail, name, phone, id } = res.data
-			console.log(address_name, detail, name, phone, id);
-			address.setAddress(address_name + detail, name, phone, id)
-		})
-	get_goods_list(1).then(res => {
-		// 获取最多4个
-		seckill_list.value = res.data.data.slice(0, 4)
 	})
 	get_today_list(1).then(res => {
 		// 最多获取两个
@@ -293,7 +285,6 @@ onShareTimeline(() => {
 	padding-top: 114rpx;
 	position: relative;
 	background: #F6F6F6;
-	//background: linear-gradient(to bottom, url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSVIHwxfRM3wibsshXu5Wh1aanKIwgD6RgKjISicMREfe4cYpZGbfkQqgYMwHqOkI5DMHWckibTYCeJA/0?wx_fmt=png') 0%, url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSVIHwxfRM3wibsshXu5Wh1aanKIwgD6RgKjISicMREfe4cYpZGbfkQqgYMwHqOkI5DMHWckibTYCeJA/0?wx_fmt=png') 100%);
 	z-index: 0;
 }
 

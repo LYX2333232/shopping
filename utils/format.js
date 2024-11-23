@@ -10,34 +10,28 @@ export const setTime = T => {
     if (date) {
         // 日期
         const [day, month, year] = date.split('-').reverse().map(n => +n)
-        if (year) {
+        if (year)
             res.setFullYear(year)
-        }
-        if (month) {
+        if (month)
             res.setMonth(month - 1)
-        }
-        if (day) {
+        if (day)
             res.setDate(day)
-        }
     }
     if (time) {
         // 时间
         const [hour, minute, second] = time.split(':').map(n => +n)
-        if (hour) {
+        if (hour)
             res.setHours(hour)
-        }
-        if (minute) {
+
+        if (minute)
             res.setMinutes(minute)
-        }
-        else {
+        else
             res.setMinutes(0)
-        }
-        if (second) {
+
+        if (second)
             res.setSeconds(second)
-        }
-        else {
+        else
             res.setSeconds(0)
-        }
     }
     return res
 }

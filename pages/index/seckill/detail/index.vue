@@ -26,12 +26,12 @@
   </view>
   <view class="all">
     <view class="flash">
-              <view class="tn-flex-center-start">
+      <view class="tn-flex-center-start">
         <view class="now">
-          ￥{{ size[sizeIndex].price }}
+          ￥{{ size.price }}
         </view>
-        <view v-show="size[sizeIndex].or_price" class="old">
-          ￥{{ size[sizeIndex].or_price }}
+        <view v-show="size.or_price" class="old">
+          ￥{{ size.or_price }}
         </view>
       </view>
       <view class="right">
@@ -44,7 +44,6 @@
       </view>
     </view>
     <view class="white_boxs">
-
       <view class="info">
         {{ name }}
       </view>
@@ -57,46 +56,11 @@
         已售 {{ sell }}
       </view>
     </view>
-    <view class="deliver">
-      <view class="label">
-        配送
-      </view>
-      <view class="text">
-        最快{{ arrive_time }}送达
-      </view>
-    </view>
     <view class="size">
-      <view class="title"> 选择规格 </view>
-      <uni-section title="更多样式 - tag" subTitle="使用mode=tag属性使用标签样式" type="line">
-        <view class="uni-px-5">
-          <uni-data-checkbox mode="tag" v-model="sizeIndex" :localdata="size"
-            selectedColor="#14BF20"></uni-data-checkbox>
-        </view>
-      </uni-section>
       <view class="tn-flex-center-between">
         <view class="title">数量</view>
         <view>
-          <uni-section title="基本用法" type="line" padding>
-            <uni-number-box v-model="cont" :min="1" />
-          </uni-section>
-        </view>
-      </view>
-    </view>
-    <view class="param">
-      <view class="title">商品参数</view>
-      <view class="card">
-        <view class="item">
-          <view class="label">产地</view>
-          <view class="text">
-            {{ location }}
-          </view>
-        </view>
-        <view class="block"></view>
-        <view class="item">
-          <view class="label">存储方式</view>
-          <view class="text">
-            {{ store_way }}
-          </view>
+          <TnNumberBox v-model="cont" />
         </view>
       </view>
     </view>
@@ -118,14 +82,13 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad, onReady } from '@dcloudio/uni-app'
+import { onLoad } from '@dcloudio/uni-app'
 
-import { get_goods_detail } from '@/api/goods/goods'
-import { add_to_cart } from '@/api/cart/cart'
+import TnNumberBox from '@tuniao/tnui-vue3-uniapp/components/number-box/src/number-box.vue'
+import { get_goods_detail } from '@/api/index/seckill/seckill'
 import Header from '@/components/header.vue'
 import GoodNav from '@/components/goodNav'
 import CountDown from '@/components/CountDown'
-import {setTime } from '@/utils/format'
 
 // 轮播图相关
 const swiperVideo = ref([])
@@ -146,18 +109,12 @@ const toWeb = (path) => {
 
 // 其他用户的购买信息
 const other = ref({})
-const getOther = () => {
-  other.value = {
-    avatar: ' https://picsum.photos/40/40',
-    name: '张三',
-    time: '三分钟前'
-  }
-}
 
 const c_id = ref('')
+var flash_id
 
-const end = ref(setTime('18:00'))
-const finish = ()=>{
+const end = ref(new Date())
+const finish = () => {
 
 }
 
@@ -166,20 +123,8 @@ const sell = ref(0)
 const name = ref('')
 const typeList = ref([])
 
-// 配送时间
-const arrive_time = ref('')
-
 // 商品规格
-const size = ref([{}])
-const sizeIndex = ref(0)
-
-// 参数
-const location = ref('')
-const store_way = ref('')
-const getParam = () => {
-  location.value = '四川成都'
-  store_way.value = '常温'
-}
+const size = ref({})
 
 // 数量
 const cont = ref(1)
@@ -194,21 +139,12 @@ const changeLike = () => {
   like.value = 1 - like.value
 }
 
+/**
+ * 立即购买
+  */
 function buttonClick() {
-  // 加入购物车
-  add_to_cart(size.value[sizeIndex.value].id, cont.value).then(res => {
-    if (res.code == 200)
-      uni.showToast({
-        title: '加入购物车成功',
-        icon: 'none'
-      })
-
-    else
-      uni.showToast({
-        title: res.msg,
-        icon: 'none'
-      })
-
+  uni.navigateTo({
+    url: `/pages/me/order/new_order?flash_id=${flash_id}&com_cont=${cont.value}`
   })
 }
 
@@ -221,16 +157,13 @@ onLoad((options) => {
     swiperVideo.value = res.data.videost
 
     c_id.value = res.data.id
+    flash_id = res.data.flash_com_id
+
+    end.value = new Date(res.data.end_time * 1000)
+    console.log(end.value);
 
     // 规格
-    size.value = res.data.items.map((item, index) => {
-      return {
-        ...item,
-        text: item.name,
-        value: index
-      }
-    })
-    sizeIndex.value = 0
+    size.value = res.data.item
 
     // 商品名称
     name.value = res.data.name
@@ -243,9 +176,6 @@ onLoad((options) => {
 
     sell.value = res.data.volume
   })
-  arrive_time.value = '今日 10:30'
-  getOther()
-  getParam()
 })
 </script>
 
@@ -327,16 +257,17 @@ page {
   padding: 20rpx;
 }
 
-.flash{
-  width:710rpx;
-  height:162rpx;
+.flash {
+  width: 710rpx;
+  height: 162rpx;
   margin-bottom: -40rpx;
-  background:url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRVKItZSgfib07mMPF0QTRLgJPSrW6ez1oJ4GIlU5rK1tTWTGCbtiaW7qicTOtHlGF7qHTHDSlQ1fypQ/0?wx_fmt=png") no-repeat center  center;
+  background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRVKItZSgfib07mMPF0QTRLgJPSrW6ez1oJ4GIlU5rK1tTWTGCbtiaW7qicTOtHlGF7qHTHDSlQ1fypQ/0?wx_fmt=png") no-repeat center center;
   background-size: 100% 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color:#FFF;
+  color: #FFF;
+
   .now {
     font-family: WeChat-Sans-Std, WeChat-Sans-Std;
     font-weight: bold;
@@ -354,12 +285,13 @@ page {
     font-style: normal;
     text-decoration-line: line-through;
   }
-  .right{
-    margin-right:30rpx;
+
+  .right {
+    margin-right: 30rpx;
     height: 100rpx;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
   }
 }
 

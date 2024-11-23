@@ -74,19 +74,15 @@
 					<view style="font-size: 27rpx;color: rgba(102, 102, 102, 1);">
 						{{ item.name }}
 					</view>
-
 				</view>
 			</view>
 		</view>
-
 		<view class="apply">
 			<view class="top">
 				<view class="title">
 					我的应用
 				</view>
 			</view>
-
-
 			<view class="function">
 				<view class="tofunction" v-for="(item, index) in funList1" :key="'function2' + index"
 					@click="tap_application(index)">
@@ -677,6 +673,7 @@ onShow(() => {
 	margin: 10rpx 0;
 
 	.img {
+		position: relative;
 		width: 60rpx;
 		height: 60rpx;
 	}

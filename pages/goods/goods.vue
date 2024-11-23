@@ -28,7 +28,7 @@
 			</view>
 		</view>
 		<view class="main">
-			<view class="good" v-for="good in goods_list" :key="good.id" @click="toDetail(good.id)">
+			<view class="good" v-for="good in goods_list" :key="good.id" @click="toDetail(good)">
 				<image :src="good.path" mode="scaleToFill" class="image" />
 				<view class="right">
 					<view class="name">
@@ -62,7 +62,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onShow, onHide, onReachBottom } from '@dcloudio/uni-app'
+import { onShow, onLoad, onHide, onReachBottom } from '@dcloudio/uni-app'
 
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
@@ -108,9 +108,21 @@ const flash_image = ref("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQALAl1LiaicbL
 const teamwork_image = ref("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQALAl1LiaicbL5icnESbI4SrztIUKU5XBXWLppz530Olq6E5QlT1iceOzhaZFiat3OtKOfzibMxbBGXN5g/0?wx_fmt=png")
 
 const goods_list = ref([])
-const toDetail = (id) => {
+const toDetail = good => {
+	var url = ''
+	switch (good.type) {
+		case 0:
+			url = '/pages/goods/goods_detail?id=' + good.id
+			break
+		case 1:
+			url = '/pages/index/today/detail/index?id=' + good.teamwork_id
+			break
+		case 2:
+			url = '/pages/index/seckill/detail/index?id=' + good.flash_id
+			break
+	}
 	uni.navigateTo({
-		url: '/pages/goods/goods_detail?id=' + id
+		url: url
 	})
 }
 // 判断是普通商品(0)、拼团商品(1)、还是秒杀商品(2)
@@ -161,15 +173,23 @@ const getGoodsList = async () => {
 const getData = () => {
 	// 获取分类列表
 	get_type_list(t_id).then(res => {
-		console.log(res)
 		indexs.value = res.data
-		tag_list.value = res.data[0].new_children
-		tag_index.value = res.data[0].new_children[0].id
+		if (uni.getStorageSync('index')) {
+			indexs_index.value = uni.getStorageSync('index')
+			uni.clearStorageSync('index')
+		}
+		tag_list.value = res.data[indexs_index.value].new_children
+		tag_index.value = res.data[indexs_index.value].new_children[0].id
 		getGoodsList()
 	})
-
 }
 onShow(() => {
+	if (uni.getStorageSync('index')) {
+		getData()
+	}
+})
+
+onLoad(() => {
 	searchInfo.value = uni.getStorageSync('searchInfo') ?? ''
 	t_id = uni.getStorageSync('t_id') ?? undefined
 	getData()

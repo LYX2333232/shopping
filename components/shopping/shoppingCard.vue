@@ -68,6 +68,7 @@ const changeNum = (e, i) => {
   height: 170rpx;
   margin: 0 15rpx;
   border-radius: 20rpx;
+  flex-shrink: 0; //防止被挤压
 }
 
 .right {

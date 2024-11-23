@@ -8,42 +8,43 @@
       <view style="height: 180rpx">
         <view class="tn-flex-center-start indexs">
           <view style="height:100%;overflow:visible" v-for="(item, index) in indexs" :key="index"
-            @click="active_index = index">
-            <view v-if="item.start < new Date()" :class="['item', 'doing', active_index === index ? 'active' : '']">
-              <image v-if="active_index === index"
-                src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
-                class="image" mode="scaleToFill" />
-              <CountDown :time="item.end - new Date()" @finish="getIndexs"
-                :textColor="active_index === index ? '#FFF' : '#EE2532'"
-                :background="active_index === index ? '#14BF20' : '#FFF'" />
-              <view style="margin-top: 20rpx;">
-                {{ item.hour }}点{{ item.min ? '半' : '' }}场
-              </view>
-            </view>
-            <view v-else :class="['item', 'wait', active_index === index ? 'active' : '']">
+            @click="changeIndex(index)">
+            <!-- 未开始 -->
+            <view v-if="item.start > new Date()" :class="['item', 'wait', active_index === index ? 'active' : '']">
               <image v-if="active_index === index"
                 src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
                 class="image" mode="scaleToFill" />
               <view>
-                {{ formatTime(item.start, 'h:m') }}
+                {{ dayText(item.start) + formatTime(item.start, 'h:m') }}
               </view>
               <view style="margin-top:20rpx;">
                 整点秒杀
+              </view>
+            </view>
+            <!-- 已开始且未结束 -->
+            <view v-else-if="item.end > new Date()" :class="['item', 'doing', active_index === index ? 'active' : '']">
+              <image v-if="active_index === index"
+                src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
+                class="image" mode="scaleToFill" />
+              <CountDown :time="item.end - new Date()" :textColor="active_index === index ? '#FFF' : '#EE2532'"
+                :background="active_index === index ? '#14BF20' : '#FFF'" />
+              <view style="margin-top: 20rpx;">
+                {{ item.hour }}点{{ item.min ? '半' : '' }}场
               </view>
             </view>
           </view>
         </view>
       </view>
     </TnScrollList>
-    <view v-for="(item, index) in indexs[active_index]?.list" :key="'item' + index" class="item" @click="toBuy(item.id)">
+    <view v-for="(item, index) in items" :key="'item' + index" class="item" @click="toBuy(item.id)">
       <image class="image" :src="item.path" mode="scaleToFill" />
       <view class="right">
         <view class="item_name">{{ item.name }} </view>
         <view class="tn-flex-center-start">
           <view class="progress">
-            <view class="progress_background" :style="{ width: `${Math.floor(item.last * 100 / item.total)}%` }"></view>
+            <view class="progress_background" :style="{ width: `${item.percentage}%` }"></view>
             <view class="text">
-              已抢{{ Math.floor(item.last * 100 / item.total) }}%
+              已抢{{ item.percentage }}%
             </view>
           </view>
           <view class="limit">
@@ -65,93 +66,21 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onShow, onReachBottom } from '@dcloudio/uni-app'
+import { onShow } from '@dcloudio/uni-app'
 
 import TnScrollList from '@tuniao/tnui-vue3-uniapp/components/scroll-list/src/scroll-list.vue'
 import Header from '@/components/header.vue'
 import CountDown from '@/components/CountDown'
-import { get_goods_list } from '@/api/index/seckill/seckill'
-import { setTime, formatTime } from '@/utils/format'
-import { getRandomImage } from '@/utils/constant'
+import { get_time_list, get_goods_list } from '@/api/index/seckill/seckill'
 
 // 顶部选项框
 const indexs = ref([])
 const active_index = ref(0)
-const getIndexs = () => {
-  const list = [
-    {
-      start: '14:00',
-      end: '20:00',
-      list: [
-        {
-          id: 102,
-          path: getRandomImage(200, 200),
-          name: '123',
-          flash_price: '99.00',
-          price: '199.00',
-          last: 10,
-          total: 20
-        },
-        {
-          id: 2,
-          path: getRandomImage(200, 200),
-          name: '123',
-          flash_price: '99.00',
-          price: '199.00',
-          last: 10,
-          total: 20
-        },
-        {
-          id: 3,
-          path: getRandomImage(200, 200),
-          name: '123',
-          flash_price: '99.00',
-          price: '199.00',
-          last: 10,
-          total: 20
-        },
-      ]
-    },
-    {
-      start: '17 8:00',
-      end: '17 12:00',
-      list: [
-        {
-          id: 1,
-          path: getRandomImage(200, 200),
-          name: '123',
-          flash_price: '99.00',
-          price: '199.00',
-          last: 10,
-          total: 20
-        },
-        {
-          id: 2,
-          path: getRandomImage(200, 200),
-          name: '123',
-          flash_price: '99.00',
-          price: '199.00',
-          last: 10,
-          total: 20
-        },
-      ]
-    },
-    {
-      start: '17 10:30',
-      end: '17 11:00',
-      list: []
-    },
-    {
-      start: '17 11:00',
-      end: '17 12:00',
-      list: []
-    }
-  ]
-  indexs.value = list.map(item => {
-    const start = setTime(item.start)
-    const hour = start.getHours()
-    const min = start.getMinutes()
-    return { ...item, hour, min, start, end: setTime(item.end) }
+const changeIndex = index => {
+  active_index.value = index
+  get_goods_list(indexs.value[index].id).then(res => {
+    console.log(res)
+    items.value = res.data
   })
 }
 
@@ -167,41 +96,55 @@ const toBuy = (id) => {
 
 const getData = () => {
   // 获取数据
-  get_goods_list(1).then(res => {
-    page = 1
-    items.value = res.data.data
+  get_time_list().then(res => {
+    indexs.value = res.data.map(item => {
+      const start = new Date(item.start * 1000)
+      const hour = start.getHours()
+      const min = start.getMinutes()
+      return {
+        ...item,
+        hour,
+        min,
+        start,
+        end: new Date(item.end * 1000)
+      }
+    })
+    changeIndex(0)
   })
-  items.value.push(
-    {
-      id: 1,
-      path: getRandomImage(200, 200),
-      name: '123',
-      flash_price: '99.00',
-      price: '199.00',
-      last: 10
-    }
-  )
+}
+
+/**
+ * 判断是否需要加上天（明天、后天）
+ */
+const dayText = time => {
+  const now = new Date().setHours(0, 0, 0, 0)
+  const start = new Date(time)
+  // 注意可能会跨月份，需要用getTime来比较
+  const day = (start - now) / (24 * 60 * 60 * 1000)
+  if (day === 0) return ''
+  if (day === 1) return '明天'
+  if (day === 2) return '后天'
+  return day + '天后'
 }
 
 onShow(() => {
-  getIndexs()
-  // getData()
+  getData()
 })
 
 var page = 1
-onReachBottom(() => {
-  get_goods_list(++page).then(res => {
-    if (res.data.data.length)
-      items.value = items.value.concat(res.data.data)
-    else {
-      page--
-      uni.showToast({
-        title: '没有更多数据了',
-        icon: 'none'
-      })
-    }
-  })
-}) 
+// onReachBottom(() => {
+//   get_goods_list(++page).then(res => {
+//     if (res.data.data.length)
+//       items.value = items.value.concat(res.data.data)
+//     else {
+//       page--
+//       uni.showToast({
+//         title: '没有更多数据了',
+//         icon: 'none'
+//       })
+//     }
+//   })
+// }) 
 </script>
 
 <style lang="scss" scoped>

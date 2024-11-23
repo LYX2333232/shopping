@@ -15,37 +15,25 @@
       </view>
     </view>
     <view v-if="active_index === 0" class="list usable">
-      <view v-for="coupon in cardList" :key="coupon.id" class="card">
+      <view v-for="coupon in usable" :key="coupon.id" class="card">
         <view class="tn-flex-center-start">
           <view class="left">
             <view class="coupon-top">
-              {{ type[coupon.type] }}
+              {{ coupon.type_text }}
             </view>
             <view class="price">
-              ￥{{ coupon.number }}
+              ￥{{ coupon.price }}
             </view>
             <view class="desc">
-              {{ coupon.type === 0 ? '无门槛立减' : coupon.type === 1 ? '满减' : coupon.type === 2 ? '折扣' : coupon.type === 3 ?
-                '类目' : '新人' }}
+              {{ descText(coupon) }}
             </view>
           </view>
           <view class="main">
-            <view class="title">{{
-              coupon.name }}</view>
-            <!-- <view class="info" v-if="coupon.type === 0">
-              无门槛立减{{ coupon.number }}
-            </view>
-            <view class="info" v-if="coupon.type === 1">
-              满{{ coupon.full }}减{{ coupon.reduce }}
-            </view>
-            <view class="info" v-if="coupon.type === 2">
-              打{{ coupon.number }}折
-            </view> -->
-            <view class="info" v-if="coupon.type === 3">
-              {{ coupon.com_type.name }}券
+            <view class="title">
+              {{ coupon.name }}
             </view>
             <view class="time">
-              有效期：{{ coupon.start }} 至 {{ coupon.end }}
+              有效期至 {{ coupon.end }}
             </view>
           </view>
         </view>
@@ -55,37 +43,25 @@
       </view>
     </view>
     <view v-else class="list unusable">
-      <view v-for="coupon in cardList" :key="coupon.id" class="card">
+      <view v-for="coupon in unusable" :key="coupon.id" class="card">
         <view class="tn-flex-center-start">
           <view class="left">
             <view class="coupon-top">
-              {{ type[coupon.type] }}
+              {{ coupon.type_text }}
             </view>
             <view class="price">
-              ￥{{ coupon.number }}
+              ￥{{ coupon.price }}
             </view>
             <view class="desc">
-              {{ coupon.type === 0 ? '无门槛立减' : coupon.type === 1 ? '满减' : coupon.type === 2 ? '折扣' : coupon.type === 3 ?
-                '类目' : '新人' }}
+              {{ descText(coupon) }}
             </view>
           </view>
           <view class="main">
-            <view class="title">{{
-              coupon.name }}</view>
-            <!-- <view class="info" v-if="coupon.type === 0">
-              无门槛立减{{ coupon.number }}
-            </view>
-            <view class="info" v-if="coupon.type === 1">
-              满{{ coupon.full }}减{{ coupon.reduce }}
-            </view>
-            <view class="info" v-if="coupon.type === 2">
-              打{{ coupon.number }}折
-            </view> -->
-            <view class="info" v-if="coupon.type === 3">
-              {{ coupon.com_type.name }}券
+            <view class="title">
+              {{ coupon.name }}
             </view>
             <view class="time">
-              有效期：{{ coupon.start }} 至 {{ coupon.end }}
+              有效期至 {{ coupon.end }}
             </view>
           </view>
         </view>
@@ -103,6 +79,7 @@ import { onShow, onReachBottom } from '@dcloudio/uni-app'
 
 import TnButton from '@tuniao/tnui-vue3-uniapp/components/button/src/button.vue'
 import { get_my_coupon } from '@/api/coupon/coupon'
+import { setTime } from '@/utils/format'
 import Header from '@/components/header.vue'
 
 const active_index = ref(0)
@@ -111,27 +88,35 @@ const changeTab = index => {
 }
 
 const cardList = ref([])
+const usable = ref([])
+const unusable = ref([])
 
 const type = ['无门槛券', '满减券', '折扣券', '类目券', '新人券']
 
 let page = 1
 
 const isUsable = coupon => {
-  return true
-  return coupon.state === 0 && new Date(coupon.end) > new Date() && new Date(coupon.start) < new Date()
+  return coupon.state === 0 && setTime(coupon.end) > new Date() && setTime(coupon.start) < new Date()
 }
 
 const buttonText = coupon => {
   if (coupon.state === 0) return ''
   // 结束了
-  if (new Date(coupon.end) < new Date())
+  if (setTime(coupon.end) < new Date())
     return '已过期'
   // 没开始
-  const start_time = new Date(coupon.start)
+  const start_time = setTime(coupon.start)
   if (start > new Date())
     return `${start_time.getMonth() + 1}月${start_time.getDate()}日开始`
   // 可用
   return '去使用'
+}
+
+const descText = coupon => {
+  if (coupon.type_text === '现金券') return ''
+  if (coupon.type_text === '满减券') return `满${coupon.full}减${coupon.reduce}`
+  if (coupon.type_text === '类目券') return ''
+  if (coupon.type_text === '折扣券') return `打${coupon.price}折`
 }
 
 const toCart = () => {
@@ -142,7 +127,10 @@ const toCart = () => {
 
 const getData = () => {
   get_my_coupon(1).then(res => {
-    cardList.value = res.data.data
+    cardList.value = res.data
+    console.log(cardList.value);
+    usable.value = cardList.value.filter(item => setTime(item.end) > new Date())
+    unusable.value = cardList.value.filter(item => setTime(item.end) < new Date())
   })
 }
 
@@ -154,6 +142,8 @@ onReachBottom(() => {
   page++
   get_my_coupon(page).then(res => {
     cardList.value = cardList.value.concat(res.data.data)
+    usable.value = cardList.value.filter(item => setTime(item.end) > new Date())
+    unusable.value = cardList.value.filter(item => setTime(item.end) < new Date())
   })
 })
 </script>
@@ -232,7 +222,7 @@ onReachBottom(() => {
 
     .card {
       margin-bottom: 20rpx;
-      width: 100%;
+      width: 710rpx;
       height: 180rpx;
       padding-right: 20rpx;
       display: flex;

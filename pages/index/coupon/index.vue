@@ -11,7 +11,7 @@
       <view class="tn-flex-center-start">
         <view class="left">
           <view class="coupon-top">
-            {{ type[coupon.type] }}
+            {{ coupon.type_text }}
           </view>
           <view class="price">
             ￥{{ coupon.number }}
@@ -22,22 +22,11 @@
           </view>
         </view>
         <view class="main">
-          <view class="title">{{
-            coupon.name }}</view>
-          <view class="info" v-if="coupon.type === 0">
-            无门槛立减{{ coupon.number }}
-          </view>
-          <view class="info" v-if="coupon.type === 1">
-            满{{ coupon.full }}减{{ coupon.reduce }}
-          </view>
-          <view class="info" v-if="coupon.type === 2">
-            打{{ coupon.number }}折
-          </view>
-          <view class="info" v-if="coupon.type === 3">
-            {{ coupon.com_type.name }}券
+          <view class="title">
+            {{ coupon.name }}
           </view>
           <view class="time">
-            有效期：{{ coupon.start }} 至 {{ coupon.end }}
+            有效期至 {{ coupon.end }}
           </view>
         </view>
       </view>

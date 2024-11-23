@@ -53,6 +53,7 @@ defineProps({
   height: 170rpx;
   margin: 0 15rpx;
   border-radius: 20rpx;
+  flex-shrink: 0;
 
   .mask {
     width: 100%;

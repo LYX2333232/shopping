@@ -9,10 +9,12 @@
 			</swiper-item>
 		</swiper>
 		<view class="show">
-			<view class="other">
-				<image :src="other.avatar" mode="scaleToFill" class="avatar" />
-				<view>
-					{{ other.name }}在{{ other.time }}抢购了该商品
+			<view>
+				<view v-if="other" class="other">
+					<image :src="other.avatar" mode="scaleToFill" class="avatar" />
+					<view>
+						{{ other.name + other.text }}
+					</view>
 				</view>
 			</view>
 			<view class="index">
@@ -47,14 +49,6 @@
 				已售 {{ sell }}
 			</view>
 		</view>
-		<view class="deliver">
-			<view class="label">
-				配送
-			</view>
-			<view class="text">
-				最快{{ arrive_time }}送达
-			</view>
-		</view>
 		<view class="size">
 			<view class="title"> 选择规格 </view>
 			<uni-section title="更多样式 - tag" subTitle="使用mode=tag属性使用标签样式" type="line">
@@ -69,24 +63,6 @@
 					<uni-section title="基本用法" type="line" padding>
 						<uni-number-box v-model="cont" :min="1" />
 					</uni-section>
-				</view>
-			</view>
-		</view>
-		<view class="param">
-			<view class="title">商品参数</view>
-			<view class="card">
-				<view class="item">
-					<view class="label">产地</view>
-					<view class="text">
-						{{ location }}
-					</view>
-				</view>
-				<view class="block"></view>
-				<view class="item">
-					<view class="label">存储方式</view>
-					<view class="text">
-						{{ store_way }}
-					</view>
 				</view>
 			</view>
 		</view>
@@ -108,9 +84,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import { onLoad, onReady } from '@dcloudio/uni-app'
+import { onLoad } from '@dcloudio/uni-app'
 
-import { get_goods_detail } from '@/api/goods/goods'
+import { get_goods_detail, set_favorite } from '@/api/goods/goods'
 import { add_to_cart } from '@/api/cart/cart'
 import Header from '@/components/header.vue'
 import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
@@ -135,13 +111,6 @@ const toWeb = (path) => {
 
 // 其他用户的购买信息
 const other = ref({})
-const getOther = () => {
-	other.value = {
-		avatar: ' https://picsum.photos/40/40',
-		name: '张三',
-		time: '三分钟前'
-	}
-}
 
 const c_id = ref('')
 
@@ -150,20 +119,9 @@ const sell = ref(0)
 const name = ref('')
 const typeList = ref([])
 
-// 配送时间
-const arrive_time = ref('')
-
 // 商品规格
 const size = ref([{}])
 const sizeIndex = ref(0)
-
-// 参数
-const location = ref('')
-const store_way = ref('')
-const getParam = () => {
-	location.value = '四川成都'
-	store_way.value = '常温'
-}
 
 // 数量
 const cont = ref(1)
@@ -198,38 +156,38 @@ function buttonClick() {
 
 onLoad((options) => {
 	const that = this
-	get_goods_detail({ id: options.id }).then(res => {
-		// 轮播图
-		swiperImg.value = res.data.paths
-		// 视频轮播图
-		swiperVideo.value = res.data.videost
+	get_goods_detail({ id: options.id })
+		.then(res => {
+			// 轮播图
+			swiperImg.value = res.data.paths
+			// 视频轮播图
+			swiperVideo.value = res.data.videost
 
-		c_id.value = res.data.id
+			c_id.value = res.data.id
 
-		// 规格
-		size.value = res.data.items.map((item, index) => {
-			return {
-				...item,
-				text: item.name,
-				value: index
-			}
+			other.value = res.data.users[0]
+
+			// 规格
+			size.value = res.data.items.map((item, index) => {
+				return {
+					...item,
+					text: item.name,
+					value: index
+				}
+			})
+			sizeIndex.value = 0
+
+			// 商品名称
+			name.value = res.data.name
+
+			typeList.value = res.data.labels
+
+			content.value = res.data.content.replace(/(<img [^>]*)(style="[^"]*")?/gi, '$1 style="width:100%;"')
+
+			like.value = res.data.is_like
+
+			sell.value = res.data.volume
 		})
-		sizeIndex.value = 0
-
-		// 商品名称
-		name.value = res.data.name
-
-		typeList.value = res.data.labels
-
-		content.value = res.data.content.replace(/(<img [^>]*)(style="[^"]*")?/gi, '$1 style="width:100%;"')
-
-		like.value = res.data.is_like
-
-		sell.value = res.data.volume
-	})
-	arrive_time.value = '今日 10:30'
-	getOther()
-	getParam()
 })
 </script>
 
@@ -254,8 +212,8 @@ page {
 		opacity: 0.6;
 		display: flex;
 		align-items: center;
-		width: 450rpx;
 		height: 60rpx;
+		padding: 0 20rpx;
 		border-radius: 0 30rpx 30rpx 0;
 		font-family: PingFangSC, PingFang SC;
 		font-weight: 400;

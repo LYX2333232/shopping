@@ -2,17 +2,17 @@
   <Header />
   <view class="all">
     <view class="card header">
-      <view class="background" v-if="order.statte_text === '待分享'">
+      <view class="background" v-if="order.state_text === '待分享'">
         拼团剩余时间
         <CountDown :time="Math.floor((new Date(order.order_end) - new Date()) / 1000)" background="#EE2532"
           textColor="#FFF" />
       </view>
       <view class="title">
-        {{ order.statte_text }}
+        {{ order.state_text }}
       </view>
       <!-- 拼团部分 -->
       <view v-if="order.teamwork" class="others">
-        <image v-for="(user, index) in order.teamwork.users" :key="index" :src="user" mode="scaleToFill"
+        <image v-for="(user, index) in order.teamwork.users" :key="index" :src="user.avatar" mode="scaleToFill"
           class="avatar" />
         <view v-if="order.teamwork.state === 0">
           已有{{ order.teamwork.seng_count }}人拼团，
@@ -21,27 +21,27 @@
         <view v-else-if="order.teamwork.state === 1">拼团成功！商家正在备货</view>
         <view v-else>拼团失败</view>
       </view>
-      <view v-else-if="order.statte_text === '待发货'" class="desc">商家正在备货</view>
-      <TnButton v-if="order.statte_text === '待分享' || order.statte_text === '拼团中'" width="100%" height="80" shape="round"
+      <view v-else-if="order.state_text === '待发货'" class="desc">商家正在备货</view>
+      <TnButton v-if="order.state_text === '待分享' || order.state_text === '拼团中'" width="100%" height="80" shape="round"
         type="success">
         邀请好友拼单
       </TnButton>
 
-      <view v-if="order.statte_text === '待收货'">
+      <view v-if="order.state_text === '待收货'">
         {{ deliver[order.state] }}
       </view>
-      <TnButton v-if="order.statte_text === '待收货'" width="100%" height="80" shape="round" type="success">
+      <TnButton v-if="order.state_text === '待收货'" width="100%" height="80" shape="round" type="success">
         确认收货
       </TnButton>
 
       <!-- 待付款部分 -->
-      <view v-if="order.statte_text === '待付款'" class="desc">
+      <view v-if="order.state_text === '待支付'" class="desc">
         15分钟后订单关闭，请尽快支付哦
       </view>
-      <TnButton v-if="order.statte_text === '待付款'" width="100%" height="80" shape="round" type="success">
+      <TnButton v-if="order.state_text === '待支付'" width="100%" height="80" shape="round" type="success">
         去支付
-        <TnCountDown :time="Math.floor((new Date(order.order_end) - new Date()) / 1000)" text-color="#FFF"
-          separator-color="#FFF" />
+        <TnCountDown :time="Math.floor((new Date(order.end) - new Date()) / 1000)" text-color="#FFF"
+          separator-color="#FFF" @finish="uni.navigateBack()" />
       </TnButton>
     </view>
     <view class="card deliver">
@@ -78,15 +78,15 @@
           <view class="tn-flex-center-between tn-w-full">
             <view class="title">{{ good.name }}</view>
             <view class="total">
-              ￥ {{ good.should_price }}
+              ￥ {{ good.price }}
             </view>
           </view>
           <view class="tn-flex-center-between tn-w-full">
             <view>
-              规格：{{ good.item_name }}/袋
+              规格：{{ good.item_name }}
             </view>
             <view>
-              {{ good.cont }}袋
+              {{ good.com_cont }}袋
             </view>
           </view>
           <view>
@@ -118,17 +118,24 @@
           共优惠
         </view>
         <view class="discount">
-          <!-- !缺少优惠券 -->
-          -￥ {{ order.coupon_price }}
+          -￥ {{ discount.toFixed(2) }}
         </view>
       </view>
-      <view v-if="order.coupon_price" class="sub-card">
-        <view class="tn-flex-center-between tn-w-full" v-for="discount in order.coupon_price" :key="discount.name">
+      <view v-if="discount > 0" class="sub-card">
+        <view v-if="discount > parseFloat(order.coupon_price)" class="tn-flex-center-between tn-w-full">
           <view class="title" style="font-size:24rpx">
-            {{ discount.name }}
+            活动优惠
           </view>
           <view class="discount" style="font-size:24rpx">
             -￥ {{ discount.price }}
+          </view>
+        </view>
+        <view v-if="order.coupon_price" class="tn-flex-center-between tn-w-full">
+          <view class="title" style="font-size:24rpx">
+            优惠券
+          </view>
+          <view class="discount" style="font-size:24rpx">
+            -￥ {{ discount.coupon_price }}
           </view>
         </view>
       </view>
@@ -154,10 +161,9 @@
         </view>
         <view class="tn-flex-center-start">
           <view class="right">
-            <!-- !缺少订单编号 -->
-            {{ order.time }}
+            {{ order.out_trade_no }}
           </view>
-          <TnButton shape="round" type="info" plain>复制</TnButton>
+          <TnButton shape="round" type="info" plain @click="copy">复制</TnButton>
         </view>
       </view>
     </view>
@@ -178,7 +184,6 @@ import TnCountDown from '@tuniao/tnui-vue3-uniapp/components/count-down/src/coun
 import CountDown from '@/components/CountDown'
 import Header from '@/components/header'
 import { get_order_detail } from '@/api/order/order'
-import { getRandomImage } from '@/utils/constant'
 
 const deliver = {
   10: '正在等待接单',
@@ -193,71 +198,27 @@ const deliver = {
 const order = ref({})
 const getDetail = id => {
   get_order_detail(id).then(res => {
+    // get_order_detail(213).then(res => {
     console.log(res)
-    order.value = res.data
+    order.value = {
+      ...res.data,
+      end: new Date(res.data.created_at).getTime() + 15 * 60 * 1000
+    }
   })
-  // order.value = {
-  //   state: 1,
-  //   end: new Date().setDate(new Date().getDate() + 1),
-  //   address: '海街道高新南2路科兴科学园A1栋201',
-  //   name: '张三',
-  //   phone: '13800138000',
-  //   goods: [
-  //     {
-  //       id: 1,
-  //       path: getRandomImage(),
-  //       title: '新疆克伦生无籽红提',
-  //       item_name: '1000g/袋',
-  //       price: 29.9,
-  //       old_price: 49.9,
-  //       number: 2
-  //     },
-  //     {
-  //       id: 2,
-  //       path: getRandomImage(),
-  //       title: '新疆克伦生无籽红提',
-  //       item_name: '1000g/袋',
-  //       price: 29.9,
-  //       old_price: 49.9,
-  //       number: 2
-  //     }
-  //   ],
-  //   statte_text: '待收货',
-  //   // teamwork: {
-  //   //   count: 3,
-  //   //   seng_count: 2,
-  //   //   state: 1,
-  //   //   end: 1759161600,
-  //   //   users: [
-  //   //     {
-  //   //       id: 38,
-  //   //       name: "丫ㄅㄩㄉㄛㄩ",
-  //   //       avatar: "https://senmei.top/upload/images/66d2cb8616bf1.jpeg",
-  //   //     },
-  //   //     {
-  //   //       id: 10,
-  //   //       name: "可dl.sir1",
-  //   //       avatar: "https://senmei.top/upload/images/660fb7af4b121.jpeg"
-  //   //     }
-  //   //   ]
-  //   // },
-  //   deliver: 2,
-  //   discount: [
-  //     {
-  //       name: '活动优惠',
-  //       price: 20,
-  //     },
-  //     {
-  //       name: '会员优惠',
-  //       price: 10,
-  //     }
-  //   ],
-  //   time: '2024-10-29 14:09',
-  //   deliver_id: "20248403984095203"
-  // }
 }
 
-// const res = computed(() => order.value.goods.reduce((total, cur) => total + cur.price * cur.number, 0) + order.value.deliver - order.value.discount.reduce((total, cur) => total + cur.price, 0))
+const discount = computed(() => {
+  return parseFloat(order.value.should_price) - parseFloat(order.value.price) - parseFloat(order.value.freight)
+})
+
+const copy = () => {
+  uni.setClipboardData({
+    data: order.value.out_trade_no,
+    success: () => {
+      uni.showToast
+    }
+  })
+}
 
 onLoad(options => {
   console.log(options)

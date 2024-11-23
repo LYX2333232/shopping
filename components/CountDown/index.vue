@@ -3,15 +3,15 @@
     <view class="item" :style="{ color: textColor, background: background }">
       {{ time[0] }}
     </view>
-    <view v-if="time.length < 3" class="operation" :style="{ color: background }">:</view>
-    <view class="item" :style="{ color: textColor, background: background }">{{ time[1] ?? 0 }}</view>
-    <view class="operation" :style="{ color: background }">:</view>
-    <view class="item" :style="{ color: textColor, background: background }">{{ time[2] ?? 0 }}
+    <view class="operation" :style="{ color: background }">{{ time.length < 3 ? ':' : '' }}</view>
+        <view class="item" :style="{ color: textColor, background: background }">{{ time[1] ?? 0 }}</view>
+        <view class="operation" :style="{ color: background }">:</view>
+        <view class="item" :style="{ color: textColor, background: background }">{{ time[2] ?? 0 }}
+        </view>
+        <view v-if="time[3]" class="operation" :style="{ color: background }">:</view>
+        <view v-if="time[3]" class="item" :style="{ color: textColor, background: background }">{{ time[3] }}
+        </view>
     </view>
-    <view v-if="time[3]" class="operation" :style="{ color: background }">:</view>
-    <view v-if="time[3]" class="item" :style="{ color: textColor, background: background }">{{ time[3] }}
-    </view>
-  </view>
 </template>
 
 <script setup>
