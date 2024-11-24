@@ -18,7 +18,7 @@
         </view>
       </view>
       <view class="tn-flex-center-end">
-        <TnButton type="info" plain>删除</TnButton>
+        <TnButton type="info" plain @click="emit('delete', data.id)">删除</TnButton>
       </view>
     </view>
   </view>
@@ -38,6 +38,7 @@ defineProps({
     default: {}
   }
 })
+const emit = defineEmits(['delete'])
 </script>
 
 <style lang="scss" scoped>

@@ -11,14 +11,16 @@
       <view class="tn-flex-center-start">
         <view class="left">
           <view class="coupon-top">
-            {{ coupon.type_text }}
+            <!-- {{ coupon.type_text }} -->
+            {{ type[coupon.type] }}
           </view>
           <view class="price">
             ￥{{ coupon.number }}
           </view>
           <view class="desc">
-            {{ coupon.type === 0 ? '无门槛立减' : coupon.type === 1 ? '满减' : coupon.type === 2 ? '折扣' : coupon.type === 3 ?
-              '类目' : '新人' }}
+            {{ coupon.type === 0 ? `无门槛立减${coupon.number}` : coupon.type === 1 ? `满${coupon.reduce}减${coupon.number}` :
+              coupon.type === 2 ? `打${coupon.number}折` : coupon.type === 3 ? `类目减${coupon.number}` :
+                '新人专享' }}
           </view>
         </view>
         <view class="main">

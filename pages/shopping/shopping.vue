@@ -22,7 +22,7 @@
 				@changeNum="changeNum"></shoppingCard>
 		</view>
 		<view v-if="deleteList.length > 0" class="card">
-			<deleteCard v-for="(data, index) in deleteList" :key="index" :data="data" />
+			<deleteCard v-for="(data, index) in deleteList" :key="index" :data="data" @delete="Delete" />
 		</view>
 		<view v-if="is_empty" class="empty">
 			<TnEmpty mode="cart">
@@ -197,17 +197,37 @@ const changeOrderAll = (e) => {
 
 const del = () => {
 	const list = []
-	select_goods.value.forEach(item => {
-		list.push(del_cart(item.id))
+	uni.showModal({
+		title: '提示',
+		content: '确定要删除选中的所有商品吗?',
+		success: (success) => {
+			if (success.confirm) {
+				select_goods.value.forEach(item => {
+					list.push(del_cart(item.id))
+				})
+				Promise.all(list).then(res => {
+					if (res.code === 200) {
+						dataList.value = dataList.value.filter(item => !select_goods.value.includes(item))
+						uni.showToast({
+							title: '删除成功',
+							icon: 'none'
+						})
+						select_goods.value = []
+					}
+				})
+			}
+		},
 	})
-	Promise.all(list).then(res => {
+}
+
+const Delete = id => {
+	del_cart(id).then(res => {
 		if (res.code === 200) {
-			dataList.value = dataList.value.filter(item => !select_goods.value.includes(item))
+			deleteList.value = deleteList.value.filter(item => item.id !== id)
 			uni.showToast({
 				title: '删除成功',
 				icon: 'none'
 			})
-			select_goods.value = []
 		}
 	})
 }

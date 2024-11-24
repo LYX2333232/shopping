@@ -3,15 +3,15 @@
   <view class="all">
     <TnWaterFall :data="list" mode="calc">
       <template #left="{ item }">
-        <view class="item">
+        <view class="item" @click="toDetail(item)">
           <image :src="item.path" class="image" mode="aspectFit" />
           <view class="title">
-            <text v-if="true" class="group">三人团 | </text>
+            <text v-if="item.teamwork" class="group">三人团 | </text>
             {{ item.name }}
           </view>
           <view class="bottom">
             <view class="left">
-              <view v-if="true" class="text">拼团价</view>
+              <view v-if="item.teamwork" class="text">拼团价</view>
               <view class="price">
                 ￥{{ item.price }}
               </view>
@@ -19,8 +19,8 @@
                 ￥{{ item.or_price }}
               </view>
             </view>
-            <TnBadge value="1" type="danger">
-              <image class="btn" :src="cart" mode="scaleToFill" />
+            <TnBadge :value="item.shopping_count ?? ''" type="danger">
+              <image class="btn" :src="item.teamwork ? ping : cart" mode="scaleToFill" />
             </TnBadge>
           </view>
         </view>
@@ -29,12 +29,12 @@
         <view class="item">
           <image :src="item.path" class="image" mode="aspectFit" />
           <view class="title">
-            <text v-if="true" class="group">三人团 | </text>
+            <text v-if="item.teamwork" class="group">三人团 | </text>
             {{ item.name }}
           </view>
           <view class="bottom">
             <view class="left">
-              <view v-if="true" class="text">拼团价</view>
+              <view v-if="item.teamwork" class="text">拼团价</view>
               <view class="price">
                 ￥{{ item.price }}
               </view>
@@ -42,7 +42,9 @@
                 ￥{{ item.or_price }}
               </view>
             </view>
-            <image class="btn" :src="cart" mode="scaleToFill" />
+            <TnBadge :value="item.shopping_count ?? ''" type="danger">
+              <image class="btn" :src="item.teamwork ? ping : cart" mode="scaleToFill" />
+            </TnBadge>
           </view>
         </view>
       </template>
@@ -74,6 +76,12 @@ const getData = () => {
   get_favorite_list().then(res => {
     list.value = res.data.data
   })
+}
+
+const toDetail = item => {
+  // 拼团商品
+  if (item.teamwork) uni.navigateTo({ url: '/pages/index/today/detail/index?id=' + item.id })
+  else uni.navigateTo({ url: '/pages/goods/goods_detail?id=' + item.id })
 }
 
 onShow(() => {

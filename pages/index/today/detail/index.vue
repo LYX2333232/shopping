@@ -94,7 +94,7 @@
             </view>
         </view>
     </view>
-    <GoodNav :id="c_id" :like="like" :normal="false" @buttonClick="buttonClick" @changeLike="changeLike" />
+    <GoodNav :id="size.id" :like="like" :normal="false" @buttonClick="buttonClick" @changeLike="changeLike" />
     <!-- 分享定义在组件goods-nav中 -->
 </template>
 
@@ -157,7 +157,8 @@ const content = ref('')
 const like = ref(0)
 
 const changeLike = () => {
-    like.value = 1 - like.value
+    like.value = like.value ? 0 : 1
+    console.log(like.value)
 }
 
 function buttonClick() {
@@ -168,7 +169,6 @@ function buttonClick() {
 }
 
 onLoad((options) => {
-    console.log(options);
     const that = this
     get_today_detail({ id: options.id }).then(res => {
         // 轮播图

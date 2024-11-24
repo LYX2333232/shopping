@@ -9,8 +9,8 @@
                 <text>购物车</text>
             </button>
             <button class="icon" @click="favorite">
-                <TnIcon :name="props.like === 1?'star-fill':'star'" size="50" :color="props.like === 1 ? 'tn-red' : '#000'"
-                    :custom-style="{ height: 0 }" />
+                <TnIcon :name="props.like === 1 ? 'star-fill' : 'star'" size="50"
+                    :color="props.like === 1 ? 'tn-red' : '#000'" :custom-style="{ height: 0 }" />
                 <text>收藏</text>
             </button>
             <button class="icon" open-type="share">
@@ -64,18 +64,19 @@ const toCart = () => {
 }
 
 // 点击收藏
-const favorite = () => {
+const favorite = async () => {
     uni.showLoading({
         title: '加载中'
     })
-    set_favorite(
+    console.log(props);
+    await set_favorite(
         props.id
     ).then(res => {
         if (res.code === 200) {
             emits('changeLike')
-            uni.hideLoading({})
         }
     })
+    uni.hideLoading({})
 }
 
 

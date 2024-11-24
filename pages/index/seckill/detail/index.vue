@@ -136,7 +136,7 @@ const content = ref('')
 const like = ref(0)
 
 const changeLike = () => {
-  like.value = 1 - like.value
+  like.value = like.value ? 0 : 1
 }
 
 /**

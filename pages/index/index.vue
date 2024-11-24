@@ -55,7 +55,7 @@
 				<image class="item" v-for="(_, index) in 4" :src="`/static/index/item${index}.png`" :key="index"
 					@click="top_button(index)" />
 			</view>
-			<view class="seckill" @click="toSeckill">
+			<view class="seckill" v-if="seckill_list.length > 0" @click="toSeckill">
 				<view class="top">
 					<view style="z-index:2">全场低价秒</view>
 					<TnButton type="success" shape="round">去看看></TnButton>

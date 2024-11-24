@@ -78,7 +78,8 @@
 			</view>
 		</view>
 	</view>
-	<GoodNav :id="c_id" :like="like" :normal="true" @buttonClick="buttonClick" @changeLike="changeLike" />
+	<GoodNav :id="size[sizeIndex].id" :like="size[sizeIndex].is_like" :normal="true" @buttonClick="buttonClick"
+		@changeLike="changeLike" />
 	<!-- 分享定义在组件goods-nav中 -->
 </template>
 
@@ -133,7 +134,7 @@ const content = ref('')
 const like = ref(0)
 
 const changeLike = () => {
-	like.value = 1 - like.value
+	size.value[sizeIndex.value].is_like = size.value[sizeIndex.value].is_like ? 0 : 1
 }
 
 function buttonClick() {
