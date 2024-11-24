@@ -275,8 +275,8 @@ const pay = () => {
       address_id: order.value.address.id,
       coupon_id: order.value.coupon ? order.value.coupon.id : undefined,
       shopping_cart_ids: order.value.shopping_cart_ids
-    }).then(async res => {
-      await uni.requestPayment({
+    }).then(res => {
+      uni.requestPayment({
         provider: 'wxpay',
         timeStamp: res.data.timeStamp,
         nonceStr: res.data.nonceStr,
@@ -295,7 +295,7 @@ const pay = () => {
           console.log('fail', err)
         },
         complete: () => {
-          uni.navigateBack()
+          uni.reLaunch({ url: '/pages/me/order/detail?id=' + res.data.order_id })
         }
       })
     })
@@ -305,8 +305,8 @@ const pay = () => {
       address_id: order.value.address.id,
       teamwork_com_id: order.value.teamwork_com_id,
       com_cont: order.value.com_cont
-    }).then(async res => {
-      await uni.requestPayment({
+    }).then(res => {
+      uni.requestPayment({
         provider: 'wxpay',
         timeStamp: res.data.timeStamp,
         nonceStr: res.data.nonceStr,
@@ -325,7 +325,7 @@ const pay = () => {
           console.log('fail', err)
         },
         complete: () => {
-          uni.navigateBack()
+          uni.reLaunch({ url: '/pages/me/order/detail?id=' + res.data.order_id })
         }
       })
     })
@@ -335,8 +335,8 @@ const pay = () => {
       address_id: order.value.address.id,
       flash_com_id: order.value.flash_com_id,
       com_cont: order.value.com_cont
-    }).then(async res => {
-      await uni.requestPayment({
+    }).then(res => {
+      uni.requestPayment({
         provider: 'wxpay',
         timeStamp: res.data.timeStamp,
         nonceStr: res.data.nonceStr,
@@ -355,7 +355,7 @@ const pay = () => {
           console.log('fail', err)
         },
         complete: () => {
-          uni.navigateBack()
+          uni.reLaunch({ url: '/pages/me/order/detail?id=' + res.data.order_id })
         }
       })
     })

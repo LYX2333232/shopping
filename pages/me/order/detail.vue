@@ -38,7 +38,7 @@
       <view v-if="order.state_text === '待支付'" class="desc">
         15分钟后订单关闭，请尽快支付哦
       </view>
-      <TnButton v-if="order.state_text === '待支付'" width="100%" height="80" shape="round" type="success">
+      <TnButton v-if="order.state_text === '待支付'" width="100%" height="80" shape="round" type="success" @click="rePay">
         去支付
         <TnCountDown :time="Math.floor((new Date(order.end) - new Date()) / 1000)" text-color="#FFF"
           separator-color="#FFF" @finish="uni.navigateBack()" />
@@ -183,7 +183,7 @@ import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnCountDown from '@tuniao/tnui-vue3-uniapp/components/count-down/src/count-down.vue'
 import CountDown from '@/components/CountDown'
 import Header from '@/components/header'
-import { get_order_detail } from '@/api/order/order'
+import { get_order_detail, repay_order } from '@/api/order/order'
 
 const deliver = {
   10: '正在等待接单',
@@ -198,12 +198,38 @@ const deliver = {
 const order = ref({})
 const getDetail = id => {
   get_order_detail(id).then(res => {
-    // get_order_detail(213).then(res => {
     console.log(res)
     order.value = {
       ...res.data,
       end: new Date(res.data.created_at).getTime() + 15 * 60 * 1000
     }
+  })
+}
+
+/**
+ * 重新支付订单
+  */
+const rePay = () => {
+  repay_order(order.value.id).then(res => {
+    uni.requestPayment({
+      provider: 'wxpay',
+      timeStamp: res.data.timeStamp,
+      nonceStr: res.data.nonceStr,
+      package: res.data.package,
+      signType: res.data.signType,
+      paySign: res.data.paySign,
+      success: function (res) {
+        if (res.errMsg === 'requestPayment:ok') {
+          uni.showToast({
+            title: '支付成功',
+            icon: 'none'
+          })
+        }
+      },
+      fail: function (err) {
+        console.log('fail', err)
+      }
+    })
   })
 }
 

@@ -33,14 +33,9 @@
 					{{ card.created_at }}
 				</view>
 				<text class="right" :style="{ color: card.state === 1 ? '#EE2532' : '#131313' }">
-					<!-- {{ title.state === 1 && title.teamwork ? '待分享' : title[card.state] }} -->
 					{{ card.statte_text }}
 				</text>
 			</view>
-			<!-- <view class="order">
-				<view style="margin-right: 30rpx;">订单编号：{{ card.id }}</view>
-				<view v-if="card.state === 2"> 物流单号：{{ card.transport_number }} </view>
-			</view> -->
 			<view class="tn-flex-center-start tn-w-full">
 				<view class="goods">
 					<view v-for="good in card.order_com" :key="good.id">
@@ -69,11 +64,9 @@
 			</view>
 			<view class="tn-flex-center-between">
 				<view>
-					<!-- !条件未写 如果是拼团的 -->
 					<view v-if="card.teamwork" class="others">
 						<image v-for="(_, index) in card.teamwork.users" :key="index" :src="getRandomImage(50, 50)"
 							mode="scaleToFill" class="avatar" />
-						<!-- !拼团成功 -->
 						<view v-if="card.teamwork.state === 0">
 							已有{{ card.teamwork.seng_count }}人拼团，
 							<text style="color:#EE2532">还差{{ card.teamwork.count - card.teamwork.seng_count }}人</text>
@@ -88,7 +81,8 @@
 			</view>
 			<view class="tn-flex-center-end tn-w-full tn-mt-lg">
 				<TnButton v-for="(btn, index) in buttons[card.statte_text]" :key="index" :type="btn.type ?? 'info'"
-					:custom-style="{ marginLeft: '20rpx' }" :plain="!btn.type" shape="round" @click="btn.fun">
+					:custom-style="{ marginLeft: '20rpx' }" :plain="!btn.type" shape="round" @click="btn.fun(card)"
+					click-modifiers="stop">
 					{{ btn.title }}
 				</TnButton>
 			</view>
@@ -125,7 +119,7 @@ import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 import TnEmpty from '@/uni_modules/tuniaoui-vue3/components/empty/src/empty.vue'
 import TnCountDown from '@/uni_modules/tuniaoui-vue3/components/count-down/src/count-down.vue'
 import Header from '@/components/header.vue'
-import { get_order, repay_order, post_refund, post_receive, close_teamwork, post_delete_order } from '@/api/order/order'
+import { get_order, repay_order, post_refund, post_receive, close_teamwork, post_delete_order, get_refund_agreement } from '@/api/order/order'
 import { get_today_detail } from '@/api/index/today/today'
 import { getRandomImage } from '@/utils/constant'
 
@@ -160,6 +154,139 @@ const switchTab = (index) => {
 
 const is_empty = ref(false)
 
+const orders = ref([])
+
+const select_order = ref({})
+
+const toDetail = card => uni.navigateTo({
+	url: '/pages/me/order/detail?id=' + card.id
+})
+
+// 删除订单
+const delete_order = card => {
+	uni.showModal({
+		title: '提示',
+		content: '确定删除订单吗？',
+		success: function (res) {
+			if (res.confirm) {
+				post_delete_order(card.id).then(res => {
+					if (res.code === 200) {
+						uni.showToast({
+							title: '删除成功',
+							icon: 'none'
+						})
+						switchTab(tab.value + 1)
+					} else
+						uni.showToast({
+							title: '删除失败',
+							icon: 'none'
+						})
+				})
+			}
+		}
+	})
+}
+
+/**
+ * 重新付款
+ * @params card 订单信息
+ */
+const toPay = card => {
+	repay_order(card.id).then(res => {
+		uni.requestPayment({
+			provider: 'wxpay',
+			timeStamp: res.data.timeStamp,
+			nonceStr: res.data.nonceStr,
+			package: res.data.package,
+			signType: res.data.signType,
+			paySign: res.data.paySign,
+			success: function (res) {
+				if (res.errMsg === 'requestPayment:ok') {
+					uni.showToast({
+						title: '支付成功',
+						icon: 'none'
+					})
+				}
+			},
+			fail: function (err) {
+				console.log('fail', err)
+			}
+		})
+	})
+}
+
+// 确认收货
+const receive = card => {
+	uni.showModal({
+		title: '确认收货',
+		content: '是否确认收货',
+		success: function (res) {
+			if (res.confirm) {
+				post_receive(card.id).then(res => {
+					switchTab(tab.value + 1)
+				})
+			}
+		}
+	})
+}
+
+// 确定退款
+const refundVisible = ref(false)
+const refund_reason = ref('')
+const refund_order = () => {
+	post_refund(select_order.value.id, refund_reason.value).then(res => {
+		if (res.code = 200) {
+			refundVisible.value = false
+			uni.showToast({
+				title: '申请成功',
+				icon: 'none'
+			})
+			switchTab(tab.value + 1)
+		} else
+			uni.showToast({
+				title: '提交失败',
+				icon: 'none'
+			})
+	})
+}
+
+const resetRefund = () => {
+	refundVisible.value = false
+	refund_reason.value = ''
+}
+const cancelRefund = card => {
+	console.log('cancelRefund');
+}
+const showRefundDetail = card => {
+	console.log('showDetail')
+}
+
+/**
+ * 分享拼团
+ */
+const share = () => {
+	console.log('share');
+}
+
+
+const applyForAnswer = card => {
+	get_refund_agreement(card.id).then(res => {
+		uni.showModal({
+			title: '违约金',
+			content: `同城配送需要赔付违约金${res.data}元`,
+			confirmText: '同意',
+			success: (res) => {
+				if (res.confirm) {
+					select_order.value = card
+					refundVisible.value = true
+				}
+			},
+			cancelText: '拒绝'
+		})
+		console.log(res)
+	})
+}
+
 // 根据不同的状态设定不同的按钮展示
 const buttons = ref({
 	// 待付款
@@ -190,24 +317,24 @@ const buttons = ref({
 	'待发货': [
 		{
 			title: '申请退款',
-			fun: applyForRefund
+			fun: applyForAnswer
 		}
 	],
 	// 待收货
 	'待收货': [
 		{
-			title: '申请售后',
+			title: '申请退款',
 			fun: applyForAnswer
 		},
 		{
 			title: '确认收货',
-			fun: confirm,
+			fun: receive,
 			type: 'success'
 		}
 	],
 	'待接单': [
 		{
-			title: '申请售后',
+			title: '申请退款',
 			fun: applyForAnswer
 		},
 		{
@@ -218,7 +345,7 @@ const buttons = ref({
 	],
 	'已接单': [
 		{
-			title: '申请售后',
+			title: '申请退款',
 			fun: applyForAnswer
 		},
 		{
@@ -229,7 +356,7 @@ const buttons = ref({
 	],
 	'已到店': [
 		{
-			title: '申请售后',
+			title: '申请退款',
 			fun: applyForAnswer
 		},
 		{
@@ -240,7 +367,7 @@ const buttons = ref({
 	],
 	'配送中': [
 		{
-			title: '申请售后',
+			title: '申请退款',
 			fun: applyForAnswer
 		},
 		{
@@ -256,7 +383,7 @@ const buttons = ref({
 			fun: delete_order
 		},
 		{
-			title: '申请售后',
+			title: '申请退款',
 			fun: applyForAnswer
 		}
 	],
@@ -280,7 +407,7 @@ const buttons = ref({
 			fun: delete_order
 		},
 		{
-			title: '申请售后',
+			title: '申请退款',
 			fun: applyForAnswer
 		}
 	],
@@ -318,197 +445,6 @@ const buttons = ref({
 		}
 	],
 })
-
-const orders = ref([])
-
-const select_order = ref({})
-
-const toDetail = card => uni.navigateTo({
-	url: '/pages/me/order/detail?id=' + card.id
-})
-
-// 删除订单
-const delete_order = (card) => {
-	post_delete_order(card.id).then(res => {
-		if (res.code === 200) {
-			uni.showToast({
-				title: '删除成功',
-				icon: 'none'
-			})
-			switchTab(tab.value + 1)
-		} else
-			uni.showToast({
-				title: '删除失败',
-				icon: 'none'
-			})
-	})
-}
-
-/**
- * 跳转订单购买页面
- * @params card 订单信息
- */
-const toPay = card => {
-	console.log('toPay')
-}
-
-// 确定退款
-const refundVisible = ref(false)
-const refund_reason = ref('')
-const refund_order = () => {
-	post_refund(select_order.value.id, refund_reason.value).then(res => {
-		if (res.code = 200) {
-			refundVisible.value = false
-			uni.showToast({
-				title: '申请成功',
-				icon: 'none'
-			})
-			switchTab(tab.value + 1)
-		} else
-			uni.showToast({
-				title: '提交失败',
-				icon: 'none'
-			})
-	})
-}
-
-const resetRefund = () => {
-	refundVisible.value = false
-	refund_reason.value = ''
-}
-//申请退款
-const applyForRefund = (row) => {
-	select_order.value = row
-	refundVisible.value = true
-}
-const cancelRefund = card => {
-	console.log('cancelRefund');
-}
-const showRefundDetail = card => {
-	console.log('showDetail')
-}
-
-/**
- * 分享拼团
- */
-const share = () => {
-	console.log('share');
-}
-
-/**
- * 确认收货
- * @param card 订单信息
- */
-const confirm = card => {
-	console.log('confirm');
-}
-
-const applyForAnswer = card => {
-	console.log('applyForAnswer');
-}
-
-
-// 再次申请
-const re_apply = (card) => {
-	refundVisible.value = true
-	refund_reason.value = ''
-	select_order.value = card
-}
-
-
-const order_click = (card) => {
-	select_order.value = card
-	// 重新付款
-	if (card.state === 0) {
-		repay_order(card.id).then(res => {
-			uni.requestPayment({
-				provider: 'wxpay',
-				timeStamp: res.data.timeStamp,
-				nonceStr: res.data.nonceStr,
-				package: res.data.package,
-				signType: res.data.signType,
-				paySign: res.data.paySign,
-				success: function (res) {
-					if (res.errMsg === 'requestPayment:ok') {
-						uni.showToast({
-							title: '支付成功',
-							icon: 'none'
-						})
-					}
-				},
-				fail: function (err) {
-					console.log('fail', err)
-				},
-				complete: () => {
-					switchTab(tab.value + 1)
-				},
-			})
-		})
-	}
-	// 确认收货
-	if (card.state === 2) {
-		uni.showModal({
-			title: '确认收货',
-			content: '是否确认收货',
-			success: function (res) {
-				if (res.confirm) {
-					post_receive(card.id).then(res => {
-						switchTab(tab.value + 1)
-					})
-				}
-			}
-		})
-	}
-	// 申请退款
-	if (card.state === 3 || card.state === 1) {
-		refundVisible.value = true
-	}
-	// 拒绝原因
-	if (card.state === 5) {
-		uni.showModal({
-			title: '拒绝原因',
-			content: card.refuse,
-			showCancel: false,
-		})
-	}
-	// 取消拼团
-	if (card.state === 7) {
-		uni.showModal({
-			title: '取消拼团',
-			content: '是否取消拼团',
-			success: function (res) {
-				if (res.confirm) {
-					close_teamwork(card.activity_id).then(res => {
-						switchTab(tab.value + 1)
-					})
-				}
-			}
-		})
-	}
-	// 再次拼团
-	if (card.state === 8 || card.state === 9) {
-		uni.showModal({
-			title: '再次拼团',
-			content: '是否再次拼团',
-			success: function (res) {
-				if (res.confirm) {
-					get_today_detail(card.id).then(res => {
-						if (res.code === 200)
-							uni.navigateTo({
-								url: '/pages/index/today/detail/index?id=' + card.id
-							})
-						else
-							uni.showToast({
-								title: res.message,
-								icon: 'none'
-							})
-					})
-					switchTab(tab.value + 1)
-				}
-			}
-		})
-	}
-}
 
 
 onLoad((options) => {

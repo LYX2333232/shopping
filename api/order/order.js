@@ -43,3 +43,6 @@ export const post_delete_order = (id) => request.post('/order/delete_order', {
 })
 
 export const get_order_detail = (id) => request.get('/order/detail', { id })
+
+// 获取退款协议
+export const get_refund_agreement = origin_id => request.get('/order/order_redund_price', { origin_id })
