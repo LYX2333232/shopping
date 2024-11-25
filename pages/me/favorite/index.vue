@@ -49,8 +49,8 @@
         </view>
       </template>
     </TnWaterFall>
-    <view class="cart">
-      <TnBadge value="1" type="danger">
+    <view class="cart" @click="toCart">
+      <TnBadge :value="store.cart" type="danger">
         <TnIcon name="cart" color="#999" size="40" />
       </TnBadge>
     </view>
@@ -66,6 +66,9 @@ import TnBadge from '@tuniao/tnui-vue3-uniapp/components/badge/src/badge.vue'
 import TnWaterFall from '@tuniao/tnui-vue3-uniapp/components/water-fall/src/water-fall.vue'
 import Header from '@/components/header.vue'
 import { get_favorite_list } from '@/api/goods/goods'
+import { CartStore } from '@/store'
+
+const store = CartStore()
 
 const list = ref([])
 
@@ -82,6 +85,10 @@ const toDetail = item => {
   // 拼团商品
   if (item.teamwork) uni.navigateTo({ url: '/pages/index/today/detail/index?id=' + item.id })
   else uni.navigateTo({ url: '/pages/goods/goods_detail?id=' + item.id })
+}
+
+const toCart = () => {
+  uni.switchTab({ url: '/pages/shopping/shopping' })
 }
 
 onShow(() => {

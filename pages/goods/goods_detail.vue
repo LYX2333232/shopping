@@ -87,11 +87,14 @@
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
-import { get_goods_detail, set_favorite } from '@/api/goods/goods'
+import { get_goods_detail } from '@/api/goods/goods'
 import { add_to_cart } from '@/api/cart/cart'
 import Header from '@/components/header.vue'
 import swiper from '@/uni_modules/nutui-uni/components/swiper/swiper.vue'
 import GoodNav from '@/components/goodNav'
+import { CartStore } from '@/store'
+
+const cart = CartStore()
 
 // 轮播图相关
 const swiperVideo = ref([])
@@ -140,12 +143,13 @@ const changeLike = () => {
 function buttonClick() {
 	// 加入购物车
 	add_to_cart(size.value[sizeIndex.value].id, cont.value).then(res => {
-		if (res.code == 200)
+		if (res.code == 200) {
 			uni.showToast({
 				title: '加入购物车成功',
 				icon: 'none'
 			})
-
+			cart.update()
+		}
 		else
 			uni.showToast({
 				title: res.msg,

@@ -10,9 +10,7 @@ export const UserStore = defineStore('cp-user', () => {
     const login = () => {
         uni.login({
             complete(e) {
-                request.post('/auth/query_login', {
-                    code: e.code
-                }).then(res => {
+                request.post('/auth/query_login', { code: e.code }).then(res => {
                     if (res.code == 200 && res.data !== 0) {
                         set_user_info(res.data)
                     }

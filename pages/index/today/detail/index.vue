@@ -13,7 +13,7 @@
                 <view v-if="other" class="other">
                     <image :src="other.avatar" mode="scaleToFill" class="avatar" />
                     <view>
-                        {{ other.name }}在{{ other.time }}抢购了该商品
+                        {{ other.name + other.text }}
                     </view>
                 </view>
             </view>
@@ -94,7 +94,7 @@
             </view>
         </view>
     </view>
-    <GoodNav :id="size.id" :like="like" :normal="false" @buttonClick="buttonClick" @changeLike="changeLike" />
+    <GoodNav :id="size.id" :like="size.like" :normal="false" @buttonClick="buttonClick" @changeLike="changeLike" />
     <!-- 分享定义在组件goods-nav中 -->
 </template>
 
@@ -157,8 +157,7 @@ const content = ref('')
 const like = ref(0)
 
 const changeLike = () => {
-    like.value = like.value ? 0 : 1
-    console.log(like.value)
+    size.value.is_like = size.value.is_like ? 0 : 1
 }
 
 function buttonClick() {

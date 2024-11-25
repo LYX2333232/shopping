@@ -8,10 +8,12 @@
       </swiper-item>
     </swiper>
     <view class="show">
-      <view class="other">
-        <image :src="other.avatar" mode="scaleToFill" class="avatar" />
-        <view>
-          {{ other.name }}在{{ other.time }}抢购了该商品
+      <view>
+        <view v-if="other.length > 0" class="other">
+          <image :src="other.avatar" mode="scaleToFill" class="avatar" />
+          <view>
+            {{ other.name + other.text }}
+          </view>
         </view>
       </view>
       <view class="index">
@@ -76,7 +78,7 @@
       </view>
     </view>
   </view>
-  <GoodNav :id="c_id" :like="like" :normal="false" @buttonClick="buttonClick" @changeLike="changeLike" />
+  <GoodNav :id="c_id" :like="size.is_like" :normal="false" @buttonClick="buttonClick" @changeLike="changeLike" />
   <!-- 分享定义在组件goods-nav中 -->
 </template>
 
@@ -136,7 +138,7 @@ const content = ref('')
 const like = ref(0)
 
 const changeLike = () => {
-  like.value = like.value ? 0 : 1
+  size.value.is_like = size.value.is_like ? 0 : 1
 }
 
 /**
@@ -164,6 +166,7 @@ onLoad((options) => {
 
     // 规格
     size.value = res.data.item
+    other.value = res.data.users[0]
 
     // 商品名称
     name.value = res.data.name

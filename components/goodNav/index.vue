@@ -2,8 +2,8 @@
     <view class="nav">
         <view class="tn-w-full tn-flex-center-evenly">
             <button class="icon" @click="toCart">
-                <view class="badge" v-if="props.cart > 0">
-                    {{ props.cart }}
+                <view class="badge" v-if="cart.cart > 0">
+                    {{ cart.cart }}
                 </view>
                 <TnIcon name="cart" size="50" :custom-style="{ height: 0 }" color="#000" />
                 <text>购物车</text>
@@ -32,15 +32,14 @@
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnCountDown from '@/uni_modules/tuniaoui-vue3/components/count-down/src/count-down.vue'
 import { set_favorite } from '@/api/goods/goods'
+import { CartStore } from '@/store'
+
+const cart = CartStore()
 
 const props = defineProps({
     id: {
         type: Number,
         required: true
-    },
-    cart: {
-        type: Number,
-        default: 3
     },
     like: {
         type: Number,

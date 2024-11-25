@@ -204,6 +204,9 @@ import Header from '@/components/header'
 import AddressPopup from '@/components/AddressPopup'
 import { get_usable_coupon } from '@/api/coupon/coupon'
 import { new_order, get_order_price } from '@/api/order/order'
+import { CartStore } from '@/store'
+
+const cart = CartStore()
 
 const order = ref({})
 const pay_way = ref(true)
@@ -266,99 +269,54 @@ const total_price = computed(() => {
   return res
 })
 
-const pay = () => {
+const pay = async () => {
   console.log(order.value)
+  var res
   // 普通商品
   if (type.value === 0)
-    new_order({
+    res = await new_order({
       ids: order.value.ids,
       address_id: order.value.address.id,
       coupon_id: order.value.coupon ? order.value.coupon.id : undefined,
       shopping_cart_ids: order.value.shopping_cart_ids
-    }).then(res => {
-      uni.requestPayment({
-        provider: 'wxpay',
-        timeStamp: res.data.timeStamp,
-        nonceStr: res.data.nonceStr,
-        package: res.data.package,
-        signType: res.data.signType,
-        paySign: res.data.paySign,
-        success: function (res) {
-          if (res.errMsg === 'requestPayment:ok') {
-            uni.showToast({
-              title: '支付成功',
-              icon: 'none'
-            })
-          }
-        },
-        fail: function (err) {
-          console.log('fail', err)
-        },
-        complete: () => {
-          uni.reLaunch({ url: '/pages/me/order/detail?id=' + res.data.order_id })
-        }
-      })
     })
   // 拼团商品
   else if (type.value === 1)
-    new_order({
+    res = await new_order({
       address_id: order.value.address.id,
       teamwork_com_id: order.value.teamwork_com_id,
       com_cont: order.value.com_cont
-    }).then(res => {
-      uni.requestPayment({
-        provider: 'wxpay',
-        timeStamp: res.data.timeStamp,
-        nonceStr: res.data.nonceStr,
-        package: res.data.package,
-        signType: res.data.signType,
-        paySign: res.data.paySign,
-        success: function (res) {
-          if (res.errMsg === 'requestPayment:ok') {
-            uni.showToast({
-              title: '支付成功',
-              icon: 'none'
-            })
-          }
-        },
-        fail: function (err) {
-          console.log('fail', err)
-        },
-        complete: () => {
-          uni.reLaunch({ url: '/pages/me/order/detail?id=' + res.data.order_id })
-        }
-      })
     })
   // 秒杀商品
   else
-    new_order({
+    res = await new_order({
       address_id: order.value.address.id,
       flash_com_id: order.value.flash_com_id,
       com_cont: order.value.com_cont
-    }).then(res => {
-      uni.requestPayment({
-        provider: 'wxpay',
-        timeStamp: res.data.timeStamp,
-        nonceStr: res.data.nonceStr,
-        package: res.data.package,
-        signType: res.data.signType,
-        paySign: res.data.paySign,
-        success: function (res) {
-          if (res.errMsg === 'requestPayment:ok') {
-            uni.showToast({
-              title: '支付成功',
-              icon: 'none'
-            })
-          }
-        },
-        fail: function (err) {
-          console.log('fail', err)
-        },
-        complete: () => {
-          uni.reLaunch({ url: '/pages/me/order/detail?id=' + res.data.order_id })
-        }
-      })
     })
+  uni.requestPayment({
+    provider: 'wxpay',
+    timeStamp: res.data.timeStamp,
+    nonceStr: res.data.nonceStr,
+    package: res.data.package,
+    signType: res.data.signType,
+    paySign: res.data.paySign,
+    success: function (res) {
+      if (res.errMsg === 'requestPayment:ok') {
+        uni.showToast({
+          title: '支付成功',
+          icon: 'none'
+        })
+      }
+    },
+    fail: function (err) {
+      console.log('fail', err)
+    },
+    complete: () => {
+      uni.reLaunch({ url: '/pages/me/order/detail?id=' + res.data.order_id })
+      cart.update()
+    }
+  })
 }
 
 onLoad(options => {

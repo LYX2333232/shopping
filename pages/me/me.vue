@@ -176,10 +176,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
-import { UserStore } from '@/store'
-import { uploadImage, Login, add_us } from '@/api/user/user'
-import { get_order_count } from '@/api/order/order'
-import { post_feedback } from '@/api/feedback/feedback'
+
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 import TnForm from '@/uni_modules/tuniaoui-vue3/components/form/src/form.vue'
@@ -188,6 +185,11 @@ import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
 import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 import TnBadge from '@/uni_modules/tuniaoui-vue3/components/badge/src/badge.vue'
+
+import { UserStore, CartStore } from '@/store'
+import { uploadImage, Login, add_us } from '@/api/user/user'
+import { get_order_count } from '@/api/order/order'
+import { post_feedback } from '@/api/feedback/feedback'
 
 onMounted(() => {
 	if (!store.userInfo) {
@@ -198,6 +200,7 @@ onMounted(() => {
 })
 
 const store = UserStore()
+const cart = CartStore()
 
 const funList0 = ref([{
 	name: '账户余额',
@@ -258,19 +261,6 @@ const login_form = ref({
 // 展示登录弹窗
 const showLogin = () => {
 	loginVisible.value = true
-}
-
-const compare = (a, b) => {
-	const a_array = a.split('.').map(e => parseInt(e))
-	const b_array = b.split('.').map(e => parseInt(e))
-	for (let i = 0; i < a_array.length; i++) {
-		if (a_array[i] > b_array[i]) {
-			return 1
-		} else if (a_array[i] < b_array[i]) {
-			return -1
-		}
-	}
-	return 0
 }
 
 // 点击分销
@@ -362,6 +352,7 @@ const getphonenumber = (e) => {
 					loginVisible.value = false
 					// 获取用户信息
 					store.set_user_info(res.data)
+					cart.update()
 				}
 			})
 		},
@@ -484,7 +475,7 @@ const getData = () => {
 	funList1.value = list
 
 	get_order_count().then(res => {
-		order_count.value = [res.data.pay, res.data.delivery, res.data.collect, 0]
+		order_count.value = [res.data.pay, res.data.delivery, res.data.collect, res.data.refund]
 	})
 }
 
