@@ -42,9 +42,9 @@
 			<image
 				src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhTcBKpUgwer5OCCic51cf2LcTZxA5rVFQEGxtVt0kIP1dxic6tTEgrte4Uelyw6FcO7HaVDicj9RUnqA/0?wx_fmt=png"
 				mode="scaleToFill" class="logo" />
-			<TnWaterFall :data="infoList" mode="calc">
+			<TnWaterFall ref="waterfall" :data="infoList" mode="calc">
 				<template #left="{ item }">
-					<view class="block3" @click="toDetail(item.id)">
+					<view class="block3" @click="toDetail(item)">
 						<image :src="item.path" mode="aspectFit" class="image"></image>
 						<view class="name">
 							{{ item.name }}
@@ -66,7 +66,7 @@
 					</view>
 				</template>
 				<template #right="{ item }">
-					<view class="block3" @click="toDetail(item.id)">
+					<view class="block3" @click="toDetail(item)">
 						<image :src="item.path" mode="aspectFit" class="image"></image>
 						<view class="name">
 							{{ item.name }}
@@ -150,6 +150,8 @@ const select_goods = ref([])
 const deleteList = ref([])
 
 const infoList = ref([])
+
+const waterfall = ref()
 
 const updateTotal = () => {
 	let temp = 0
@@ -241,9 +243,10 @@ const tocaculate = () => {
 		})
 		return
 	}
-	const ids = select_goods.value.map(item => ({ id: item.item_id, cont: item.cont, shopping_cart_id: item.id }))
+	const ids = select_goods.value.map(item => ({ id: item.item_id, cont: item.cont }))
+	const shopping = select_goods.value.map(item => item.id)
 	uni.navigateTo({
-		url: '/pages/me/order/new_order?ids=' + JSON.stringify(ids)// 将选中的商品id传到订单页面
+		url: `/pages/me/order/new_order?ids=${JSON.stringify(ids)}&shopping=${JSON.stringify(shopping)}` // 将选中的商品id传到订单页面
 	})
 }
 
@@ -281,6 +284,24 @@ onShow(() => {
 	getData()
 })
 
+const toDetail = good => {
+	var url = ''
+	switch (good.type) {
+		case 0:
+			url = '/pages/goods/goods_detail?id=' + good.id
+			break
+		case 1:
+			url = '/pages/index/today/detail/index?id=' + good.teamwork_id
+			break
+		case 2:
+			url = '/pages/index/seckill/detail/index?id=' + good.flash_id
+			break
+	}
+	uni.navigateTo({
+		url: url
+	})
+}
+
 onReachBottom(() => {
 	page++
 	get_cart_list(page).then(res => {
@@ -292,6 +313,12 @@ onReachBottom(() => {
 		}))
 	})
 	get_commodity({ ids: infoList.value.map(item => item.id) }).then(res => {
+		waterfall.value.reset()
+		// 将页面滚动到数据顶部
+		uni.pageScrollTo({
+			selector: '.suggest',
+			duration: 100
+		})
 		infoList.value = res.data.data
 	})
 })
@@ -393,7 +420,7 @@ onReachBottom(() => {
 	}
 
 	.block3 {
-		width: 90%;
+		width: 100%;
 		background: #FFF;
 		margin-bottom: 20rpx;
 		border-radius: 20rpx;

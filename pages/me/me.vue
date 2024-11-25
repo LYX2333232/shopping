@@ -93,7 +93,7 @@
 							{{ item.name }}
 						</view>
 					</button>
-					<button v-else style="background:none;border:none;padding:0;" @click="tap_application(index)">
+					<button v-else style="background:none;border:none;padding:0;">
 						<img class="img" :src="item.icon" alt="" mode="scaleToFill" />
 						<view class="text" style="margin-top:-30rpx">
 							{{ item.name }}

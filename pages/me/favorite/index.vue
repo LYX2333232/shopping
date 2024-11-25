@@ -6,7 +6,7 @@
         <view class="item" @click="toDetail(item)">
           <image :src="item.path" class="image" mode="aspectFit" />
           <view class="title">
-            <text v-if="item.teamwork" class="group">三人团 | </text>
+            <text v-if="item.teamwork" class="group">{{ item.teamwork.teamwork_count }}人团 | </text>
             {{ item.name }}
           </view>
           <view class="bottom">
@@ -19,7 +19,7 @@
                 ￥{{ item.or_price }}
               </view>
             </view>
-            <TnBadge :value="item.shopping_count ?? ''" type="danger">
+            <TnBadge :value="item.shopping_count > 0 ? item.shopping_count : ''" type="danger">
               <image class="btn" :src="item.teamwork ? ping : cart" mode="scaleToFill" />
             </TnBadge>
           </view>
@@ -29,7 +29,7 @@
         <view class="item">
           <image :src="item.path" class="image" mode="aspectFit" />
           <view class="title">
-            <text v-if="item.teamwork" class="group">三人团 | </text>
+            <text v-if="item.teamwork" class="group">{{ item.teamwork.teamwork_count }}人团 | </text>
             {{ item.name }}
           </view>
           <view class="bottom">
@@ -42,7 +42,7 @@
                 ￥{{ item.or_price }}
               </view>
             </view>
-            <TnBadge :value="item.shopping_count ?? ''" type="danger">
+            <TnBadge :value="item.shopping_count > 0 ? item.shopping_count : ''" type="danger">
               <image class="btn" :src="item.teamwork ? ping : cart" mode="scaleToFill" />
             </TnBadge>
           </view>
@@ -50,7 +50,7 @@
       </template>
     </TnWaterFall>
     <view class="cart" @click="toCart">
-      <TnBadge :value="store.cart" type="danger">
+      <TnBadge :value="store.cart > 0 ? store.cart : ''" type="danger">
         <TnIcon name="cart" color="#999" size="40" />
       </TnBadge>
     </view>
@@ -64,6 +64,7 @@ import { onShow } from '@dcloudio/uni-app'
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
 import TnBadge from '@tuniao/tnui-vue3-uniapp/components/badge/src/badge.vue'
 import TnWaterFall from '@tuniao/tnui-vue3-uniapp/components/water-fall/src/water-fall.vue'
+
 import Header from '@/components/header.vue'
 import { get_favorite_list } from '@/api/goods/goods'
 import { CartStore } from '@/store'
@@ -87,9 +88,7 @@ const toDetail = item => {
   else uni.navigateTo({ url: '/pages/goods/goods_detail?id=' + item.id })
 }
 
-const toCart = () => {
-  uni.switchTab({ url: '/pages/shopping/shopping' })
-}
+const toCart = () => uni.switchTab({ url: '/pages/shopping/shopping' })
 
 onShow(() => {
   getData()

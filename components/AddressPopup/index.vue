@@ -26,6 +26,7 @@
         </view>
         <TnIcon name="edit" size="56" @click="toDetail(item.id)" />
       </view>
+      <TnButton width="710" height="100" shape="round" type="success" @click="newAddress">新增地址</TnButton>
     </view>
   </TnPopup>
 </template>
@@ -34,6 +35,7 @@
 import { ref } from 'vue'
 
 import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
+import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
 import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
 import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
 
@@ -79,6 +81,9 @@ const close = () => {
 }
 const toDetail = id => uni.navigateTo({
   url: '/pages/me/address/editPage?index=' + id
+})
+const newAddress = () => uni.navigateTo({
+  url: '/pages/me/address/editPage?index=-1'
 })
 </script>
 

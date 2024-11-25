@@ -110,7 +110,7 @@
 					</view>
 				</view>
 			</view>
-			<TnWaterFall :data="infoList" mode="calc">
+			<TnWaterFall ref="waterfall" :data="infoList" mode="calc">
 				<template #left="{ item }">
 					<view class="block3" @click="toDetail(item.id)">
 						<image :src="item.path" mode="aspectFit" class="image"></image>
@@ -216,6 +216,8 @@ const toToday = () => uni.navigateTo({
 	url: '/pages/index/today/index'
 })
 
+const waterfall = ref()
+
 // 底部推荐商品
 const infoList = ref()
 
@@ -254,12 +256,13 @@ onReachBottom(() => {
 		ids: infoList.value.map(item => item.id)
 	}
 	get_commodity(data).then(res => {
-		infoList.value = res.data.data
+		waterfall.value.reset()
 		// 将页面滚动到数据顶部
 		uni.pageScrollTo({
-			selector: '.title',
+			selector: '.functions',
 			duration: 100
 		})
+		infoList.value = res.data.data
 	})
 })
 

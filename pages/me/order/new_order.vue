@@ -210,6 +210,55 @@ const cart = CartStore()
 
 const order = ref({})
 const pay_way = ref(true)
+var flash_com_id
+var teamwork_com_id
+var com_cont
+var ids
+var shopping_cart_ids
+
+/**
+ * 获取订单价格和运费
+ */
+const getOrderPrice = () => {
+  const address = order.value.address
+  console.log(address)
+  // 秒杀商品
+  if (flash_com_id) {
+    get_order_price({ flash_com_id, com_cont, address_id: address?.id }).then(res => {
+      order.value = {
+        ...res.data,
+        com_item: [res.data.com_item],
+        address
+      }
+      type.value = 2
+    })
+    return
+  }
+  if (teamwork_com_id) {
+    get_order_price({ teamwork_com_id, com_cont, address_id: address?.id }).then(res => {
+      order.value = {
+        ...res.data,
+        com_item: [res.data.com_item],
+        address
+      }
+      type.value = 1
+    })
+    return
+  }
+
+  // 普通商品
+  get_order_price({ ids, address_id: address?.id }).then(res => {
+    console.log(res.data)
+    order.value = {
+      ...res.data,
+      address
+    }
+  })
+  get_usable_coupon({ ids }).then(res => {
+    usable_list.value = res.data.keyong.map(item => ({ ...item, isSelect: false }))
+    unusable_list.value = res.data.bukeyong
+  })
+}
 
 // 判断是普通商品还是活动商品 0普通 1拼团 2秒杀
 const type = ref(0)
@@ -223,6 +272,7 @@ const showAddress = () => {
 }
 const changeAddress = item => {
   order.value.address = item
+  getOrderPrice()
 }
 
 // 优惠券列表
@@ -261,7 +311,7 @@ const coupon_price = computed(() => {
 })
 
 const total_price = computed(() => {
-  var res = order.value.show_price + order.value.freight
+  var res = order.value.show_price + parseFloat(order.value.freight)
   // 活动商品
   if (type) res -= order.value.discount_price
   // 使用优惠券
@@ -269,30 +319,32 @@ const total_price = computed(() => {
   return res
 })
 
+/**
+ * 支付订单
+ */
 const pay = async () => {
-  console.log(order.value)
   var res
   // 普通商品
   if (type.value === 0)
     res = await new_order({
-      ids: order.value.ids,
+      ids,
       address_id: order.value.address.id,
       coupon_id: order.value.coupon ? order.value.coupon.id : undefined,
-      shopping_cart_ids: order.value.shopping_cart_ids
+      shopping_cart_ids
     })
   // 拼团商品
   else if (type.value === 1)
     res = await new_order({
       address_id: order.value.address.id,
-      teamwork_com_id: order.value.teamwork_com_id,
-      com_cont: order.value.com_cont
+      teamwork_com_id,
+      com_cont
     })
   // 秒杀商品
   else
     res = await new_order({
       address_id: order.value.address.id,
-      flash_com_id: order.value.flash_com_id,
-      com_cont: order.value.com_cont
+      flash_com_id,
+      com_cont
     })
   uni.requestPayment({
     provider: 'wxpay',
@@ -320,47 +372,14 @@ const pay = async () => {
 }
 
 onLoad(options => {
-  console.log(options.ids)
-  const flash_com_id = options.flash_id
-  const teamwork_com_id = options.teamwork_id
-  const com_cont = options.com_cont
-  // 秒杀商品
-  if (flash_com_id) {
-    get_order_price({ flash_com_id, com_cont }).then(res => {
-      order.value = {
-        ...res.data,
-        com_item: [res.data.com_item]
-      }
-      type.value = 2
-      order.value.flash_com_id = flash_com_id
-      order.value.com_cont = com_cont
-    })
-    return
+  flash_com_id = options.flash_id
+  teamwork_com_id = options.teamwork_id
+  com_cont = options.com_cont
+  if (options.ids) {
+    ids = JSON.parse(options.ids)
+    shopping_cart_ids = JSON.parse(options.shopping)
   }
-  if (teamwork_com_id) {
-    get_order_price({ teamwork_com_id, com_cont }).then(res => {
-      order.value = {
-        ...res.data,
-        com_item: [res.data.com_item]
-      }
-      type.value = 1
-      order.value.teamwork_com_id = teamwork_com_id
-      order.value.com_cont = com_cont
-    })
-    return
-  }
-
-  // 普通商品
-  const ids = JSON.parse(options.ids)
-  get_order_price({ ids }).then(res => {
-    order.value = res.data
-    order.value.shopping_cart_ids = ids.map(item => item.shopping_cart_id)
-    order.value.ids = ids.map(item => ({ id: item.id, cont: item.cont }))
-  })
-  get_usable_coupon({ ids }).then(res => {
-    usable_list.value = res.data.keyong.map(item => ({ ...item, isSelect: false }))
-    unusable_list.value = res.data.bukeyong
-  })
+  getOrderPrice()
 })
 </script>
 

@@ -210,8 +210,8 @@ onReachBottom(() => {
 .header {
 	width: 100%;
 	padding: 100rpx 20rpx 0;
-	height: 25vh;
 	background: linear-gradient(180deg, #F1FFE9 0%, #E0FFE3 100%);
+	background-size: 100% 100%;
 
 	.search {
 		display: flex;
@@ -319,6 +319,7 @@ onReachBottom(() => {
 				width: 188rpx;
 				height: 188rpx;
 				margin-right: 20rpx;
+				flex-shrink: 0;
 			}
 
 			.right {
