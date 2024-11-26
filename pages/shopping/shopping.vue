@@ -42,7 +42,7 @@
 			<image
 				src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhTcBKpUgwer5OCCic51cf2LcTZxA5rVFQEGxtVt0kIP1dxic6tTEgrte4Uelyw6FcO7HaVDicj9RUnqA/0?wx_fmt=png"
 				mode="scaleToFill" class="logo" />
-			<TnWaterFall ref="waterfall" :data="infoList" mode="calc">
+			<TnWaterFall :data="infoList" mode="calc">
 				<template #left="{ item }">
 					<view class="block3" @click="toDetail(item)">
 						<image :src="item.path" mode="aspectFit" class="image"></image>
@@ -151,8 +151,6 @@ const deleteList = ref([])
 
 const infoList = ref([])
 
-const waterfall = ref()
-
 const updateTotal = () => {
 	let temp = 0
 	select_goods.value = []
@@ -207,9 +205,11 @@ const del = () => {
 				select_goods.value.forEach(item => {
 					list.push(del_cart(item.id))
 				})
-				Promise.all(list).then(res => {
+				del_cart(select_goods.value.map(item => item.item_id)).then(res => {
 					if (res.code === 200) {
 						dataList.value = dataList.value.filter(item => !select_goods.value.includes(item))
+						console.log(dataList.value, select_goods.value);
+						if (dataList.value.length === 0) is_empty.value = true
 						uni.showToast({
 							title: '删除成功',
 							icon: 'none'
@@ -277,7 +277,10 @@ const getData = () => {
 		})
 	})
 	get_commodity({ ids: infoList.value.map(item => item.id) }).then(res => {
-		infoList.value = res.data.data
+		infoList.value = res.data.data.map(item => ({
+			...item,
+			type: item.teamwork_id ? 1 : item.flash_id ? 2 : 0
+		}))
 	})
 }
 onShow(() => {
@@ -313,13 +316,7 @@ onReachBottom(() => {
 		}))
 	})
 	get_commodity({ ids: infoList.value.map(item => item.id) }).then(res => {
-		waterfall.value.reset()
-		// 将页面滚动到数据顶部
-		uni.pageScrollTo({
-			selector: '.suggest',
-			duration: 100
-		})
-		infoList.value = res.data.data
+		infoList.value = infoList.value.concat(res.data.data)
 	})
 })
 </script>

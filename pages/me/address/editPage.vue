@@ -6,7 +6,7 @@
         <view class="tn-flex-center-start" @click="onRegionChange">
           <view class="label">选择地区</view>
           <view class="tn-flex-center-start" style="flex:auto">
-            {{ form.address }}
+            {{ form.address + form.address_name }}
           </view>
           <TnIcon name="down" />
         </view>
@@ -23,13 +23,17 @@
       <TnListItem width="100%">
         <view class="tn-flex-center-start">
           <view class="label">联系人</view>
-          <TnInput :maxlength="10" :border="false" type="text" placeholder="请输入姓名" v-model="form.name"></TnInput>
+          <view style="width:100%">
+            <TnInput :maxlength="10" :border="false" type="text" placeholder="请输入姓名" v-model="form.name"></TnInput>
+          </view>
         </view>
       </TnListItem>
       <TnListItem width="100%">
         <view class="tn-flex-center-start">
           <view class="label">手机号</view>
-          <TnInput :border="false" type="number" :maxlength="11" placeholder="请输入手机号" v-model="form.phone"></TnInput>
+          <view style="width:100%">
+            <TnInput :border="false" type="number" :maxlength="11" placeholder="请输入手机号" v-model="form.phone"></TnInput>
+          </view>
         </view>
       </TnListItem>
       <TnListItem width="100%">
@@ -86,7 +90,7 @@ const onRegionChange = (e) => {
       form.value = {
         ...form.value,
         address: res.address,
-        detail: res.name,
+        address_name: res.name,
         lat: res.latitude,
         lng: res.longitude
       }
@@ -95,13 +99,12 @@ const onRegionChange = (e) => {
 }
 
 const can_save = computed(() => {
-  return form.value.name && form.value.phone && form.value.address && form.value.detail
+  return form.value.name && form.value.phone && form.value.address && form.value.address_name && form.value.detail
 })
-console.log(can_save);
 
 const save = () => {
   if (can_save.value)
-    add_address({ ...form.value, default: form.default ? 1 : 0 }).then((res) => {
+    add_address({ ...form.value, default: form.value.default ? 1 : 0 }).then((res) => {
       console.log(res);
       if (res.code === 200) {
         uni.showToast({

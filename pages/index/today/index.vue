@@ -22,8 +22,8 @@
             已有{{ item.seng.length }}人参团
           </view>
           <view class="btn">
-            <view class="price">拼团到手￥{{ item.price }}</view>
-            <view class="old">单买到手￥{{ item.teamwork_price }}</view>
+            <view class="price">拼团到手￥{{ item.teamwork_price }}</view>
+            <view class="old">单买到手￥{{ item.price }}</view>
           </view>
         </view>
       </view>

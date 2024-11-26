@@ -23,11 +23,10 @@
 				</view>
 			</view>
 			<TnSwiper loop autoplay :data="swiperData" width="100%" height="280" indicator indicator-type="dot"
-				indicator-active-bg-color="#FFF" indicator-bg-color="rgba(255,255,255,0.6)">
+				indicator-active-bg-color="#FFF" indicator-bg-color="rgba(255,255,255,0.6)" @item-click="toWeb">
 				<template #default="{ data }">
 					<view class="swiper-data">
-						<image style="width: 710rpx;height: 274rpx;" :src="data.path" mode="scaleToFill"
-							@click="toWeb(data.path)"></image>
+						<image style="width: 710rpx;height: 274rpx;" :src="data.path" mode="scaleToFill"></image>
 					</view>
 				</template>
 			</TnSwiper>
@@ -110,7 +109,7 @@
 					</view>
 				</view>
 			</view>
-			<TnWaterFall ref="waterfall" :data="infoList" mode="calc">
+			<TnWaterFall :data="infoList">
 				<template #left="{ item }">
 					<view class="block3" @click="toDetail(item.id)">
 						<image :src="item.path" mode="aspectFit" class="image"></image>
@@ -184,9 +183,12 @@ const changeAddress = item => {
 // 轮播图数据	
 const swiperData = ref([])
 
-const toWeb = path => uni.navigateTo({
-	url: '/pages/web/index?src=' + path
-})
+const toWeb = value => {
+	console.log(value)
+	uni.navigateTo({
+		url: '/pages/web/index?src=' + swiperData.value[value].path
+	})
+}
 
 // 顶部的按钮
 const top_button = async index => {
@@ -216,12 +218,11 @@ const toToday = () => uni.navigateTo({
 	url: '/pages/index/today/index'
 })
 
-const waterfall = ref()
-
 // 底部推荐商品
 const infoList = ref()
 
 const toDetail = (id) => {
+	console.log(id)
 	uni.navigateTo({
 		url: '/pages/goods/goods_detail?id=' + id,
 	})
@@ -256,13 +257,7 @@ onReachBottom(() => {
 		ids: infoList.value.map(item => item.id)
 	}
 	get_commodity(data).then(res => {
-		waterfall.value.reset()
-		// 将页面滚动到数据顶部
-		uni.pageScrollTo({
-			selector: '.functions',
-			duration: 100
-		})
-		infoList.value = res.data.data
+		infoList.value = infoList.value.concat(res.data.data)
 	})
 })
 

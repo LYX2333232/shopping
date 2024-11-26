@@ -84,8 +84,8 @@ const getData = () => {
 
 const toDetail = item => {
   // 拼团商品
-  if (item.teamwork) uni.navigateTo({ url: '/pages/index/today/detail/index?id=' + item.id })
-  else uni.navigateTo({ url: '/pages/goods/goods_detail?id=' + item.id })
+  if (item.teamwork) uni.navigateTo({ url: '/pages/index/today/detail/index?id=' + item.teamwork.teamwork_id })
+  else uni.navigateTo({ url: '/pages/goods/goods_detail?id=' + item.commodity_id })
 }
 
 const toCart = () => uni.switchTab({ url: '/pages/shopping/shopping' })

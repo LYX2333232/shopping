@@ -85,7 +85,7 @@
           小计：
         </view>
         <view class="res pay">
-          ￥ {{ total_price.toFixed(2) }}
+          ￥ {{ order.price }}
         </view>
       </view>
     </view>
@@ -108,7 +108,7 @@
     <view class="res">
       应付：
       <view class="pay">
-        ￥{{ total_price.toFixed(2) }}
+        ￥{{ order.price }}
       </view>
     </view>
     <TnButton type="success" size="xl" shape="round" @click="pay">
@@ -235,7 +235,7 @@ const getOrderPrice = () => {
     return
   }
   if (teamwork_com_id) {
-    get_order_price({ teamwork_com_id, com_cont, address_id: address?.id }).then(res => {
+    get_order_price({ teamwork_com_id, com_cont }).then(res => {
       order.value = {
         ...res.data,
         com_item: [res.data.com_item],
@@ -247,7 +247,7 @@ const getOrderPrice = () => {
   }
 
   // 普通商品
-  get_order_price({ ids, address_id: address?.id }).then(res => {
+  get_order_price({ ids, address_id: address?.id, coupon_id: order.value.coupon?.id }).then(res => {
     console.log(res.data)
     order.value = {
       ...res.data,
@@ -301,6 +301,7 @@ const selectCoupon = coupon => {
   })
   coupon.isSelect = true
   order.value.coupon = coupon
+  getOrderPrice()
 }
 // 计算使用优惠券降价
 const coupon_price = computed(() => {
@@ -308,15 +309,6 @@ const coupon_price = computed(() => {
   if (order.value.coupon.type_text === '折扣券')
     return order.value.show_price * (1 - order.value.coupon.price / 10)
   return order.value.coupon.price
-})
-
-const total_price = computed(() => {
-  var res = order.value.show_price + parseFloat(order.value.freight)
-  // 活动商品
-  if (type) res -= order.value.discount_price
-  // 使用优惠券
-  if (order.value.coupon) res -= coupon_price.value
-  return res
 })
 
 /**
