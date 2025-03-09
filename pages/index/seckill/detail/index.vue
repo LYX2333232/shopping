@@ -1,15 +1,29 @@
 <template>
-  <Header />
-  <view style="position: relative;">
-    <swiper :indicator-dots="false" autoplay="false" circular @change="changeSwiper" style="height:750rpx;">
+  <Header
+    background="rgba(255, 255, 255, 0.6)"
+    border="1rpx solid rgba(151, 151, 151, 0.2)"
+  />
+  <view style="position: relative">
+    <swiper
+      :indicator-dots="false"
+      autoplay="false"
+      circular
+      @change="changeSwiper"
+      style="height: 750rpx"
+    >
       <swiper-item v-for="item in swiperImg" :key="'swiperImg' + item.id">
-        <image :src="item.path" mode="aspectFill" style="width: 750rpx;height: 750rpx;" @click="toWeb(item.path)">
+        <image
+          :src="item.path"
+          mode="aspectFill"
+          style="width: 750rpx; height: 750rpx"
+          @click="toWeb(item.path)"
+        >
         </image>
       </swiper-item>
     </swiper>
     <view class="show">
       <view>
-        <view v-if="other.length > 0" class="other">
+        <view v-if="other" class="other">
           <image :src="other.avatar" mode="scaleToFill" class="avatar" />
           <view>
             {{ other.name + other.text }}
@@ -27,21 +41,29 @@
     </view>
   </view>
   <view class="all">
-    <view class="flash">
-      <view class="tn-flex-center-start">
-        <view class="now">
-          ￥{{ size.price }}
-        </view>
-        <view v-show="size.or_price" class="old">
-          ￥{{ size.or_price }}
+    <view
+      class="flash"
+      :style="{
+        background: `url(${preUrl}flash.png)`,
+        backgroundSize: '100%',
+      }"
+    >
+      <view>
+        <view class="now"> ￥{{ size.price }} </view>
+        <view class="tn-flex-center-start">
+          <view class="old"> ￥{{ size.or_price }} </view>
+          <view style="margin: 0 10rpx">|</view>
+          <view>已售{{ size.number }}</view>
         </view>
       </view>
       <view class="right">
         <view class="tn-flex-center-start">
-          <view>
-            距结束
-          </view>
-          <CountDown :time="end - new Date()" textColor="#DD1A21" @finish="finish" />
+          <view> 距结束仅剩： </view>
+          <CountDown
+            :time="end - new Date().getTime()"
+            textColor="#DD1A21"
+            @finish="finish"
+          />
         </view>
       </view>
     </view>
@@ -54,75 +76,92 @@
           {{ item }}
         </view>
       </view>
-      <view class="sold">
-        已售 {{ sell }}
-      </view>
     </view>
     <view class="size">
-      <view class="tn-flex-center-between">
-        <view class="title">数量</view>
+      <view class="tn-flex-center-start">
+        <view class="title">配送</view>
+        <view class="desc">同城48小时送达</view>
+      </view>
+      <view class="tn-flex-center-between tn-mt-xl">
+        <view class="tn-flex-center-start">
+          <view class="title">规格</view>
+          <view class="desc">{{ size.item_name }}</view>
+        </view>
         <view>
           <TnNumberBox v-model="cont" />
         </view>
       </view>
     </view>
     <view class="detail">
-      <view class="title" style="width: 90%;margin: 0 auto;">
+      <view class="title">
         <text>商品详情</text>
       </view>
-      <view v-for="item in swiperVideo" :key="'swiperVideo' + item.id" style="width: 90%;margin: 0 auto;">
-        <video style="width:100%" :src="'https://senmei.top/' + item.url"></video>
+      <view
+        v-for="item in swiperVideo"
+        :key="'swiperVideo' + item.id"
+        style="width: 90%; margin: 0 auto"
+      >
+        <video
+          style="width: 100%"
+          :src="'https://senmei.top/' + item.url"
+        ></video>
       </view>
-      <view style="width: 90%;margin: 10rpx 5%;">
+      <view style="width: 100%; margin: 10rpx 0">
         <rich-text :nodes="content"></rich-text>
       </view>
     </view>
   </view>
-  <GoodNav :id="c_id" :like="size.is_like" :normal="false" @buttonClick="buttonClick" @changeLike="changeLike" />
+  <GoodNav
+    :id="c_id"
+    :like="size.is_like"
+    :normal="false"
+    @buttonClick="buttonClick"
+    @changeLike="changeLike"
+  />
   <!-- 分享定义在组件goods-nav中 -->
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { ref } from "vue"
+import { onLoad } from "@dcloudio/uni-app"
 
-import TnNumberBox from '@tuniao/tnui-vue3-uniapp/components/number-box/src/number-box.vue'
-import { get_goods_detail } from '@/api/index/seckill/seckill'
-import Header from '@/components/header.vue'
-import GoodNav from '@/components/goodNav'
-import CountDown from '@/components/CountDown'
+import TnNumberBox from "@tuniao/tnui-vue3-uniapp/components/number-box/src/number-box.vue"
+import { get_goods_detail } from "@/api/index/seckill/seckill"
+import Header from "@/components/header.vue"
+import GoodNav from "@/components/goodNav"
+import CountDown from "@/components/CountDown"
+
+const preUrl = "/static/detail/"
 
 // 轮播图相关
 const swiperVideo = ref([])
 const swiperImg = ref([])
 const current = ref(1)
-const changeSwiper = e => {
+const changeSwiper = (e) => {
   if (e && e.detail && e.detail.current !== undefined) {
     current.value = e.detail.current + 1
   } else {
-    console.error('Invalid event object:', e)
+    console.error("Invalid event object:", e)
   }
 }
 const toWeb = (path) => {
   uni.navigateTo({
-    url: '/pages/web/index?src=' + path
+    url: "/pages/web/index?src=" + path,
   })
 }
 
 // 其他用户的购买信息
-const other = ref({})
+const other = ref(null)
 
-const c_id = ref('')
+const c_id = ref("")
 var flash_id
 
 const end = ref(new Date())
-const finish = () => {
-
-}
+const finish = () => {}
 
 // 商品售价
 const sell = ref(0)
-const name = ref('')
+const name = ref("")
 const typeList = ref([])
 
 // 商品规格
@@ -132,7 +171,7 @@ const size = ref({})
 const cont = ref(1)
 
 // 详细描述
-const content = ref('')
+const content = ref("")
 
 // 底部信息
 const like = ref(0)
@@ -143,16 +182,16 @@ const changeLike = () => {
 
 /**
  * 立即购买
-  */
+ */
 function buttonClick() {
   uni.navigateTo({
-    url: `/pages/me/order/new_order?flash_id=${flash_id}&com_cont=${cont.value}`
+    url: `/pages/me/order/new_order?flash_id=${flash_id}&com_cont=${cont.value}`,
   })
 }
 
 onLoad((options) => {
   const that = this
-  get_goods_detail({ id: options.id }).then(res => {
+  get_goods_detail({ id: options.id }).then((res) => {
     // 轮播图
     swiperImg.value = res.data.paths
     // 视频轮播图
@@ -162,7 +201,7 @@ onLoad((options) => {
     flash_id = res.data.flash_com_id
 
     end.value = new Date(res.data.end_time * 1000)
-    console.log(end.value);
+    console.log(end.value)
 
     // 规格
     size.value = res.data.item
@@ -173,7 +212,10 @@ onLoad((options) => {
 
     typeList.value = res.data.labels
 
-    content.value = res.data.content.replace(/(<img [^>]*)(style="[^"]*")?/gi, '$1 style="width:100%;"')
+    content.value = res.data.content.replace(
+      /(<img [^>]*)(style="[^"]*")?/gi,
+      '$1 style="width:100%;"'
+    )
 
     like.value = res.data.is_like
 
@@ -184,10 +226,8 @@ onLoad((options) => {
 
 <style lang="scss" scoped>
 page {
-  background: #F6F6F6;
+  background: #f6f6f6;
 }
-
-
 
 .show {
   position: absolute;
@@ -209,7 +249,7 @@ page {
     font-family: PingFangSC, PingFang SC;
     font-weight: 400;
     font-size: 24rpx;
-    color: #FFFFFF;
+    color: #ffffff;
     line-height: 33rpx;
     text-align: left;
     font-style: normal;
@@ -233,7 +273,7 @@ page {
     font-family: PingFangSC, PingFang SC;
     font-weight: 400;
     font-size: 26rpx;
-    color: #FFFFFF;
+    color: #ffffff;
     line-height: 40rpx;
 
     .current {
@@ -253,7 +293,7 @@ page {
 }
 
 .all {
-  background-color: #F6F6F6;
+  background-color: #f6f6f6;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -263,13 +303,15 @@ page {
 .flash {
   width: 710rpx;
   height: 162rpx;
-  margin-bottom: -40rpx;
-  background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRVKItZSgfib07mMPF0QTRLgJPSrW6ez1oJ4GIlU5rK1tTWTGCbtiaW7qicTOtHlGF7qHTHDSlQ1fypQ/0?wx_fmt=png") no-repeat center center;
-  background-size: 100% 100%;
+  margin-bottom: -30rpx;
+  // 旧背景图
+  // background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRVKItZSgfib07mMPF0QTRLgJPSrW6ez1oJ4GIlU5rK1tTWTGCbtiaW7qicTOtHlGF7qHTHDSlQ1fypQ/0?wx_fmt=png")
+  //   no-repeat center center;
+  // background-size: 100% 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #FFF;
+  color: #fff;
 
   .now {
     font-family: WeChat-Sans-Std, WeChat-Sans-Std;
@@ -277,10 +319,11 @@ page {
     font-size: 50rpx;
     text-align: left;
     font-style: normal;
-    margin: 0 30rpx;
+    margin: 22rpx 23rpx 10rpx;
   }
 
   .old {
+    margin-left: 20rpx;
     font-family: PingFangSC, PingFang SC;
     font-weight: 400;
     font-size: 26rpx;
@@ -302,10 +345,8 @@ page {
   width: 710rpx;
   margin: 20rpx;
   padding: 20rpx;
-  background-color: #FFF;
+  background-color: #fff;
   border-radius: 24rpx;
-
-
 
   .info {
     font-family: PingFangSC, PingFang SC;
@@ -337,7 +378,7 @@ page {
     font-weight: 400;
     font-size: 23rpx;
     margin-top: 15rpx;
-    color: #8A8A8A;
+    color: #8a8a8a;
     line-height: 35rpx;
     padding-bottom: 40rpx;
     text-align: right;
@@ -347,7 +388,7 @@ page {
 .deliver {
   width: 100%;
   display: flex;
-  background: #FFF;
+  background: #fff;
   padding: 30rpx 20rpx;
   font-family: PingFangSC, PingFang SC;
   font-weight: 400;
@@ -373,13 +414,20 @@ page {
   padding: 30rpx 20rpx;
 
   .title {
-    font-family: PingFangSC, PingFang SC;
-    font-weight: 400;
     font-size: 28rpx;
-    color: #999999;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: #131313;
     line-height: 40rpx;
-    text-align: left;
-    font-style: normal;
+    margin-right: 30rpx;
+  }
+
+  .desc {
+    font-size: 28rpx;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #131313;
+    line-height: 40rpx;
   }
 
   .uni-px-5 {
@@ -408,7 +456,7 @@ page {
 
   .card {
     border-radius: 16rpx;
-    border: 1rpx solid #D0D0D0;
+    border: 1rpx solid #d0d0d0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -445,7 +493,7 @@ page {
       width: 100%;
       margin: 0 20rpx;
       height: 1rpx;
-      background-color: #EEE;
+      background-color: #eee;
     }
   }
 }
@@ -464,7 +512,7 @@ page {
     line-height: 40rpx;
     text-align: left;
     font-style: normal;
-    margin: 20rpx 30rpx;
+    margin: 30rpx 20rpx;
   }
 }
 
@@ -477,7 +525,7 @@ page {
     font-family: Inter, Inter;
     font-weight: 600;
     font-size: 27rpx;
-    color: #75694A;
+    color: #75694a;
     line-height: 40rpx;
     text-align: left;
   }
@@ -504,7 +552,7 @@ page {
 
 .goods-carts {
   height: 146rpx;
-  background: #FFFFFF;
+  background: #ffffff;
   box-shadow: 0rpx 8rpx 12rpx 0rpx rgba(0, 0, 0, 0.2);
   border-radius: 50rpx 50rpx 0rpx 0rpx;
 

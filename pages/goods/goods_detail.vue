@@ -1,5 +1,8 @@
 <template>
-  <Header />
+  <Header
+    background="rgba(255, 255, 255, 0.6)"
+    border="1rpx solid rgba(151, 151, 151, 0.2)"
+  />
   <view style="position: relative">
     <swiper
       :indicator-dots="false"
@@ -110,63 +113,63 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { onLoad } from "@dcloudio/uni-app";
+import { ref } from "vue"
+import { onLoad } from "@dcloudio/uni-app"
 
-import { get_goods_detail } from "@/api/goods/goods";
-import { add_to_cart } from "@/api/cart/cart";
-import Header from "@/components/header.vue";
-import swiper from "@/uni_modules/tuniaoui-vue3/components/swiper/src/swiper.vue";
-import GoodNav from "@/components/goodNav";
-import { CartStore } from "@/store";
+import { get_goods_detail } from "@/api/goods/goods"
+import { add_to_cart } from "@/api/cart/cart"
+import Header from "@/components/header.vue"
+import swiper from "@/uni_modules/tuniaoui-vue3/components/swiper/src/swiper.vue"
+import GoodNav from "@/components/goodNav"
+import { CartStore } from "@/store"
 
-const cart = CartStore();
+const cart = CartStore()
 
 // 轮播图相关
-const swiperVideo = ref([]);
-const swiperImg = ref([]);
-const current = ref(1);
+const swiperVideo = ref([])
+const swiperImg = ref([])
+const current = ref(1)
 const changeSwiper = (e) => {
   if (e && e.detail && e.detail.current !== undefined) {
-    current.value = e.detail.current + 1;
+    current.value = e.detail.current + 1
   } else {
-    console.error("Invalid event object:", e);
+    console.error("Invalid event object:", e)
   }
-};
+}
 const toWeb = (path) => {
   uni.navigateTo({
     url: "/pages/web/index?src=" + path,
-  });
-};
+  })
+}
 
 // 其他用户的购买信息
-const other = ref({});
+const other = ref({})
 
-const c_id = ref("");
+const c_id = ref("")
 
 // 商品售价
-const sell = ref(0);
-const name = ref("");
-const typeList = ref([]);
+const sell = ref(0)
+const name = ref("")
+const typeList = ref([])
 
 // 商品规格
-const size = ref([{}]);
-const sizeIndex = ref(0);
+const size = ref([{}])
+const sizeIndex = ref(0)
 
 // 数量
-const cont = ref(1);
+const cont = ref(1)
 
 // 详细描述
-const content = ref("");
+const content = ref("")
 
 // 底部信息
-const like = ref(0);
+const like = ref(0)
 
 const changeLike = () => {
   size.value[sizeIndex.value].is_like = size.value[sizeIndex.value].is_like
     ? 0
-    : 1;
-};
+    : 1
+}
 
 function buttonClick() {
   // 加入购物车
@@ -175,27 +178,27 @@ function buttonClick() {
       uni.showToast({
         title: "加入购物车成功",
         icon: "none",
-      });
-      cart.update();
+      })
+      cart.update()
     } else
       uni.showToast({
         title: res.msg,
         icon: "none",
-      });
-  });
+      })
+  })
 }
 
 onLoad((options) => {
-  const that = this;
+  const that = this
   get_goods_detail({ id: options.id }).then((res) => {
     // 轮播图
-    swiperImg.value = res.data.paths;
+    swiperImg.value = res.data.paths
     // 视频轮播图
-    swiperVideo.value = res.data.videost;
+    swiperVideo.value = res.data.videost
 
-    c_id.value = res.data.id;
+    c_id.value = res.data.id
 
-    other.value = res.data.users[0];
+    other.value = res.data.users[0]
 
     // 规格
     size.value = res.data.items.map((item, index) => {
@@ -203,25 +206,25 @@ onLoad((options) => {
         ...item,
         text: item.name,
         value: index,
-      };
-    });
-    sizeIndex.value = 0;
+      }
+    })
+    sizeIndex.value = 0
 
     // 商品名称
-    name.value = res.data.name;
+    name.value = res.data.name
 
-    typeList.value = res.data.labels;
+    typeList.value = res.data.labels
 
     content.value = res.data.content.replace(
       /(<img [^>]*)(style="[^"]*")?/gi,
       '$1 style="width:100%;"'
-    );
+    )
 
-    like.value = res.data.is_like;
+    like.value = res.data.is_like
 
-    sell.value = res.data.volume;
-  });
-});
+    sell.value = res.data.volume
+  })
+})
 </script>
 
 <style lang="scss" scoped>

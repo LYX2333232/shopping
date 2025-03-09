@@ -267,7 +267,12 @@
         </template>
       </TnWaterFall> -->
       <view class="title">森美精选好物</view>
-      <view class="info" v-for="item in infoList" :key="item.id">
+      <view
+        class="info"
+        v-for="item in infoList"
+        :key="item.id"
+        @click="toDetail(item.id)"
+      >
         <image class="image" :src="item.path" mode="aspectFill"> </image>
         <view class="right">
           <view class="name">{{ item.name }}</view>

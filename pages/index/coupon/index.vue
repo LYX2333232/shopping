@@ -1,77 +1,103 @@
 <template>
-  <Header title="领券中心" />
+  <Header title="领券中心" background="pink" />
   <view class="all">
     <image
       src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSicr23JD01fOs8hzEmFwb8vDIPykt0L9jfBf2aEMpNfKwmfPBMCq5nCPcITfB139nnhrHm1RhfqaA/0?wx_fmt=png"
-      mode="scaleToFill" class="top" />
-    <view v-for="coupon in couponList" :key="coupon.id"
-      :class="['card', 'tn-flex-center-start', isUsable(coupon) ? 'usable' : 'unusable']"
-      :style="{ background: `url(${isUsable(coupon) ? usable_image : unusable_image}) no-repeat center center`, backgroundSize: '100% 100%' }"
-      @click="receive(coupon)">
+      mode="scaleToFill"
+      class="top"
+    />
+    <view
+      v-for="coupon in couponList"
+      :key="coupon.id"
+      :class="[
+        'card',
+        'tn-flex-center-start',
+        isUsable(coupon) ? 'usable' : 'unusable',
+      ]"
+      :style="{
+        background: `url(${
+          isUsable(coupon) ? usable_image : unusable_image
+        }) no-repeat center center`,
+        backgroundSize: '100% 100%',
+      }"
+      @click="receive(coupon)"
+    >
       <view class="tn-flex-center-start">
         <view class="left">
           <view class="coupon-top">
             <!-- {{ coupon.type_text }} -->
             {{ type[coupon.type] }}
           </view>
-          <view class="price">
-            ￥{{ coupon.number }}
-          </view>
+          <view class="price"> ￥{{ coupon.number }} </view>
           <view class="desc">
-            {{ coupon.type === 0 ? `无门槛立减${coupon.number}` : coupon.type === 1 ? `满${coupon.reduce}减${coupon.number}` :
-              coupon.type === 2 ? `打${coupon.number}折` : coupon.type === 3 ? `类目减${coupon.number}` :
-                '新人专享' }}
+            {{
+              coupon.type === 0
+                ? `无门槛立减${coupon.number}`
+                : coupon.type === 1
+                ? `满${coupon.reduce}减${coupon.number}`
+                : coupon.type === 2
+                ? `打${coupon.number}折`
+                : coupon.type === 3
+                ? `类目减${coupon.number}`
+                : "新人专享"
+            }}
           </view>
         </view>
         <view class="main">
           <view class="title">
             {{ coupon.name }}
           </view>
-          <view class="time">
-            有效期至 {{ coupon.end }}
-          </view>
+          <view class="time"> 有效期至 {{ coupon.end }} </view>
         </view>
       </view>
-      <TnButton :type="isUsable(coupon) ? 'danger' : 'info'" :plain="coupon.state = 1" shape="round">
-        {{ coupon.state === 0 ? '立即领取' : '已领取' }}
+      <TnButton
+        :type="isUsable(coupon) ? 'danger' : 'info'"
+        :plain="(coupon.state = 1)"
+        shape="round"
+      >
+        {{ coupon.state === 0 ? "立即领取" : "已领取" }}
       </TnButton>
     </view>
   </view>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onShow, onReachBottom } from '@dcloudio/uni-app'
+import { ref } from "vue"
+import { onShow, onReachBottom } from "@dcloudio/uni-app"
 
-import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
-import Header from '@/components/header.vue'
-import { get_coupon_list, receive_coupon } from '@/api/coupon/coupon'
+import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
+import Header from "@/components/header.vue"
+import { get_coupon_list, receive_coupon } from "@/api/coupon/coupon"
 
 const couponList = ref([])
 
 // 可用、不可用、已领取
-const usable_image = ref("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSicr23JD01fOs8hzEmFwb8vfCq3Kefaic0OH4dos360FCvZwQ2ib43ohBUcIfm3Wy0FaweEgFuFzhZA/0?wx_fmt=png")
-const unusable_image = ref("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSicr23JD01fOs8hzEmFwb8vLNxgsBK2ficyplPp60mpfuVmGd1mwzITWiamyQFZ02S3vcicAKUxM07Ag/0?wx_fmt=png")
+const usable_image = ref(
+  "http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSicr23JD01fOs8hzEmFwb8vfCq3Kefaic0OH4dos360FCvZwQ2ib43ohBUcIfm3Wy0FaweEgFuFzhZA/0?wx_fmt=png"
+)
+const unusable_image = ref(
+  "http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSicr23JD01fOs8hzEmFwb8vLNxgsBK2ficyplPp60mpfuVmGd1mwzITWiamyQFZ02S3vcicAKUxM07Ag/0?wx_fmt=png"
+)
 
 /**
  * 判断优惠券是否可领
  * @param coupon 优惠券
  */
-const isUsable = coupon => {
+const isUsable = (coupon) => {
   return coupon.state === 0
 }
 
-const type = ['无门槛券', '满减券', '折扣券', '类目券', '新人券']
+const type = ["无门槛券", "满减券", "折扣券", "类目券", "新人券"]
 
 // 领取优惠券
 const receive = (coupon) => {
   // 还有优惠券未领取
   if (coupon.state === 0) {
-    receive_coupon(coupon.id).then(res => {
+    receive_coupon(coupon.id).then((res) => {
       if (res.code === 200) {
         uni.showToast({
-          title: '领取成功',
-          icon: 'none'
+          title: "领取成功",
+          icon: "none",
         })
         getData()
       }
@@ -82,7 +108,7 @@ const receive = (coupon) => {
 // 获取优惠券列表
 const getData = () => {
   // 获取优惠券列表
-  get_coupon_list(1).then(res => {
+  get_coupon_list(1).then((res) => {
     couponList.value = res.data.data
   })
 }
@@ -100,7 +126,7 @@ onReachBottom(() => {
   if (isReaching.value) return
   isReaching.value = true
   page++
-  get_coupon_list(page).then(res => {
+  get_coupon_list(page).then((res) => {
     couponList.value = couponList.value.concat(res.data.data)
     isReaching.value = false
   })
@@ -117,7 +143,7 @@ onReachBottom(() => {
   width: 100%;
   min-height: 100vh;
   padding-top: 176rpx;
-  background: #F6F6F6;
+  background: #f6f6f6;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -132,7 +158,7 @@ onReachBottom(() => {
     width: 710rpx;
     height: 180rpx;
     border-radius: 10rpx;
-    background: #FFFFFF;
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -186,7 +212,6 @@ onReachBottom(() => {
       flex-direction: column;
       justify-content: center;
 
-
       .title {
         font-family: PingFangSC, PingFang SC;
         font-weight: 500;
@@ -223,15 +248,15 @@ onReachBottom(() => {
   .usable {
     .left {
       .coupon-top {
-        background: #FF4121;
+        background: #ff4121;
       }
 
       .price {
-        color: #EE2532;
+        color: #ee2532;
       }
 
       .desc {
-        color: #EE2532;
+        color: #ee2532;
       }
     }
 
@@ -247,7 +272,7 @@ onReachBottom(() => {
   .unusable {
     .left {
       .coupon-top {
-        background: #C2C2C2;
+        background: #c2c2c2;
       }
 
       .price {
