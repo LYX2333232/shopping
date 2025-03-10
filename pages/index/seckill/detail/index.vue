@@ -60,14 +60,15 @@
         <view class="tn-flex-center-start">
           <view> 距结束仅剩： </view>
           <CountDown
-            :time="end - new Date().getTime()"
+            v-if="end"
+            :time="end - new Date()"
             textColor="#DD1A21"
             @finish="finish"
           />
         </view>
       </view>
     </view>
-    <view class="white_boxs">
+    <view class="white_boxs card">
       <view class="info">
         {{ name }}
       </view>
@@ -77,7 +78,7 @@
         </view>
       </view>
     </view>
-    <view class="size">
+    <view class="size card">
       <view class="tn-flex-center-start">
         <view class="title">配送</view>
         <view class="desc">同城48小时送达</view>
@@ -85,14 +86,28 @@
       <view class="tn-flex-center-between tn-mt-xl">
         <view class="tn-flex-center-start">
           <view class="title">规格</view>
-          <view class="desc">{{ size.item_name }}</view>
+          <view class="desc">{{ size.name }}</view>
         </view>
         <view>
           <TnNumberBox v-model="cont" />
         </view>
       </view>
     </view>
-    <view class="detail">
+    <view class="recommend card">
+      <view class="title">为您推荐</view>
+      <view class="items">
+        <view class="item" v-for="item in recommend" :key="item.id">
+          <image class="recommend-image" :src="item.path" mode="aspectFill">
+          </image>
+          <view class="name">{{ item.name }}</view>
+          <view class="tn-flex-center-between">
+            <view class="price">￥{{ item.price }}</view>
+            <TnIcon :name="`${preUrl}add.png`" size="48rpx" />
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="detail card">
       <view class="title">
         <text>商品详情</text>
       </view>
@@ -126,10 +141,12 @@ import { ref } from "vue"
 import { onLoad } from "@dcloudio/uni-app"
 
 import TnNumberBox from "@tuniao/tnui-vue3-uniapp/components/number-box/src/number-box.vue"
+import TnIcon from "@tuniao/tnui-vue3-uniapp/components/icon/src/icon.vue"
 import { get_goods_detail } from "@/api/index/seckill/seckill"
 import Header from "@/components/header.vue"
 import GoodNav from "@/components/goodNav"
 import CountDown from "@/components/CountDown"
+import { getRandomImage } from "@/utils/constant"
 
 const preUrl = "/static/detail/"
 
@@ -156,8 +173,16 @@ const other = ref(null)
 const c_id = ref("")
 var flash_id
 
-const end = ref(new Date())
-const finish = () => {}
+const end = ref()
+const finish = () => {
+  if (false)
+    uni.showToast({
+      title: "活动已结束",
+      icon: "none",
+      duration: 500,
+      complete: () => setTimeout(uni.navigateBack, 500),
+    })
+}
 
 // 商品售价
 const sell = ref(0)
@@ -169,6 +194,31 @@ const size = ref({})
 
 // 数量
 const cont = ref(1)
+
+const recommend = ref([])
+const getRecommend = () => {
+  // 静态数据
+  recommend.value = [
+    {
+      id: 1,
+      name: "商品1",
+      path: getRandomImage(),
+      price: 100,
+    },
+    {
+      id: 2,
+      name: "商品2",
+      path: getRandomImage(),
+      price: 200,
+    },
+    {
+      id: 3,
+      name: "商品3",
+      path: getRandomImage(),
+      price: 300,
+    },
+  ]
+}
 
 // 详细描述
 const content = ref("")
@@ -221,6 +271,7 @@ onLoad((options) => {
 
     sell.value = res.data.volume
   })
+  getRecommend()
 })
 </script>
 
@@ -341,13 +392,15 @@ page {
   }
 }
 
-.white_boxs {
+.card {
   width: 710rpx;
-  margin: 20rpx;
-  padding: 20rpx;
+  margin: 20rpx 0;
+  padding: 0rpx 20rpx;
   background-color: #fff;
   border-radius: 24rpx;
+}
 
+.white_boxs {
   .info {
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
@@ -408,11 +461,7 @@ page {
 }
 
 .size {
-  width: 100%;
-  background-color: #fff;
-  margin: 20rpx;
   padding: 30rpx 20rpx;
-
   .title {
     font-size: 28rpx;
     font-family: PingFangSC-Medium, PingFang SC;
@@ -498,10 +547,51 @@ page {
   }
 }
 
+.recommend {
+  .title {
+    font-size: 28rpx;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: #131313;
+    line-height: 40rpx;
+    margin: 30rpx 20rpx;
+  }
+  .items {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20rpx;
+    .item {
+      .recommend-image {
+        width: 210rpx;
+        height: 210rpx;
+        border-radius: 20rpx 20rpx 0 0;
+      }
+      .name {
+        margin: 12rpx;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 24rpx;
+        color: #1f2024;
+        line-height: 33rpx;
+        text-align: left;
+        font-style: normal;
+      }
+
+      .price {
+        font-family: SourceHanSansCN, SourceHanSansCN;
+        font-weight: 500;
+        font-size: 24rpx;
+        color: #ee2532;
+        line-height: 36rpx;
+        text-align: left;
+        font-style: normal;
+      }
+    }
+  }
+}
+
 .detail {
-  width: 100%;
-  background-color: #fff;
-  margin: 20rpx;
   padding-bottom: 150rpx;
 
   .title {

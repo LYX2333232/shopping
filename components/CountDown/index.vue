@@ -3,42 +3,53 @@
     <view class="item" :style="{ color: textColor, background: background }">
       {{ time[0] }}
     </view>
-    <view class="operation" :style="{ color: background }">{{ time.length < 3 ? ':' : '' }}</view>
-        <view class="item" :style="{ color: textColor, background: background }">{{ time[1] ?? 0 }}</view>
-        <view class="operation" :style="{ color: background }">:</view>
-        <view class="item" :style="{ color: textColor, background: background }">{{ time[2] ?? 0 }}
-        </view>
-        <view v-if="time[3]" class="operation" :style="{ color: background }">:</view>
-        <view v-if="time[3]" class="item" :style="{ color: textColor, background: background }">{{ time[3] }}
-        </view>
+    <view class="operation" :style="{ color: background }">{{
+      time.length < 3 ? ":" : ""
+    }}</view>
+    <view class="item" :style="{ color: textColor, background: background }">{{
+      time[1] ?? 0
+    }}</view>
+    <view class="operation" :style="{ color: background }">:</view>
+    <view class="item" :style="{ color: textColor, background: background }"
+      >{{ time[2] ?? 0 }}
     </view>
+    <view v-if="time[3]" class="operation" :style="{ color: background }"
+      >:</view
+    >
+    <view
+      v-if="time[3]"
+      class="item"
+      :style="{ color: textColor, background: background }"
+      >{{ time[3] }}
+    </view>
+  </view>
 </template>
 
 <script setup>
-import { ref, onDeactivated } from 'vue';
+import { ref, onDeactivated } from "vue"
 const props = defineProps({
   time: {
     type: Number,
-    require
+    require,
   },
   textColor: {
     type: String,
-    default: '#000',
+    default: "#000",
   },
   background: {
     type: String,
-    default: '#fff',
-  }
+    default: "#fff",
+  },
 })
 
-const emits = defineEmits(['finish'])
+const emits = defineEmits(["finish"])
 const time = ref([])
 var L = Math.floor(props.time / 1000)
 const id = setInterval(() => {
   L--
   var left = L
   if (left <= 0) {
-    emits('finish')
+    clearInterval(id)
     return 0
   }
   const res = []
@@ -59,8 +70,12 @@ const id = setInterval(() => {
     }
   }
   res.push(left)
+  // 填充到至少3位
+  while (res.length < 3) {
+    res.push(0)
+  }
   time.value = res.reverse()
-}, 1000);
+}, 1000)
 
 onDeactivated(() => {
   clearInterval(id)

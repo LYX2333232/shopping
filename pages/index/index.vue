@@ -304,10 +304,10 @@ import TnTag from "@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue"
 import TnCountDown from "@/uni_modules/tuniaoui-vue3/components/count-down/src/count-down.vue"
 import { ref } from "vue"
 import {
-  onShow,
   onReachBottom,
   onShareAppMessage,
   onShareTimeline,
+  onLoad,
 } from "@dcloudio/uni-app"
 
 import AddressPopup from "@/components/AddressPopup"
@@ -459,7 +459,7 @@ const toSearch = () => {
 
 var top = ref(0)
 
-onShow(() => {
+onLoad(() => {
   // 获取状态栏高度
   top.value = uni.getMenuButtonBoundingClientRect().top
   getData()
