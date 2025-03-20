@@ -113,7 +113,6 @@ import { onShow, onLoad, onHide, onReachBottom } from "@dcloudio/uni-app"
 import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
 import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
 import { get_type_list, get_goods_list } from "@/api/goods/goods"
-import { p } from "../../unpackage/dist/dev/mp-weixin/common/vendor"
 
 let t_id = undefined
 
