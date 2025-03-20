@@ -552,7 +552,6 @@ onShareTimeline(() => {
 .swiper-data {
   width: 100%;
   height: 100%;
-  border-radius: 25rpx;
 
   .image {
     width: 100%;
@@ -597,12 +596,12 @@ onShareTimeline(() => {
 .functions {
   margin-top: 30rpx;
   display: flex;
-  text-align: center;
-  justify-content: space-around;
+  align-items: center;
 
   .item {
     width: 162rpx;
     height: 202rpx;
+    margin-left: 21rpx;
   }
 }
 
@@ -619,7 +618,7 @@ onShareTimeline(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10rpx 0 28rpx 400rpx;
+    padding: 10rpx 64rpx 28rpx 400rpx;
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
     font-size: 28rpx;
@@ -708,7 +707,7 @@ onShareTimeline(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10rpx 0 28rpx 400rpx;
+    padding: 10rpx 71rpx 28rpx 387rpx;
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
     font-size: 28rpx;
@@ -799,7 +798,7 @@ onShareTimeline(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10rpx 0 28rpx 400rpx;
+    padding: 10rpx 92rpx 28rpx 412rpx;
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
     font-size: 28rpx;
