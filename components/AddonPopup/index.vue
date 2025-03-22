@@ -19,7 +19,7 @@
           </image>
           <view class="desc">｜包邮无忧 暖心送达</view>
         </view>
-        <TnIcon name="close" size="56" />
+        <TnIcon name="close" size="56" @click="close" />
       </view>
       <view class="free">
         <view class="tag">免配送费</view>
@@ -29,7 +29,7 @@
         <image class="image" :src="good.path" mode="aspectFill"> </image>
         <view class="right">
           <view class="name">
-            <view class="tag" v-if="good.tag">时令秒杀</view>
+            <text class="tag" v-if="good.tag">时令秒杀</text>
             {{ good.name }}
           </view>
           <view class="bottom">
@@ -39,7 +39,12 @@
                 >￥{{ good.or_price }}</view
               >
             </view>
-            <TnNumberBox v-if="good.count" v-model="good.count" min="0" />
+            <TnNumberBox
+              v-if="good.cont"
+              v-model="good.cont"
+              :min="0"
+              @change="(e) => change(good, e)"
+            />
             <TnButton
               v-else
               width="110"
@@ -47,7 +52,7 @@
               shape="round"
               bg-color="#14BF20"
               text-color="#FFF"
-              @click="add(good)"
+              @click="change(good, 1)"
               >凑单</TnButton
             >
           </view>
@@ -73,13 +78,15 @@ defineProps({
   },
 })
 
+const emits = defineEmits(["close", "changeSelect"])
+
 const list = ref([])
 const getData = () => {
   list.value = [
     {
       id: 1,
       path: getRandomImage(),
-      name: "商品1",
+      name: "你好多号UI发货你师弟估计内燃机发咯古黄大发飞机快好啦手打开发加拿大索拉卡激发进啦科技覅UR办公",
       or_price: 200,
       item_name: "1kg/袋",
       price: 100,
@@ -103,8 +110,13 @@ const open = () => {
   getData()
 }
 
-const add = (good) => {
-  good.count = 1
+const close = () => {
+  emits("close")
+}
+
+const change = (good, value) => {
+  good.cont = value
+  emits("changeSelect", good, value)
 }
 </script>
 
@@ -180,6 +192,7 @@ const add = (good) => {
     justify-content: space-between;
 
     .name {
+      width: 100%;
       font-family: PingFangSC, PingFang SC;
       font-weight: 400;
       font-size: 30rpx;
@@ -187,6 +200,13 @@ const add = (good) => {
       line-height: 42rpx;
       text-align: left;
       font-style: normal;
+      // 最多2行显示
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
 
       .tag {
         background: #ff4121;

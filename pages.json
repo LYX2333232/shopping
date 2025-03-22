@@ -146,18 +146,6 @@
       }
     },
     {
-      "path": "pages/index/today/address/index",
-      "style": {
-        "navigationStyle": "custom"
-      }
-    },
-    {
-      "path": "pages/index/seckill/address/index",
-      "style": {
-        "navigationStyle": "custom"
-      }
-    },
-    {
       "path": "pages/me/favorite/index",
       "style": {
         "navigationStyle": "custom"

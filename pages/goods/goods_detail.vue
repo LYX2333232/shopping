@@ -42,12 +42,16 @@
   </view>
   <view class="all">
     <view class="white_boxs">
-      <view class="tn-flex-center-start">
-        <view class="now"> ¥{{ size[sizeIndex].price }} </view>
-        <view v-show="size[sizeIndex].or_price" class="old">
-          原价：{{ size[sizeIndex].or_price }}
+      <view class="tn-flex-center-between">
+        <view class="tn-flex-center-start">
+          <view class="now"> ¥{{ size[sizeIndex].price }} </view>
+          <view v-show="size[sizeIndex].or_price" class="old">
+            原价：{{ size[sizeIndex].or_price }}
+          </view>
         </view>
+        <view class="sold"> 已售 {{ sell }} </view>
       </view>
+      <view class="free">满99包邮</view>
       <view class="info">
         {{ name }}
       </view>
@@ -56,7 +60,6 @@
           {{ item }}
         </view>
       </view>
-      <view class="sold"> 已售 {{ sell }} </view>
     </view>
     <view class="size">
       <view class="title"> 选择规格 </view>
@@ -80,6 +83,20 @@
           <uni-section title="基本用法" type="line" padding>
             <uni-number-box v-model="cont" :min="1" />
           </uni-section>
+        </view>
+      </view>
+    </view>
+    <view class="recommend card">
+      <view class="title">为您推荐</view>
+      <view class="items">
+        <view class="item" v-for="item in recommend" :key="item.id">
+          <image class="recommend-image" :src="item.path" mode="aspectFill">
+          </image>
+          <view class="name">{{ item.name }}</view>
+          <view class="tn-flex-center-between">
+            <view class="price">￥{{ item.price }}</view>
+            <TnIcon :name="`${preUrl}add.png`" size="48rpx" />
+          </view>
         </view>
       </view>
     </view>
@@ -122,6 +139,7 @@ import Header from "@/components/header.vue"
 import swiper from "@/uni_modules/tuniaoui-vue3/components/swiper/src/swiper.vue"
 import GoodNav from "@/components/goodNav"
 import { CartStore } from "@/store"
+import { getRandomImage } from "@/utils/constant"
 
 const cart = CartStore()
 
@@ -158,6 +176,32 @@ const sizeIndex = ref(0)
 
 // 数量
 const cont = ref(1)
+
+// 推荐商品
+const recommend = ref([])
+const getRecommend = () => {
+  // 静态数据
+  recommend.value = [
+    {
+      id: 1,
+      name: "商品1",
+      path: getRandomImage(),
+      price: 100,
+    },
+    {
+      id: 2,
+      name: "商品2",
+      path: getRandomImage(),
+      price: 200,
+    },
+    {
+      id: 3,
+      name: "商品3",
+      path: getRandomImage(),
+      price: 300,
+    },
+  ]
+}
 
 // 详细描述
 const content = ref("")
@@ -224,6 +268,7 @@ onLoad((options) => {
 
     sell.value = res.data.volume
   })
+  getRecommend()
 })
 </script>
 
@@ -332,6 +377,32 @@ page {
     text-decoration-line: line-through;
   }
 
+  .sold {
+    width: 100%;
+    font-family: Inter, Inter;
+    font-weight: 400;
+    font-size: 23rpx;
+    margin-top: 15rpx;
+    color: #8a8a8a;
+    line-height: 35rpx;
+    padding-bottom: 40rpx;
+    text-align: right;
+  }
+
+  .free {
+    width: 131rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffefef;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 400;
+    font-size: 22rpx;
+    color: #ff4121;
+    line-height: 30rpx;
+    font-style: normal;
+  }
+
   .info {
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
@@ -354,18 +425,6 @@ page {
     line-height: 35rpx;
     display: flex;
     align-items: center;
-  }
-
-  .sold {
-    width: 100%;
-    font-family: Inter, Inter;
-    font-weight: 400;
-    font-size: 23rpx;
-    margin-top: 15rpx;
-    color: #8a8a8a;
-    line-height: 35rpx;
-    padding-bottom: 40rpx;
-    text-align: right;
   }
 }
 
@@ -471,6 +530,58 @@ page {
       margin: 0 20rpx;
       height: 1rpx;
       background-color: #eee;
+    }
+  }
+}
+
+.card {
+  width: 710rpx;
+  margin: 20rpx 0;
+  padding: 0rpx 20rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+}
+
+.recommend {
+  .title {
+    font-size: 28rpx;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: #131313;
+    line-height: 40rpx;
+    margin: 30rpx 20rpx;
+  }
+  .items {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20rpx;
+    .item {
+      .recommend-image {
+        width: 210rpx;
+        height: 210rpx;
+        border-radius: 20rpx 20rpx 0 0;
+      }
+      .name {
+        margin: 12rpx;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 24rpx;
+        color: #1f2024;
+        line-height: 33rpx;
+        text-align: left;
+        font-style: normal;
+      }
+
+      .price {
+        font-family: SourceHanSansCN, SourceHanSansCN;
+        font-weight: 500;
+        font-size: 24rpx;
+        color: #ee2532;
+        line-height: 36rpx;
+        text-align: left;
+        font-style: normal;
+      }
     }
   }
 }

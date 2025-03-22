@@ -116,7 +116,10 @@
       <view class="left">
         <image class="image" :src="`${image_url}`" mode="aspectFit"> </image>
         <view class="orange">满99包邮</view>
-        <view class="desc"> | 再买{{ (99 - total).toFixed(2) }}免邮 </view>
+        <view class="desc">
+          |
+          {{ total < 99 ? ` 再买 ${(99 - total).toFixed(2)} 免邮` : "已免邮" }}
+        </view>
       </view>
       <TnButton
         plain
@@ -147,6 +150,7 @@
             <view class="text">总计</view>
             <view class="price">¥{{ total.toFixed(2) }} </view>
           </view>
+          <view class="have_free" v-if="total >= 99">已免配送费</view>
         </view>
         <TnButton
           width="220"
@@ -168,11 +172,15 @@
     @changeAddress="changeAddress"
   />
   <OutPopup :visible="output_visible" @close="close" @toEdit="toEdit" />
-  <AddonPopup :visible="addon_visible" @close="addon_visible = false" />
+  <AddonPopup
+    :visible="addon_visible"
+    @close="addon_visible = false"
+    @changeSelect="changeSelect"
+  />
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue"
+import { ref, computed, watchEffect } from "vue"
 import { onShow, onReachBottom } from "@dcloudio/uni-app"
 
 import TnCheckbox from "@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue"
@@ -243,6 +251,10 @@ const updateTotal = () => {
       select_goods.value.push(item)
       temp += item.price * item.cont
     }
+  })
+  addon_list.value.forEach((item) => {
+    select_goods.value.push(item)
+    temp += item.price * item.cont
   })
   total.value = temp
 }
@@ -344,8 +356,16 @@ const Delete = (id) => {
 }
 
 const addon_visible = ref(false)
+const addon_list = ref([])
 const addOn = () => {
   addon_visible.value = true
+}
+
+// 凑单添加商品
+const changeSelect = (good, cont) => {
+  const index = addon_list.value.findIndex((item) => item.id === good.id)
+  if (index !== -1) addon_list.value.push(good)
+  else addon_list.value[index].cont = cont
 }
 
 // 点击结算
@@ -375,13 +395,9 @@ const tocaculate = () => {
 }
 
 const total = ref(0)
-watch(
-  dataList,
-  () => {
-    updateTotal()
-  },
-  { deep: true }
-)
+watchEffect(() => {
+  updateTotal()
+})
 
 const output_visible = ref(false)
 const close = () => {
@@ -643,6 +659,7 @@ onReachBottom(() => {
   width: 750rpx;
   background: #ffffff;
   position: fixed;
+  z-index: 50000;
   bottom: 0;
 
   .free {
@@ -744,6 +761,16 @@ onReachBottom(() => {
           color: #999999;
           line-height: 33rpx;
           text-align: left;
+          font-style: normal;
+        }
+
+        .have_free {
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 400;
+          font-size: 24rpx;
+          color: #999999;
+          line-height: 33rpx;
+          text-align: center;
           font-style: normal;
         }
       }
