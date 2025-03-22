@@ -1,6 +1,6 @@
 <template>
   <!-- 超出配送范围弹窗 -->
-  <TnPopup model-value="visible" bg-color="transparent">
+  <TnPopup :model-value="visible" bg-color="transparent">
     <view class="popup">
       <image class="background" :src="background" mode="aspectFit"> </image>
       <view class="title"> 该地址超出配送范围\n暂不支持配送 </view>
@@ -13,6 +13,7 @@
           border-color="#979797"
           plain
           text-color="#666"
+          @click="close"
         >
           知道了
         </TnButton>
@@ -22,6 +23,7 @@
           bg-color="#14BF20"
           text-color="#FFF"
           shape="round"
+          @click="toEdit"
         >
           去修改地址
         </TnButton>
@@ -41,7 +43,16 @@ defineProps({
   },
 })
 
+const emit = defineEmits(["close", "toEdit"])
+
 const background = "/static/popup/popup.png"
+
+const close = () => {
+  emit("close")
+}
+const toEdit = () => {
+  emit("toEdit")
+}
 </script>
 
 <style lang="scss" scoped>

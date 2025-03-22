@@ -9,19 +9,26 @@
     </view>
     <view class="tn-flex-center-between">
       <view class="title"> 购物车 </view>
-      <view class="delete" @click="del"> 删除 </view>
+      <view class="delete"> 管理 </view>
     </view>
   </view>
   <view class="all">
     <view v-if="dataList.length > 0" class="card">
-      <shoppingCard
-        v-for="(data, index) in dataList"
-        :key="index"
-        :index="index"
-        :data="data"
-        @change="change"
-        @changeNum="changeNum"
-      ></shoppingCard>
+      <uni-swipe-action>
+        <uni-swipe-action-item
+          v-for="(data, index) in dataList"
+          :key="data.id"
+          :right-options="swipe_options"
+          @click="del(data)"
+        >
+          <shoppingCard
+            :index="index"
+            :data="data"
+            @change="change"
+            @changeNum="changeNum"
+          ></shoppingCard>
+        </uni-swipe-action-item>
+      </uni-swipe-action>
     </view>
     <view v-if="deleteList.length > 0" class="card">
       <deleteCard
@@ -44,7 +51,7 @@
         </template>
       </TnEmpty>
     </view>
-    <view v-if="dataList.length > 0" class="suggest">
+    <view class="suggest">
       <image
         src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhTcBKpUgwer5OCCic51cf2LcTZxA5rVFQEGxtVt0kIP1dxic6tTEgrte4Uelyw6FcO7HaVDicj9RUnqA/0?wx_fmt=png"
         mode="scaleToFill"
@@ -105,6 +112,23 @@
     </view>
   </view>
   <view class="fix-bottom">
+    <view class="free">
+      <view class="left">
+        <image class="image" :src="`${image_url}`" mode="aspectFit"> </image>
+        <view class="orange">满99包邮</view>
+        <view class="desc"> | 再买{{ (99 - total).toFixed(2) }}免邮 </view>
+      </view>
+      <TnButton
+        plain
+        border-color="#FF4121"
+        text-color="#FF4121"
+        shape="round"
+        font-size="26rpx"
+        @click="addOn"
+      >
+        去凑单
+      </TnButton>
+    </view>
     <view class="bottom">
       <view class="tn-flex-center-start">
         <TnCheckbox
@@ -143,7 +167,8 @@
     @close="address_visible = false"
     @changeAddress="changeAddress"
   />
-  <OutPopup visible />
+  <OutPopup :visible="output_visible" @close="close" @toEdit="toEdit" />
+  <AddonPopup :visible="addon_visible" @close="addon_visible = false" />
 </template>
 
 <script setup>
@@ -160,6 +185,8 @@ import shoppingCard from "@/components/shopping/shoppingCard.vue"
 
 import AddressPopup from "@/components/AddressPopup"
 import OutPopup from "@/components/OutPopup"
+import AddonPopup from "@/components/AddonPopup"
+
 import { get_commodity } from "@/api/index/index"
 import { get_cart_list, del_cart } from "@/api/cart/cart"
 import { AddressStore } from "@/store"
@@ -176,10 +203,29 @@ const changeAddress = (item) => {
   )
 }
 
+const image_url = "/static/shopping/free.png"
+
 let page = 1
 
+const swipe_options = ref([
+  {
+    text: "删除",
+    style: {
+      width: "140rpx",
+      backgroundColor: "#FF4121",
+      fontFamily: "PingFangSC, PingFang SC",
+      fontWeight: 400,
+      fontSize: "28rpx",
+      color: "#FFFFFF",
+      fontStyle: "normal",
+    },
+  },
+])
+
 // 用来标记是否要显示没有购物车数据，避免用户已进入先看到空
-const is_empty = ref(false)
+const is_empty = computed(() => {
+  return dataList.value.length === 0
+})
 
 const dataList = ref([])
 
@@ -233,28 +279,51 @@ const changeOrderAll = (e) => {
   orderAll.value = e
 }
 
-const del = () => {
-  const list = []
+const del = (data) => {
+  // 旧版，把选中的所有都删除
+  // const list = []
+  // uni.showModal({
+  //   title: "提示",
+  //   content: "确定要删除选中的所有商品吗?",
+  //   success: (success) => {
+  //     if (success.confirm) {
+  //       select_goods.value.forEach((item) => {
+  //         list.push(del_cart(item.id))
+  //       })
+  //       del_cart(select_goods.value.map((item) => item.item_id)).then((res) => {
+  //         if (res.code === 200) {
+  //           dataList.value = dataList.value.filter(
+  //             (item) => !select_goods.value.includes(item)
+  //           )
+  //           console.log(dataList.value, select_goods.value)
+  //           if (dataList.value.length === 0) is_empty.value = true
+  //           uni.showToast({
+  //             title: "删除成功",
+  //             icon: "none",
+  //           })
+  //           select_goods.value = []
+  //         }
+  //       })
+  //     }
+  //   },
+  // })
+  console.log(data)
   uni.showModal({
-    title: "提示",
-    content: "确定要删除选中的所有商品吗?",
+    title: "确定要删除该商品吗？",
     success: (success) => {
       if (success.confirm) {
-        select_goods.value.forEach((item) => {
-          list.push(del_cart(item.id))
-        })
-        del_cart(select_goods.value.map((item) => item.item_id)).then((res) => {
+        del_cart(data.id).then((res) => {
           if (res.code === 200) {
             dataList.value = dataList.value.filter(
-              (item) => !select_goods.value.includes(item)
+              (item) => item.id !== data.id
             )
-            console.log(dataList.value, select_goods.value)
-            if (dataList.value.length === 0) is_empty.value = true
+            select_goods.value = select_goods.value.filter(
+              (item) => item.id !== data.id
+            )
             uni.showToast({
               title: "删除成功",
               icon: "none",
             })
-            select_goods.value = []
           }
         })
       }
@@ -274,6 +343,11 @@ const Delete = (id) => {
   })
 }
 
+const addon_visible = ref(false)
+const addOn = () => {
+  addon_visible.value = true
+}
+
 // 点击结算
 const tocaculate = () => {
   if (select_goods.value.length === 0) {
@@ -281,6 +355,11 @@ const tocaculate = () => {
       title: "请先选择商品",
       icon: "none",
     })
+    return
+  }
+  //   如果地址不在深圳，弹出提示
+  if (!address.address.is_same) {
+    output_visible.value = true
     return
   }
   const ids = select_goods.value.map((item) => ({
@@ -303,6 +382,15 @@ watch(
   },
   { deep: true }
 )
+
+const output_visible = ref(false)
+const close = () => {
+  output_visible.value = false
+}
+const toEdit = () => {
+  output_visible.value = false
+  address_visible.value = true
+}
 
 const getData = () => {
   get_cart_list(1).then((res) => {
@@ -446,6 +534,7 @@ onReachBottom(() => {
 
   .empty {
     margin-top: 150rpx;
+    margin-bottom: 150rpx;
     font-family: PingFangSC, PingFang SC;
     font-weight: 400;
     font-size: 30rpx;
@@ -555,6 +644,51 @@ onReachBottom(() => {
   background: #ffffff;
   position: fixed;
   bottom: 0;
+
+  .free {
+    width: 100%;
+    height: 68rpx;
+    background: #ffeed7;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20rpx;
+
+    .left {
+      display: flex;
+      align-items: center;
+
+      .image {
+        width: 58rpx;
+        height: 28rpx;
+        margin-right: 4rpx;
+      }
+
+      .orange {
+        background: #ff7500;
+        border-radius: 4rpx;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 22rpx;
+        color: #ffffff;
+        line-height: 30rpx;
+        text-align: left;
+        font-style: normal;
+        padding: 0 8rpx;
+      }
+
+      .desc {
+        margin-left: 10rpx;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 24rpx;
+        color: #666666;
+        line-height: 33rpx;
+        text-align: left;
+        font-style: normal;
+      }
+    }
+  }
 
   .bottom {
     width: 90%;
