@@ -179,30 +179,6 @@ const cont = ref(1)
 
 // 推荐商品
 const recommend = ref([])
-const getRecommend = () => {
-  // 静态数据
-  recommend.value = [
-    {
-      id: 1,
-      name: "商品1",
-      path: getRandomImage(),
-      price: 100,
-    },
-    {
-      id: 2,
-      name: "商品2",
-      path: getRandomImage(),
-      price: 200,
-    },
-    {
-      id: 3,
-      name: "商品3",
-      path: getRandomImage(),
-      price: 300,
-    },
-  ]
-}
-
 // 详细描述
 const content = ref("")
 
@@ -258,6 +234,8 @@ onLoad((options) => {
     name.value = res.data.name
 
     typeList.value = res.data.labels
+
+    recommend.value = res.data.recommend
 
     content.value = res.data.content.replace(
       /(<img [^>]*)(style="[^"]*")?/gi,

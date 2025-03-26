@@ -120,7 +120,12 @@
           实实在在的口碑之选
         </view>
         <view class="items">
-          <view v-for="card in hot_list" :key="card.id" class="item">
+          <view
+            v-for="card in hot_list"
+            :key="card.id"
+            class="item"
+            @click="toDetail(card.id)"
+          >
             <view class="left">
               <view class="name">
                 {{ card.name }}
@@ -146,7 +151,7 @@
         >
           跟榜买 不会错！
         </view>
-        <view class="main-must">
+        <view class="main-must" @click="toDetail(must_title.c_id)">
           <image class="background" :src="must_title.img" mode="aspectFill">
           </image>
           <view class="mask"></view>
@@ -156,7 +161,12 @@
           </view>
         </view>
         <view class="items">
-          <view class="item" v-for="card in must_list" :key="card.id">
+          <view
+            class="item"
+            v-for="card in must_list"
+            :key="card.id"
+            @click="toDetail(card.id)"
+          >
             <image class="image" :src="card.path" mode="aspectFit"> </image>
             <view class="name">
               {{ card.name }}
@@ -280,7 +290,9 @@
           <view class="tn-flex-center-between">
             <view class="tn-flex-center-start">
               <view class="price"> ￥{{ item.price }} </view>
-              <view class="old"> ￥{{ item.or_price }} </view>
+              <view class="old" v-if="item.or_price">
+                ￥{{ item.or_price }}
+              </view>
             </view>
             <image class="cart" :src="`${preUrl}cart.png`"> </image>
           </view>
@@ -299,9 +311,7 @@
 <script setup>
 import TnSwiper from "@/uni_modules/tuniaoui-vue3/components/swiper/src/swiper.vue"
 import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
-import TnWaterFall from "@/uni_modules/tuniaoui-vue3/components/water-fall/src/water-fall.vue"
 import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
-import TnTag from "@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue"
 import TnCountDown from "@/uni_modules/tuniaoui-vue3/components/count-down/src/count-down.vue"
 import { ref } from "vue"
 import {
