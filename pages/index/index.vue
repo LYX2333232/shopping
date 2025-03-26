@@ -126,13 +126,13 @@
                 {{ card.name }}
               </view>
               <view class="tn-flex-center-start tn-mt-10 tn-mb-20">
-                <view class="flash"> ￥{{ card.flash_price }} </view>
+                <view class="flash"> ￥{{ card.price }} </view>
                 <view class="size">{{ card.item_name }}</view>
               </view>
               <button>立即购买</button>
               <!-- <view class="old"> ￥{{ card.price }} </view> -->
             </view>
-            <image :src="card.path" mode="scaleToFill" class="image" />
+            <image :src="card.path" mode="aspectFit" class="image" />
           </view>
         </view>
       </view>
@@ -147,11 +147,12 @@
           跟榜买 不会错！
         </view>
         <view class="main-must">
-          <image class="background" :src="must_list[0]?.path" mode="aspectFill">
+          <image class="background" :src="must_title.img" mode="aspectFill">
           </image>
+          <view class="mask"></view>
           <view class="price">
-            <view class="name">{{ must_list[0]?.name }}</view>
-            <view class="flash"> {{ must_list[0]?.price }}元 </view>
+            <view class="name">{{ must_title.name }}</view>
+            <view class="flash"> {{ must_title.price }}元 </view>
           </view>
         </view>
         <view class="items">
@@ -313,7 +314,7 @@ import {
 import AddressPopup from "@/components/AddressPopup"
 import { AddressStore } from "@/store"
 import { get_home, get_commodity } from "@/api/index"
-import { get_today_list } from "@/api/index/today/today"
+// import { get_today_list } from "@/api/index/today/today"
 import { getRandomImage } from "@/utils/constant"
 
 const preUrl = "/static/index/"
@@ -363,15 +364,17 @@ const toSeckill = () =>
 // 热卖商品
 const hot_list = ref([])
 
+// 必吃商品
 const must_list = ref([])
+const must_title = ref({})
 
 // 今日开团商品
-const today_list = ref([])
+// const today_list = ref([])
 
-const toToday = () =>
-  uni.navigateTo({
-    url: "/pages/index/today/index",
-  })
+// const toToday = () =>
+//   uni.navigateTo({
+//     url: "/pages/index/today/index",
+//   })
 
 // 底部推荐商品
 const infoList = ref()
@@ -388,32 +391,33 @@ const getData = () => {
     swiperData.value = res.data.swiper
     seckill_list.value = res.data.flash_commodity
     // 静态数据
-    hot_list.value = [
-      {
-        id: 1,
-        name: "苹果",
-        path: getRandomImage(),
-        flash_price: 100,
-        price: 150,
-        item_name: "1kg/袋",
-      },
-      {
-        id: 2,
-        name: "雪梨",
-        path: getRandomImage(),
-        flash_price: 100,
-        price: 150,
-        item_name: "1kg/袋",
-      },
-      {
-        id: 3,
-        name: "葡萄",
-        path: getRandomImage(),
-        flash_price: 100,
-        price: 150,
-        item_name: "1kg/袋",
-      },
-    ]
+    // hot_list.value = [
+    //   {
+    //     id: 1,
+    //     name: "苹果",
+    //     path: getRandomImage(),
+    //     flash_price: 100,
+    //     price: 150,
+    //     item_name: "1kg/袋",
+    //   },
+    //   {
+    //     id: 2,
+    //     name: "雪梨",
+    //     path: getRandomImage(),
+    //     flash_price: 100,
+    //     price: 150,
+    //     item_name: "1kg/袋",
+    //   },
+    //   {
+    //     id: 3,
+    //     name: "葡萄",
+    //     path: getRandomImage(),
+    //     flash_price: 100,
+    //     price: 150,
+    //     item_name: "1kg/袋",
+    //   },
+    // ]
+    hot_list.value = res.data.hot
     must_list.value = [
       {
         id: 1,
@@ -440,14 +444,16 @@ const getData = () => {
         path: getRandomImage(),
       },
     ]
+    must_list.value = res.data.must_eat.commoditys
+    must_title.value = { ...res.data.must_eat }
   })
   get_commodity({ ids: [] }).then((res) => {
     infoList.value = res.data.data
   })
-  get_today_list(1).then((res) => {
-    // 最多获取两个
-    today_list.value = res.data.data.slice(0, 2)
-  })
+  // get_today_list(1).then((res) => {
+  //   // 最多获取两个
+  //   today_list.value = res.data.data.slice(0, 2)
+  // })
 }
 
 // 点击输入框
@@ -732,6 +738,7 @@ onShareTimeline(() => {
       margin-bottom: 20rpx;
 
       .left {
+        width: 100%;
         .name {
           font-family: SourceHanSansCN, SourceHanSansCN;
           font-weight: 500;
@@ -740,6 +747,12 @@ onShareTimeline(() => {
           line-height: 57rpx;
           text-align: left;
           font-style: normal;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .flash {
           font-family: PingFangSC, PingFang SC;
@@ -778,6 +791,7 @@ onShareTimeline(() => {
       }
 
       .image {
+        flex-shrink: 0;
         margin-left: 71rpx;
         width: 280rpx;
         height: 250rpx;
@@ -817,6 +831,15 @@ onShareTimeline(() => {
       width: 100%;
       height: 100%;
     }
+    .mask {
+      width: 100%;
+      height: 100%;
+      //添加一个蒙层，让无论什么背景都能看得到文字
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, #000000 100%);
+      position: absolute;
+      top: 0;
+      z-index: 1;
+    }
     .price {
       position: absolute;
       left: 0;
@@ -824,6 +847,7 @@ onShareTimeline(() => {
       display: flex;
       flex-direction: column;
       align-items: center;
+      z-index: 2;
       .name {
         max-width: 240rpx;
         font-family: SourceHanSansCN, SourceHanSansCN;
