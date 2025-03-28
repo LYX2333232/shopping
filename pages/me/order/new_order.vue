@@ -5,24 +5,30 @@
       <view v-if="order.address" class="info">
         <image
           src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRZ79seDfEequ1Hb9ickvPefV9FlF1NZbibwytQibaoEFxqbxzfnoXYxx72t1xcTG5QxEclNf797DAVA/0?wx_fmt=png"
-          mode="scaleToFill" class="map" />
+          mode="scaleToFill"
+          class="map"
+        />
         <view>
           <view class="title">
-            {{ order.address.address_name + ' ' + order.address.detail }}
+            {{ order.address.address_name + " " + order.address.detail }}
           </view>
           <view class="desc">
             {{ order.address.name }} {{ order.address.phone }}
           </view>
         </view>
       </view>
-      <view v-else class="info">
-        请选择收货地址
-      </view>
+      <view v-else class="info"> 请选择收货地址 </view>
       <TnIcon name="right" />
     </view>
     <view class="card goods_list">
       <view class="goods">
-        <image v-for="good in order.com_item" :key="good.id" :src="good.path" class="image" mode="scaleToFill" />
+        <image
+          v-for="good in order.com_item"
+          :key="good.id"
+          :src="good.path"
+          class="image"
+          mode="scaleToFill"
+        />
       </view>
       <view class="right">
         共{{ order.com_item?.length }}件
@@ -33,106 +39,109 @@
       <view class="title">价格明细</view>
       <view class="price_item">
         <view class="left">商品金额</view>
-        <view class="right">
-          ￥ {{ order.show_price }}
-        </view>
+        <view class="right"> ￥ {{ order.show_price }} </view>
       </view>
       <view class="price_item">
         <view class="left">
           <view>配送费</view>
         </view>
         <view class="right">
-          <view>
-            ￥ {{ order.freight }}
-          </view>
+          <view> ￥ {{ order.freight }} </view>
         </view>
       </view>
       <view v-if="type" class="price_item">
-        <view class="left">
-          活动优惠
-        </view>
-        <view class="discount">
-          -￥ {{ order.discount_price }}
-        </view>
+        <view class="left"> 活动优惠 </view>
+        <view class="discount"> -￥ {{ order.discount_price }} </view>
       </view>
       <view v-if="type === 0" class="price_item" @click="showCoupon">
         <view class="left">
           <image
             src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRZ79seDfEequ1Hb9ickvPefN6opIhUMaphx7TnXfSmuBfib7aSODM2zvb8ibvY2VZc5tUAo2ibHDbjEQ/0?wx_fmt=png"
-            mode="scaleToFill" class="coupon" />
-          <view>
-            优惠券
-          </view>
+            mode="scaleToFill"
+            class="coupon"
+          />
+          <view> 优惠券 </view>
         </view>
         <view class="right">
           <view v-if="order.coupon" class="discount">
             - ￥{{ coupon_price.toFixed(2) }}
           </view>
           <view v-else class="old">
-            {{ usable_list?.length === 0 ? '暂无优惠券' : '请选择优惠券' }}
+            {{ usable_list?.length === 0 ? "暂无优惠券" : "请选择优惠券" }}
           </view>
           <TnIcon name="right" />
         </view>
       </view>
       <view class="total">
-        <view class="discount text">
-          共优惠
-        </view>
+        <view class="discount text"> 共优惠 </view>
         <view class="discount pay">
           -￥ {{ (order.discount_price + coupon_price).toFixed(2) }}
         </view>
-        <view class="res text">
-          小计：
-        </view>
-        <view class="res pay">
-          ￥ {{ order.price }}
-        </view>
+        <view class="res text"> 小计： </view>
+        <view class="res pay"> ￥ {{ order.price }} </view>
       </view>
     </view>
     <view class="card price">
-      <view class="title">
-        支付方式
-      </view>
+      <view class="title"> 支付方式 </view>
       <view class="price_item">
         <view class="left">
           <image
             src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRZ79seDfEequ1Hb9ickvPefcDLgnn0x3soldkgUfGnxj3XuEYibYVlQUYEibpO4Ar4Bd7lMRqbJa4Uw/0?wx_fmt=png"
-            mode="scaleToFill" class="wechat" />
+            mode="scaleToFill"
+            class="wechat"
+          />
           微信支付
         </view>
-        <TnCheckbox active-color="#14bf20" checked-shape="circle" v-model="pay_way" disabled />
+        <TnCheckbox
+          active-color="#14bf20"
+          checked-shape="circle"
+          v-model="pay_way"
+          disabled
+        />
       </view>
     </view>
   </view>
   <view class="bottom">
     <view class="res">
       应付：
-      <view class="pay">
-        ￥{{ order.price }}
-      </view>
+      <view class="pay"> ￥{{ order.price }} </view>
     </view>
     <TnButton type="success" size="xl" shape="round" @click="pay">
       去支付
     </TnButton>
   </view>
-  <AddressPopup :visible="address_visible" :select_id="order.address?.id" @close="address_visible = false"
-    @changeAddress="changeAddress" />
-  <TnPopup v-model="coupon_visible" open-direction="bottom" height="750" @close="coupon_visible = false">
+  <AddressPopup
+    :visible="address_visible"
+    :select_id="order.address?.id"
+    @close="address_visible = false"
+    @changeAddress="changeAddress"
+  />
+  <TnPopup
+    v-model="coupon_visible"
+    open-direction="bottom"
+    height="750"
+    @close="coupon_visible = false"
+  >
     <view class="coupon-all">
-      <view class="header">
-        选择优惠券
-      </view>
-      <view class="title">
-        可用优惠券
-      </view>
-      <view v-for="coupon in usable_list" :key="coupon.id" class="coupon usable tn-mb-lg" @click="selectCoupon(coupon)">
+      <view class="header"> 选择优惠券 </view>
+      <view class="title"> 可用优惠券 </view>
+      <view
+        v-for="coupon in usable_list"
+        :key="coupon.id"
+        class="coupon usable tn-mb-lg"
+        @click="selectCoupon(coupon)"
+      >
         <view class="left">
           <view class="coupon-price">
             <view class="type">
               {{ coupon.type_text }}
             </view>
             <view class="discount">
-              {{ coupon.type_text === '折扣券' ? `${coupon.price}折` : `￥${coupon.price}` }}
+              {{
+                coupon.type_text === "折扣券"
+                  ? `${coupon.price}折`
+                  : `￥${coupon.price}`
+              }}
             </view>
             <view class="desc">
               {{ descText(coupon) }}
@@ -145,16 +154,16 @@
             <view class="desc" v-if="coupon.bk_text">
               {{ coupon.bk_text }}
             </view>
-            <view class="time">
-              有效期至：{{ coupon.end }}
-            </view>
+            <view class="time"> 有效期至：{{ coupon.end }} </view>
           </view>
         </view>
-        <TnCheckbox v-model="coupon.isSelect" active-color="#14bf20" checked-shape="circle" />
+        <TnCheckbox
+          v-model="coupon.isSelect"
+          active-color="#14bf20"
+          checked-shape="circle"
+        />
       </view>
-      <view class="title">
-        不可用优惠券
-      </view>
+      <view class="title"> 不可用优惠券 </view>
       <view v-for="coupon in unusable_list" :key="coupon.id" class="tn-mb-lg">
         <view class="coupon unusable">
           <view class="left">
@@ -163,7 +172,11 @@
                 {{ coupon.type_text }}
               </view>
               <view class="discount">
-                {{ coupon.type_text === '折扣券' ? `${coupon.price}折` : `￥${coupon.price}` }}
+                {{
+                  coupon.type_text === "折扣券"
+                    ? `${coupon.price}折`
+                    : `￥${coupon.price}`
+                }}
               </view>
               <view class="desc">
                 {{ descText(coupon) }}
@@ -176,9 +189,7 @@
               <view class="desc" v-if="coupon.bk_text">
                 {{ coupon.bk_text }}
               </view>
-              <view class="time">
-                有效期至：{{ coupon.end }}
-              </view>
+              <view class="time"> 有效期至：{{ coupon.end }} </view>
             </view>
           </view>
           <view></view>
@@ -192,19 +203,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { ref, computed } from "vue"
+import { onLoad } from "@dcloudio/uni-app"
 
-import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
-import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
-import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
-import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
+import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
+import TnCheckbox from "@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue"
+import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
+import TnPopup from "@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue"
 
-import Header from '@/components/header'
-import AddressPopup from '@/components/AddressPopup'
-import { get_usable_coupon } from '@/api/coupon/coupon'
-import { new_order, get_order_price } from '@/api/order/order'
-import { CartStore } from '@/store'
+import Header from "@/components/header"
+import AddressPopup from "@/components/AddressPopup"
+import { get_usable_coupon } from "@/api/coupon/coupon"
+import { new_order, get_order_price } from "@/api/order/order"
+import { CartStore } from "@/store"
 
 const cart = CartStore()
 
@@ -224,22 +235,24 @@ const getOrderPrice = () => {
   console.log(address)
   // 秒杀商品
   if (flash_com_id) {
-    get_order_price({ flash_com_id, com_cont, address_id: address?.id }).then(res => {
-      order.value = {
-        ...res.data,
-        com_item: [res.data.com_item],
-        address
+    get_order_price({ flash_com_id, com_cont, address_id: address?.id }).then(
+      (res) => {
+        order.value = {
+          ...res.data,
+          com_item: [res.data.com_item],
+          address,
+        }
+        type.value = 2
       }
-      type.value = 2
-    })
+    )
     return
   }
   if (teamwork_com_id) {
-    get_order_price({ teamwork_com_id, com_cont }).then(res => {
+    get_order_price({ teamwork_com_id, com_cont }).then((res) => {
       order.value = {
         ...res.data,
         com_item: [res.data.com_item],
-        address
+        address,
       }
       type.value = 1
     })
@@ -247,15 +260,22 @@ const getOrderPrice = () => {
   }
 
   // 普通商品
-  get_order_price({ ids, address_id: address?.id, coupon_id: order.value.coupon?.id }).then(res => {
+  get_order_price({
+    ids,
+    address_id: address?.id,
+    coupon_id: order.value.coupon?.id,
+  }).then((res) => {
     console.log(res.data)
     order.value = {
       ...res.data,
-      address
+      address,
     }
   })
-  get_usable_coupon({ ids }).then(res => {
-    usable_list.value = res.data.keyong.map(item => ({ ...item, isSelect: false }))
+  get_usable_coupon({ ids }).then((res) => {
+    usable_list.value = res.data.keyong.map((item) => ({
+      ...item,
+      isSelect: false,
+    }))
     unusable_list.value = res.data.bukeyong
   })
 }
@@ -270,7 +290,7 @@ const address_visible = ref(false)
 const showAddress = () => {
   address_visible.value = true
 }
-const changeAddress = item => {
+const changeAddress = (item) => {
   order.value.address = item
   getOrderPrice()
 }
@@ -281,20 +301,20 @@ const unusable_list = ref([])
 const coupon_visible = ref(false)
 const showCoupon = () => {
   if (usable_list.value.length === 0) {
-    uni.showToast({ title: '暂无优惠券', icon: 'none' })
+    uni.showToast({ title: "暂无优惠券", icon: "none" })
     return
   }
   coupon_visible.value = true
 }
-const descText = coupon => {
-  if (coupon.type_text === '现金券') return ''
-  if (coupon.type_text === '满减券') return `满${coupon.full}减${coupon.reduce}`
-  if (coupon.type_text === '类目券') return ''
-  if (coupon.type_text === '折扣券') return `打${coupon.price}折`
+const descText = (coupon) => {
+  if (coupon.type_text === "现金券") return ""
+  if (coupon.type_text === "满减券") return `满${coupon.full}减${coupon.reduce}`
+  if (coupon.type_text === "类目券") return ""
+  if (coupon.type_text === "折扣券") return `打${coupon.price}折`
 }
-const selectCoupon = coupon => {
+const selectCoupon = (coupon) => {
   // 清除其他选择
-  usable_list.value.forEach(item => {
+  usable_list.value.forEach((item) => {
     if (item.id !== coupon.id) {
       item.isSelect = false
     }
@@ -306,7 +326,7 @@ const selectCoupon = coupon => {
 // 计算使用优惠券降价
 const coupon_price = computed(() => {
   if (!order.value.coupon) return 0
-  if (order.value.coupon.type_text === '折扣券')
+  if (order.value.coupon.type_text === "折扣券")
     return order.value.show_price * (1 - order.value.coupon.price / 10)
   return order.value.coupon.price
 })
@@ -322,48 +342,48 @@ const pay = async () => {
       ids,
       address_id: order.value.address.id,
       coupon_id: order.value.coupon ? order.value.coupon.id : undefined,
-      shopping_cart_ids
+      shopping_cart_ids,
     })
   // 拼团商品
   else if (type.value === 1)
     res = await new_order({
       address_id: order.value.address.id,
       teamwork_com_id,
-      com_cont
+      com_cont,
     })
   // 秒杀商品
   else
     res = await new_order({
       address_id: order.value.address.id,
       flash_com_id,
-      com_cont
+      com_cont,
     })
   uni.requestPayment({
-    provider: 'wxpay',
+    provider: "wxpay",
     timeStamp: res.data.timeStamp,
     nonceStr: res.data.nonceStr,
     package: res.data.package,
     signType: res.data.signType,
     paySign: res.data.paySign,
     success: function (res) {
-      if (res.errMsg === 'requestPayment:ok') {
+      if (res.errMsg === "requestPayment:ok") {
         uni.showToast({
-          title: '支付成功',
-          icon: 'none'
+          title: "支付成功",
+          icon: "none",
         })
       }
     },
     fail: function (err) {
-      console.log('fail', err)
+      console.log("fail", err)
     },
     complete: () => {
-      uni.reLaunch({ url: '/pages/me/order/detail?id=' + res.data.order_id })
+      uni.reLaunch({ url: "/pages/me/order/detail?id=" + res.data.order_id })
       cart.update()
-    }
+    },
   })
 }
 
-onLoad(options => {
+onLoad((options) => {
   flash_com_id = options.flash_id
   teamwork_com_id = options.teamwork_id
   com_cont = options.com_cont
@@ -381,7 +401,7 @@ onLoad(options => {
   min-height: 100vh;
   position: relative;
   padding: 200rpx 0 100rpx;
-  background: #F5F5F5;
+  background: #f5f5f5;
   z-index: 0;
 }
 
@@ -392,17 +412,17 @@ onLoad(options => {
   left: 0;
   width: 100%;
   height: 560rpx;
-  background: url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRZ79seDfEequ1Hb9ickvPeftGpjvxq7dKHqF0IPP2bpExe4szbAaPK2wOG52haKkCu8ZuiaIcprFdw/0?wx_fmt=png') no-repeat;
+  background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRZ79seDfEequ1Hb9ickvPeftGpjvxq7dKHqF0IPP2bpExe4szbAaPK2wOG52haKkCu8ZuiaIcprFdw/0?wx_fmt=png")
+    no-repeat;
   background-size: 100% auto;
   z-index: -1;
 }
-
 
 .card {
   width: 90%;
   border-radius: 24rpx;
   padding: 20rpx;
-  background: #FFF;
+  background: #fff;
   margin: 20rpx 5%;
 }
 
@@ -506,7 +526,7 @@ onLoad(options => {
     text-align: left;
     font-style: normal;
     padding-bottom: 30rpx;
-    border-bottom: 1rpx solid #EEEEEE;
+    border-bottom: 1rpx solid #eeeeee;
   }
 
   .price_item {
@@ -555,7 +575,7 @@ onLoad(options => {
       font-family: WeChat-Sans-Std, WeChat-Sans-Std;
       font-weight: 400;
       font-size: 28rpx;
-      color: #EE2532;
+      color: #ee2532;
       line-height: 31rpx;
       text-align: center;
       font-style: normal;
@@ -568,7 +588,7 @@ onLoad(options => {
     align-items: center;
     justify-content: flex-end;
     padding-top: 30rpx;
-    border-top: 1rpx solid #EEEEEE;
+    border-top: 1rpx solid #eeeeee;
 
     .discount {
       font-family: PingFangSC, PingFang SC;
@@ -582,7 +602,7 @@ onLoad(options => {
 
     .pay {
       margin: 0 10rpx;
-      color: #EE2532;
+      color: #ee2532;
     }
 
     .res {
@@ -604,7 +624,7 @@ onLoad(options => {
   display: flex;
   padding: 10rpx 20rpx;
   align-items: center;
-  background: #FFF;
+  background: #fff;
   justify-content: flex-end;
 
   .res {
@@ -619,7 +639,7 @@ onLoad(options => {
     font-style: normal;
 
     .pay {
-      color: #EE2532;
+      color: #ee2532;
     }
 
     margin-right: 20rpx;
@@ -636,7 +656,7 @@ onLoad(options => {
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
     font-size: 32rpx;
-    color: #0F0D0D;
+    color: #0f0d0d;
     line-height: 45rpx;
     text-align: center;
     font-style: normal;
@@ -680,7 +700,7 @@ onLoad(options => {
           width: 136rpx;
           height: 40rpx;
           text-align: center;
-          color: #FFF;
+          color: #fff;
           border-radius: 8rpx 0rpx 8rpx 0rpx;
         }
 
@@ -730,14 +750,15 @@ onLoad(options => {
   }
 
   .usable {
-    background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSicr23JD01fOs8hzEmFwb8vfCq3Kefaic0OH4dos360FCvZwQ2ib43ohBUcIfm3Wy0FaweEgFuFzhZA/0?wx_fmt=png") no-repeat;
+    background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSicr23JD01fOs8hzEmFwb8vfCq3Kefaic0OH4dos360FCvZwQ2ib43ohBUcIfm3Wy0FaweEgFuFzhZA/0?wx_fmt=png")
+      no-repeat;
     background-size: 100% 100%;
 
     .left {
-      color: #EE2532;
+      color: #ee2532;
 
       .type {
-        background: #FF4121;
+        background: #ff4121;
       }
 
       .main {
@@ -751,14 +772,15 @@ onLoad(options => {
   }
 
   .unusable {
-    background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSicr23JD01fOs8hzEmFwb8vLNxgsBK2ficyplPp60mpfuVmGd1mwzITWiamyQFZ02S3vcicAKUxM07Ag/0?wx_fmt=png") no-repeat;
+    background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhSicr23JD01fOs8hzEmFwb8vLNxgsBK2ficyplPp60mpfuVmGd1mwzITWiamyQFZ02S3vcicAKUxM07Ag/0?wx_fmt=png")
+      no-repeat;
     background-size: 100% 100%;
 
     .left {
       color: #999999;
 
       .type {
-        background: #C2C2C2;
+        background: #c2c2c2;
       }
 
       .main {
@@ -773,7 +795,7 @@ onLoad(options => {
     font-family: PingFangSC, PingFang SC;
     font-weight: 400;
     font-size: 26rpx;
-    background: #F6F6F6;
+    background: #f6f6f6;
     color: #131313;
     line-height: 37rpx;
     text-align: left;

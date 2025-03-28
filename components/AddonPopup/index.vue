@@ -39,14 +39,14 @@
                 >￥{{ good.or_price }}</view
               >
             </view>
+            <!-- 只能使用v-show，用if有bug -->
             <TnNumberBox
-              v-if="good.cont"
+              v-show="good.cont"
               v-model="good.cont"
-              :min="0"
               @change="(e) => change(good, e)"
             />
             <TnButton
-              v-else
+              v-if="!good.cont"
               width="110"
               height="48"
               shape="round"
@@ -58,6 +58,8 @@
           </view>
         </view>
       </view>
+      <view class="bottom"></view>
+      <view class="fix"></view>
     </view>
   </TnPopup>
 </template>
@@ -69,11 +71,18 @@ import TnPopup from "@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue"
 import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
 import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
 import TnNumberBox from "@/uni_modules/tuniaoui-vue3/components/number-box/src/number-box.vue"
-import { getRandomImage } from "@/utils/constant"
 
-defineProps({
+// import { get_commodity } from "@/api/index"
+import { get_recommend_list } from "@/api/goods/goods"
+// import { getRandomImage } from "@/utils/constant"
+
+const props = defineProps({
   visible: {
     type: Boolean,
+    require,
+  },
+  differ: {
+    type: Number,
     require,
   },
 })
@@ -81,29 +90,33 @@ defineProps({
 const emits = defineEmits(["close", "changeSelect"])
 
 const list = ref([])
+var page = 1
 const getData = () => {
-  list.value = [
-    {
-      id: 1,
-      path: getRandomImage(),
-      name: "你好多号UI发货你师弟估计内燃机发咯古黄大发飞机快好啦手打开发加拿大索拉卡激发进啦科技覅UR办公",
-      or_price: 200,
-      item_name: "1kg/袋",
-      price: 100,
-      tag: true,
-      count: 0,
-    },
-    {
-      id: 2,
-      path: getRandomImage(),
-      name: "商品1",
-      or_price: 200,
-      item_name: "1kg/袋",
-      price: 100,
-      tag: false,
-      count: 1,
-    },
-  ]
+  // list.value = [
+  //   {
+  //     id: 1,
+  //     path: getRandomImage(),
+  //     name: "你好多号UI发货你师弟估计内燃机发咯古黄大发飞机快好啦手打开发加拿大索拉卡激发进啦科技覅UR办公",
+  //     or_price: 200,
+  //     item_name: "1kg/袋",
+  //     price: 100,
+  //     tag: true,
+  //     count: 0,
+  //   },
+  //   {
+  //     id: 2,
+  //     path: getRandomImage(),
+  //     name: "商品1",
+  //     or_price: 200,
+  //     item_name: "1kg/袋",
+  //     price: 100,
+  //     tag: false,
+  //     count: 1,
+  //   },
+  // ]
+  get_recommend_list(page, props.differ).then((res) => {
+    list.value = [...list.value, ...res.data.data]
+  })
 }
 
 const open = () => {
@@ -115,8 +128,13 @@ const close = () => {
 }
 
 const change = (good, value) => {
+  console.log(good, value)
   good.cont = value
-  emits("changeSelect", good, value)
+  // emits("changeSelect", good, value)
+}
+
+const scroll = (e) => {
+  console.log(e)
 }
 </script>
 
@@ -125,7 +143,9 @@ const change = (good, value) => {
   width: 100%;
   height: 100%;
   padding: 35rpx 30rpx;
+  margin-bottom: 150rpx;
   background: linear-gradient(180deg, #ffe3cc 0%, #ffffff 20%);
+  overflow: auto;
 }
 
 .addon {
@@ -257,5 +277,9 @@ const change = (good, value) => {
       }
     }
   }
+}
+
+.bottom {
+  height: 1rpx;
 }
 </style>

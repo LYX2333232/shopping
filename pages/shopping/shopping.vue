@@ -112,13 +112,15 @@
     </view>
   </view>
   <view class="fix-bottom">
-    <view class="free">
+    <view class="free" v-if="!addon_visible">
       <view class="left">
         <image class="image" :src="`${image_url}`" mode="aspectFit"> </image>
         <view class="orange">满99包邮</view>
         <view class="desc">
           |
-          {{ total < 99 ? ` 再买 ${(99 - total).toFixed(2)} 免邮` : "已免邮" }}
+          {{
+            differ > addon_all ? ` 再买 ${differ - addon_all} 元免邮` : "已免邮"
+          }}
         </view>
       </view>
       <TnButton
@@ -132,6 +134,12 @@
         去凑单
       </TnButton>
     </view>
+    <view class="in_popup" v-else-if="differ > addon_all">
+      再买
+      <text style="color: #ffd744"> {{ differ - addon_all }}元 </text>
+      ，免配送费
+    </view>
+    <view class="in_popup" v-else> 已免配送费 </view>
     <view class="bottom">
       <view class="tn-flex-center-start">
         <TnCheckbox
@@ -150,7 +158,10 @@
             <view class="text">总计</view>
             <view class="price">¥{{ total.toFixed(2) }} </view>
           </view>
-          <view class="have_free" v-if="total >= 99">已免配送费</view>
+          <view class="freight" v-if="total >= 99">已免配送费</view>
+          <view class="freight" v-else-if="total > 0"
+            >配送费：{{ freight }}</view
+          >
         </view>
         <TnButton
           width="220"
@@ -176,6 +187,7 @@
     :visible="addon_visible"
     @close="addon_visible = false"
     @changeSelect="changeSelect"
+    :differ="differ"
   />
 </template>
 
@@ -196,6 +208,7 @@ import OutPopup from "@/components/OutPopup"
 import AddonPopup from "@/components/AddonPopup"
 
 import { get_commodity } from "@/api/index/index"
+import { get_order_price } from "@/api/order/order"
 import { get_cart_list, del_cart } from "@/api/cart/cart"
 import { AddressStore } from "@/store"
 
@@ -244,19 +257,21 @@ const deleteList = ref([])
 const infoList = ref([])
 
 const updateTotal = () => {
-  let temp = 0
-  select_goods.value = []
-  dataList.value.forEach((item) => {
-    if (item.order) {
-      select_goods.value.push(item)
-      temp += item.price * item.cont
-    }
+  select_goods.value = [
+    ...dataList.value.filter((item) => item.order),
+    ...addon_list.value,
+  ]
+  get_order_price({
+    ids: select_goods.value.map((item) => ({
+      id: item.item_id,
+      cont: item.cont,
+    })),
+  }).then((res) => {
+    // console.log(res)
+    freight.value = res.data.freight
+    total.value = res.data.price
+    differ.value = res.data.differ
   })
-  addon_list.value.forEach((item) => {
-    select_goods.value.push(item)
-    temp += item.price * item.cont
-  })
-  total.value = temp
 }
 
 // 改变选中状态
@@ -357,6 +372,11 @@ const Delete = (id) => {
 
 const addon_visible = ref(false)
 const addon_list = ref([])
+const addon_all = computed(() =>
+  addon_list.value.reduce((pre, cur) => {
+    return pre + cur.cont * cur.price
+  }, 0)
+)
 const addOn = () => {
   addon_visible.value = true
 }
@@ -364,8 +384,9 @@ const addOn = () => {
 // 凑单添加商品
 const changeSelect = (good, cont) => {
   const index = addon_list.value.findIndex((item) => item.id === good.id)
-  if (index !== -1) addon_list.value.push(good)
+  if (index === -1) addon_list.value.push(good)
   else addon_list.value[index].cont = cont
+  updateTotal()
 }
 
 // 点击结算
@@ -394,7 +415,9 @@ const tocaculate = () => {
   })
 }
 
+const differ = ref(99)
 const total = ref(0)
+const freight = ref(0)
 watchEffect(() => {
   updateTotal()
 })
@@ -707,6 +730,22 @@ onReachBottom(() => {
     }
   }
 
+  .in_popup {
+    width: 100%;
+    height: 72rpx;
+    background: #ee2532;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 500;
+    font-size: 32rpx;
+    color: #ffffff;
+    line-height: 45rpx;
+    text-align: right;
+    font-style: normal;
+  }
+
   .bottom {
     width: 90%;
     margin: 10rpx auto;
@@ -764,7 +803,7 @@ onReachBottom(() => {
           font-style: normal;
         }
 
-        .have_free {
+        .freight {
           font-family: PingFangSC, PingFang SC;
           font-weight: 400;
           font-size: 24rpx;
