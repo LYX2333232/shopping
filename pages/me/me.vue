@@ -271,127 +271,129 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import { onShow } from "@dcloudio/uni-app";
+import { onMounted, ref } from "vue"
+import { onShow } from "@dcloudio/uni-app"
 
-import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue";
-import TnPopup from "@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue";
-import TnForm from "@/uni_modules/tuniaoui-vue3/components/form/src/form.vue";
-import TnFormItem from "@/uni_modules/tuniaoui-vue3/components/form/src/form-item.vue";
-import TnInput from "@/uni_modules/tuniaoui-vue3/components/input/src/input.vue";
-import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue";
-import TnCheckbox from "@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue";
-import TnBadge from "@/uni_modules/tuniaoui-vue3/components/badge/src/badge.vue";
+import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
+import TnPopup from "@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue"
+import TnForm from "@/uni_modules/tuniaoui-vue3/components/form/src/form.vue"
+import TnFormItem from "@/uni_modules/tuniaoui-vue3/components/form/src/form-item.vue"
+import TnInput from "@/uni_modules/tuniaoui-vue3/components/input/src/input.vue"
+import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
+import TnCheckbox from "@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue"
+import TnBadge from "@/uni_modules/tuniaoui-vue3/components/badge/src/badge.vue"
 
-import { UserStore, CartStore } from "@/store";
-import { uploadImage, Login, add_us } from "@/api/user/user";
-import { get_order_count } from "@/api/order/order";
-import { post_feedback } from "@/api/feedback/feedback";
+import { UserStore, CartStore } from "@/store"
+import { uploadImage, Login, add_us } from "@/api/user/user"
+import { get_order_count } from "@/api/order/order"
+import { post_feedback } from "@/api/feedback/feedback"
 
 onMounted(() => {
   if (!store.userInfo) {
     nextTick(() => {
-      loginVisible.value = true;
-    });
+      loginVisible.value = true
+    })
   }
-});
+})
 
-const store = UserStore();
-const cart = CartStore();
+const store = UserStore()
+const cart = CartStore()
+
+const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/icon/me/"
 
 const funList0 = ref([
   {
     name: "账户余额",
-    icon: "../../static/icon/me/wallet.png",
+    icon: preUrl + "wallet.png",
   },
   {
     name: "我的团队",
-    icon: "../../static/icon/me/team.png",
+    icon: preUrl + "team.png",
   },
   {
     name: "销售记录",
-    icon: "../../static/icon/me/sell.png",
+    icon: preUrl + "sell.png",
   },
   {
     name: "邀请好友",
-    icon: "../../static/icon/me/person.png",
+    icon: preUrl + "person.png",
   },
-]);
+])
 
 let funList = [
   {
     name: "待付款",
-    icon: "../../static/icon/me/topay.png",
+    icon: preUrl + "topay.png",
   },
   {
     name: "待发货",
-    icon: "../../static/icon/me/wait.png",
+    icon: preUrl + "wait.png",
   },
   {
     name: "待收货",
-    icon: "../../static/icon/me/truck.png",
+    icon: preUrl + "truck.png",
   },
   {
     name: "退款/售后",
-    icon: "../../static/icon/me/after.png",
+    icon: preUrl + "after.png",
   },
-];
-const funList1 = ref([]);
+]
+const funList1 = ref([])
 
-const order_count = ref([]);
+const order_count = ref([])
 
 // 反馈的弹出窗
-const feedback = ref(false);
+const feedback = ref(false)
 
-const phone = ref();
+const phone = ref()
 
 // 反馈的内容
-const feedbackContent = ref();
+const feedbackContent = ref()
 
 // 登录弹窗
-const loginVisible = ref(false);
+const loginVisible = ref(false)
 
 const login_form = ref({
   name: undefined,
   avatar: undefined,
   upload: undefined,
-});
+})
 
 // 展示登录弹窗
 const showLogin = () => {
-  loginVisible.value = true;
-};
+  loginVisible.value = true
+}
 
 // 点击分销
 const tap_item = (index) => {
   if (index === 0) {
     uni.navigateTo({
       url: "/pages/me/surplus/surplus",
-    });
+    })
   }
   if (index === 1) {
     uni.navigateTo({
       url: "/pages/me/team/team",
-    });
+    })
   }
   if (index === 2) {
     uni.navigateTo({
       url: "/pages/me/record/record",
-    });
+    })
   }
   if (index === 3) {
     uni.navigateTo({
       url: "/pages/me/invite/invite",
-    });
+    })
   }
-};
+}
 
 // 点击订单
 const tap_order = (index) => {
   uni.navigateTo({
     url: "/pages/me/order/index?index=" + index,
-  });
-};
+  })
+}
 
 // 点击我的应用的内容
 const tap_application = (index) => {
@@ -399,22 +401,22 @@ const tap_application = (index) => {
   if (index === 0) {
     uni.navigateTo({
       url: "/pages/me/address/index",
-    });
+    })
   }
   // 我的优惠券
   if (index === 2) {
     uni.navigateTo({
       url: "/pages/me/coupon/index",
-    });
+    })
   }
   // 点击反馈
   if (index === 3) {
-    feedback.value = true;
+    feedback.value = true
   }
   if (index === 4) {
     uni.navigateTo({
       url: "/pages/me/favorite/index",
-    });
+    })
   }
   if (index === 5) {
     // 退出登录
@@ -423,20 +425,20 @@ const tap_application = (index) => {
       content: "确定要退出登录吗？",
       success: (res) => {
         if (res.confirm) {
-          store.set_user_info(null);
-          uni.clearStorageSync();
+          store.set_user_info(null)
+          uni.clearStorageSync()
           // 重新加载当前页面
           uni.switchTab({
             url: "/pages/me/me",
-          });
+          })
         }
       },
-    });
+    })
   }
-};
+}
 
 const getphonenumber = (e) => {
-  const up_id = uni.getStorageSync("up_id");
+  const up_id = uni.getStorageSync("up_id")
   uni.login({
     success: (s) => {
       // 登录
@@ -449,19 +451,19 @@ const getphonenumber = (e) => {
         // 登录成功
         if (res.code === 200) {
           // 关闭弹窗
-          loginVisible.value = false;
+          loginVisible.value = false
           // 获取用户信息
-          store.set_user_info(res.data);
-          cart.update();
+          store.set_user_info(res.data)
+          cart.update()
         }
-      });
+      })
     },
-  });
-};
+  })
+}
 
 const cancelFeedback = () => {
-  feedback.value = false;
-};
+  feedback.value = false
+}
 
 const submitFeedback = () => {
   post_feedback({
@@ -469,35 +471,35 @@ const submitFeedback = () => {
     content: feedbackContent.value,
   }).then((res) => {
     if (res.code === 200) {
-      feedback.value = false;
-      phone.value = "";
-      feedbackContent.value = "";
+      feedback.value = false
+      phone.value = ""
+      feedbackContent.value = ""
     }
-  });
-};
+  })
+}
 
 // 选择头像
 const chooseavatar = (e) => {
   // 转换为base64
   const base64 = uni
     .getFileSystemManager()
-    .readFileSync(e.detail.avatarUrl, "base64");
+    .readFileSync(e.detail.avatarUrl, "base64")
   // 添加前缀
-  login_form.value.avatar = "data:image/png;base64," + base64;
+  login_form.value.avatar = "data:image/png;base64," + base64
   uploadImage("data:image/png;base64," + base64).then((res) => {
-    login_form.value.upload = res.data;
-  });
-};
+    login_form.value.upload = res.data
+  })
+}
 
-const addUsVisible = ref(false);
-const add_us_title = ref("分销规则");
+const addUsVisible = ref(false)
+const add_us_title = ref("分销规则")
 const add_us_content = ref(
   "分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是分销规则是"
-);
+)
 const add_us_form = ref({
   phone: undefined,
   agree: false,
-});
+})
 const add_us_rules = ref({
   phone: [
     {
@@ -511,10 +513,10 @@ const add_us_rules = ref({
       trigger: "blur",
     },
   ],
-});
+})
 
 const addUs = () => {
-  const pattern = /^1[3-9]\d{9}$/;
+  const pattern = /^1[3-9]\d{9}$/
   if (
     add_us_form.value.phone.toString().length !== 11 ||
     !pattern.test(add_us_form.value.phone)
@@ -523,61 +525,61 @@ const addUs = () => {
       title: "提示",
       content: "请输入正确的手机号码",
       showCancel: false,
-    });
-    return;
+    })
+    return
   }
   if (!add_us_form.value.agree) {
     uni.showModal({
       title: "提示",
       content: "请同意相关服务条款",
       showCancel: false,
-    });
-    return;
+    })
+    return
   }
   add_us(add_us_form.value.phone).then((res) => {
     if (res.code === 200) {
       uni.showToast({
         title: "提示",
         content: "申请成功",
-      });
-      addUsVisible.value = false;
+      })
+      addUsVisible.value = false
     } else {
       uni.showToast({
         title: "提示",
         content: res.msg,
-      });
+      })
     }
-  });
-};
+  })
+}
 
 const getData = () => {
   const list = [
     {
       name: "收货地址",
-      icon: "../../static/icon/me/location.png",
+      icon: preUrl + "location.png",
     },
     {
       name: "联系客服",
-      icon: "../../static/icon/me/service.png",
+      icon: preUrl + "service.png",
     },
     {
       name: "我的优惠券",
-      icon: "../../static/icon/me/money.png",
+      icon: preUrl + "money.png",
     },
     {
       name: "意见反馈",
-      icon: "../../static/icon/me/feedback.png",
+      icon: preUrl + "feedback.png",
     },
     {
       name: "收藏商品",
-      icon: "../../static/icon/me/star.png",
+      icon: preUrl + "star.png",
     },
     {
       name: "退出登录",
-      icon: "../../static/icon/me/logout.png",
+      icon: preUrl + "logout.png",
     },
-  ];
-  funList1.value = list;
+  ]
+  funList1.value = list
 
   get_order_count().then((res) => {
     order_count.value = [
@@ -585,13 +587,13 @@ const getData = () => {
       res.data.delivery,
       res.data.collect,
       res.data.refund,
-    ];
-  });
-};
+    ]
+  })
+}
 
 onShow(() => {
-  getData();
-});
+  getData()
+})
 </script>
 
 <style lang="scss" scoped>

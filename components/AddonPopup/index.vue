@@ -11,11 +11,7 @@
     <view class="popup">
       <view class="tn-flex-center-between">
         <view class="tn-flex-center-center">
-          <image
-            class="addon"
-            src="/static/shopping/addon.png"
-            mode="aspectFit"
-          >
+          <image class="addon" :src="`${preUrl}/addon.png`" mode="aspectFit">
           </image>
           <view class="desc">｜包邮无忧 暖心送达</view>
         </view>
@@ -75,6 +71,9 @@ import TnNumberBox from "@/uni_modules/tuniaoui-vue3/components/number-box/src/n
 // import { get_commodity } from "@/api/index"
 import { get_recommend_list } from "@/api/goods/goods"
 // import { getRandomImage } from "@/utils/constant"
+
+const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/shopping"
+console.log(preUrl)
 
 const props = defineProps({
   visible: {

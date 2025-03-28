@@ -148,7 +148,7 @@ import GoodNav from "@/components/goodNav"
 import CountDown from "@/components/CountDown"
 import { getRandomImage } from "@/utils/constant"
 
-const preUrl = "/static/detail/"
+const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/detail"
 
 // 轮播图相关
 const swiperVideo = ref([])

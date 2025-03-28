@@ -118,7 +118,7 @@ let t_id = undefined
 
 const searchInfo = ref("")
 
-const preUrl = "/static/goods/"
+const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/goods/"
 
 const search = () => {
   page = 1

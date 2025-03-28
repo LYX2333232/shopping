@@ -42,10 +42,11 @@ defineProps({
     default: false,
   },
 })
+const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/popup"
 
 const emit = defineEmits(["close", "toEdit"])
 
-const background = "/static/popup/popup.png"
+const background = preUrl + "/popup.png"
 
 const close = () => {
   emit("close")

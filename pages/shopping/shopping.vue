@@ -223,8 +223,9 @@ const changeAddress = (item) => {
     item.id
   )
 }
+const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/shopping"
 
-const image_url = "/static/shopping/free.png"
+const image_url = preUrl + "/free.png"
 
 let page = 1
 

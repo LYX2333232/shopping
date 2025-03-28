@@ -54,7 +54,7 @@ import TnCountDown from "@/uni_modules/tuniaoui-vue3/components/count-down/src/c
 import { set_favorite } from "@/api/goods/goods"
 import { CartStore } from "@/store"
 
-const preUrl = "/static/detail/"
+const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/detail"
 
 const cart = CartStore()
 

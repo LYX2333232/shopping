@@ -72,7 +72,7 @@
         <image
           class="item"
           v-for="(_, index) in 4"
-          :src="`/static/index/item${index}.png`"
+          :src="`${preUrl}item${index}.png`"
           :key="index"
           @click="top_button(index)"
         />
@@ -327,7 +327,7 @@ import { get_home, get_commodity } from "@/api/index"
 // import { get_today_list } from "@/api/index/today/today"
 import { getRandomImage } from "@/utils/constant"
 
-const preUrl = "/static/index/"
+const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/index/"
 
 const address = AddressStore()
 const address_visible = ref(false)
