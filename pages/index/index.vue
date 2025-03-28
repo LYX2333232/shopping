@@ -299,6 +299,14 @@
         </view>
       </view>
     </view>
+    <view class="VIP_view" v-if="VIP_visible">
+      <view class="close" @click="VIP_visible = false">
+        <TnIcon name="close" color="#FFF" size="30rpx" />
+      </view>
+      <button class="no_button" open-type="contact">
+        <image class="VIP" :src="VIP" mode="aspectFit"> </image>
+      </button>
+    </view>
     <AddressPopup
       :visible="address_visible"
       :select_id="address.id"
@@ -328,6 +336,9 @@ import { get_home, get_commodity } from "@/api/index"
 import { getRandomImage } from "@/utils/constant"
 
 const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/index/"
+
+const VIP =
+  "http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhR0plibtQOMrUJ4Dz7ibKHmkdbjMxvh0aszJibS4uLXx2BHNic33zhvIn40jQiaVW9hPXiaaSFOymIpk23Q/0?wx_fmt=png"
 
 const address = AddressStore()
 const address_visible = ref(false)
@@ -472,6 +483,8 @@ const toSearch = () => {
     url: "/pages/index/search/index",
   })
 }
+
+const VIP_visible = ref(true)
 
 var top = ref(0)
 
@@ -1010,6 +1023,48 @@ onShareTimeline(() => {
       width: 56rpx;
       height: 56rpx;
     }
+  }
+}
+
+.VIP_view {
+  position: fixed;
+  right: 20rpx;
+  top: 50vh;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  .close {
+    margin-bottom: 20rpx;
+    width: 36rpx;
+    height: 36rpx;
+    border-radius: 50%;
+    background: rgba($color: #000000, $alpha: 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .no_button {
+    //去除按钮默认样式
+    all: unset; /* 清除所有默认样式 */
+    display: block; /* 根据需要设置显示方式 */
+    width: auto; /* 自定义宽度 */
+    height: auto; /* 自定义高度 */
+    background: none; /* 移除背景 */
+    border: none; /* 移除边框 */
+    padding: 0; /* 移除内边距 */
+    margin: 0; /* 移除外边距 */
+    color: inherit; /* 继承字体颜色 */
+    font: inherit; /* 继承字体样式 */
+    text-align: inherit; /* 继承文本对齐方式 */
+  }
+
+  .VIP {
+    width: 130rpx;
+    height: 130rpx;
   }
 }
 
