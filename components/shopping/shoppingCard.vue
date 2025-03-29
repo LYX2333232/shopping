@@ -1,11 +1,21 @@
 <template>
   <view class="card">
-    <TnCheckbox v-model="data.order" @change="(e) => change(e, i)" active-color="#14bf20" checked-shape="circle"
-      size="lg">
+    <TnCheckbox
+      v-model="data.order"
+      @change="(e) => change(e, i)"
+      active-color="#14bf20"
+      checked-shape="circle"
+      size="lg"
+    >
     </TnCheckbox>
-    <image :src="data.path" class="image" mode="scaleToFill" />
+    <image
+      :src="data.path"
+      class="image"
+      mode="scaleToFill"
+      @click="toDetail(data.c_id)"
+    />
     <view class="right">
-      <view>
+      <view @click="toDetail(data.c_id)">
         <view class="title">{{ data.name }}</view>
         <view class="item-name">
           {{ data.item_name }}
@@ -16,42 +26,52 @@
           <view class="price">￥{{ data.price }}</view>
           <view v-if="data.or_price" class="old">￥{{ data.or_price }}</view>
         </view>
-        <TnNumberBox v-model="data.cont" :min="1" @change="(e) => changeNum(e, i)" />
+        <TnNumberBox
+          v-model="data.cont"
+          :min="1"
+          @change="(e) => changeNum(e, i)"
+        />
       </view>
     </view>
   </view>
 </template>
 
 <script setup>
-import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
-import TnNumberBox from '@/uni_modules/tuniaoui-vue3/components/number-box/src/number-box.vue'
-import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import TnCheckbox from "@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue"
+import TnNumberBox from "@/uni_modules/tuniaoui-vue3/components/number-box/src/number-box.vue"
+import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
 
 const { index, data } = defineProps({
   index: {
     type: Number,
-    default: 0
+    default: 0,
   },
   data: {
     type: Object,
-    default: {}
+    default: {},
   },
   edit: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
-const emit = defineEmits(['change', 'changeNum'])
+const emit = defineEmits(["change", "changeNum"])
 
 // 改变选中状态
 const change = (e, i) => {
-  emit('change', e, i, index)
+  emit("change", e, i, index)
+}
+
+const toDetail = (id) => {
+  uni.navigateTo({
+    url: "/pages/goods/goods_detail?id=" + id,
+  })
 }
 
 // 改变数量
 const changeNum = (e, i) => {
-  emit('changeNum', e, i, index)
+  emit("changeNum", e, i, index)
 }
 </script>
 
@@ -114,7 +134,7 @@ const changeNum = (e, i) => {
   font-family: PingFangSC, PingFang SC;
   font-weight: 600;
   font-size: 36rpx;
-  color: #EE2532;
+  color: #ee2532;
   line-height: 50rpx;
   text-align: left;
   font-style: normal;

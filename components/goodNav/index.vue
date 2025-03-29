@@ -4,7 +4,7 @@
       <button class="icon" @click="favorite">
         <TnIcon
           :name="props.like === 1 ? 'star-fill' : 'star'"
-          size="56"
+          size="50"
           :color="props.like === 1 ? '#FF7310' : '#000'"
           :custom-style="{ height: 0 }"
         />
@@ -15,7 +15,7 @@
       <button class="icon" open-type="share">
         <TnIcon
           name="share-square"
-          size="56"
+          size="50"
           color="#000"
           :custom-style="{ height: 0 }"
         />
@@ -23,21 +23,8 @@
       </button>
     </view>
     <view class="right">
-      <TnCountDown
-        v-if="props.time"
-        :time="props.time"
-        show-day
-        separator-mode="cn"
-        size="35"
-        text-color="tn-red"
-      />
-      <button
-        style="width: 100%; border-radius: 50rpx"
-        :class="normal ? 'normal' : 'cart'"
-        @click="onButtonClick"
-      >
-        {{ normal ? "加入购物车" : "立即购买" }}
-      </button>
+      <button class="cart" @click="addToCart">加入购物车</button>
+      <button class="buy" @click="buy">立即购买</button>
     </view>
   </view>
   <button class="fixed" @click="toCart">
@@ -50,11 +37,10 @@
 
 <script setup>
 import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
-import TnCountDown from "@/uni_modules/tuniaoui-vue3/components/count-down/src/count-down.vue"
 import { set_favorite } from "@/api/goods/goods"
 import { CartStore } from "@/store"
 
-const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/detail"
+const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/detail/"
 
 const cart = CartStore()
 
@@ -99,10 +85,12 @@ const favorite = async () => {
   uni.hideLoading({})
 }
 
-const emits = defineEmits(["buttonClick", "changeLike"])
-
-const onButtonClick = () => {
-  emits("buttonClick")
+const emits = defineEmits(["addToCart", "buy", "changeLike"])
+const addToCart = () => {
+  emits("addToCart")
+}
+const buy = () => {
+  emits("buy")
 }
 </script>
 
@@ -153,24 +141,45 @@ const onButtonClick = () => {
     }
   }
 
-  .normal {
-    background: #14bf20;
-    color: #fff;
-  }
-
-  .cart {
-    background: #ff4121;
-    color: #fff;
-  }
-
   .right {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    width: 517rpx;
     height: 80rpx;
     font-size: 32rpx;
-    margin: 15rpx 20rpx;
+    margin: 0 20rpx;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cart {
+      width: 258rpx;
+      height: 80rpx;
+      background: #ffe9e9;
+      border-radius: 40rpx 0rpx 0rpx 40rpx;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 500;
+      font-size: 32rpx;
+      color: #ff4121;
+      line-height: 40rpx;
+      text-align: right;
+      font-style: normal;
+    }
+    .buy {
+      width: 259rpx;
+      height: 80rpx;
+      background: #ff4121;
+      border-radius: 0rpx 40rpx 40rpx 0rpx;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 500;
+      font-size: 32rpx;
+      color: #ffffff;
+      line-height: 40rpx;
+      text-align: right;
+      font-style: normal;
+    }
   }
 }
 .fixed {
@@ -179,7 +188,7 @@ const onButtonClick = () => {
   bottom: 144rpx;
   overflow: visible;
   background: transparent;
-  z-index: 9;
+  z-index: 20;
   .badge {
     position: absolute;
     top: 6rpx;

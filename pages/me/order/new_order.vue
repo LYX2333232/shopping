@@ -215,9 +215,10 @@ import Header from "@/components/header"
 import AddressPopup from "@/components/AddressPopup"
 import { get_usable_coupon } from "@/api/coupon/coupon"
 import { new_order, get_order_price } from "@/api/order/order"
-import { CartStore } from "@/store"
+import { CartStore, AddressStore } from "@/store"
 
 const cart = CartStore()
+const address = AddressStore()
 
 const order = ref({})
 const pay_way = ref(true)
@@ -384,13 +385,15 @@ const pay = async () => {
 }
 
 onLoad((options) => {
+  console.log(options)
   flash_com_id = options.flash_id
   teamwork_com_id = options.teamwork_id
   com_cont = options.com_cont
   if (options.ids) {
     ids = JSON.parse(options.ids)
-    shopping_cart_ids = JSON.parse(options.shopping)
+    if (options.shopping) shopping_cart_ids = JSON.parse(options.shopping)
   }
+  order.value.address = address.address
   getOrderPrice()
 })
 </script>

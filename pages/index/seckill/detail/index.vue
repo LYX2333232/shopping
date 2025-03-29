@@ -96,7 +96,12 @@
     <view class="recommend card">
       <view class="title">为您推荐</view>
       <view class="items">
-        <view class="item" v-for="item in recommend" :key="item.id">
+        <view
+          class="item"
+          v-for="item in recommend"
+          :key="item.id"
+          @click="toDetail(item.id)"
+        >
           <image class="recommend-image" :src="item.path" mode="aspectFill">
           </image>
           <view class="name">{{ item.name }}</view>
@@ -130,7 +135,8 @@
     :id="c_id"
     :like="size.is_like"
     :normal="false"
-    @buttonClick="buttonClick"
+    @buy="buy"
+    @addToCart="addToCart"
     @changeLike="changeLike"
   />
   <!-- 分享定义在组件goods-nav中 -->
@@ -207,10 +213,26 @@ const changeLike = () => {
   size.value.is_like = size.value.is_like ? 0 : 1
 }
 
+const toDetail = (id) => {
+  uni.navigateTo({
+    url: "/pages/goods/good_detail?id=" + id,
+  })
+}
+
+/**
+ * 加入购物车
+ */
+const addToCart = () => {
+  uni.showToast({
+    title: "秒杀商品无法加入购物车！",
+    icon: "none",
+  })
+}
+
 /**
  * 立即购买
  */
-function buttonClick() {
+function buy() {
   uni.navigateTo({
     url: `/pages/me/order/new_order?flash_id=${flash_id}&com_cont=${cont.value}`,
   })

@@ -307,12 +307,10 @@
         <image class="VIP" :src="VIP" mode="aspectFit"> </image>
       </button>
     </view>
-    <AddressPopup
+    <!-- <AddressPopup
       :visible="address_visible"
-      :select_id="address.id"
-      @changeAddress="changeAddress"
       @close="address_visible = false"
-    />
+    /> -->
   </view>
 </template>
 
@@ -342,14 +340,6 @@ const VIP =
 
 const address = AddressStore()
 const address_visible = ref(false)
-const changeAddress = (item) => {
-  address.setAddress(
-    item.address_name + item.detail,
-    item.name,
-    item.phone,
-    item.id
-  )
-}
 // 轮播图数据
 const swiperData = ref([])
 

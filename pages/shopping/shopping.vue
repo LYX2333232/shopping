@@ -3,7 +3,9 @@
     <view class="map" @click="address_visible = true">
       <TnIcon name="map" size="40" />
       <view class="text">
-        {{ address.address ?? "定位失败" }}
+        {{
+          address.address.address_name + address.address.detail ?? "定位失败"
+        }}
       </view>
       <TnIcon name="down" size="40" />
     </view>
@@ -176,12 +178,7 @@
       </view>
     </view>
   </view>
-  <AddressPopup
-    :visible="address_visible"
-    :select_id="address.id"
-    @close="address_visible = false"
-    @changeAddress="changeAddress"
-  />
+  <AddressPopup :visible="address_visible" @close="address_visible = false" />
   <OutPopup :visible="output_visible" @close="close" @toEdit="toEdit" />
   <AddonPopup
     :visible="addon_visible"
@@ -215,14 +212,6 @@ import { AddressStore } from "@/store"
 const address = AddressStore()
 
 const address_visible = ref(false)
-const changeAddress = (item) => {
-  address.setAddress(
-    item.address_name + item.detail,
-    item.name,
-    item.phone,
-    item.id
-  )
-}
 const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/shopping"
 
 const image_url = preUrl + "/free.png"
@@ -400,6 +389,7 @@ const tocaculate = () => {
     return
   }
   //   如果地址不在深圳，弹出提示
+  console.log(address)
   if (!address.address.is_same) {
     output_visible.value = true
     return

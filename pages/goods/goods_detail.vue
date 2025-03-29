@@ -89,7 +89,12 @@
     <view class="recommend card">
       <view class="title">为您推荐</view>
       <view class="items">
-        <view class="item" v-for="item in recommend" :key="item.id">
+        <view
+          class="item"
+          v-for="item in recommend"
+          :key="item.id"
+          @click="toDetail(item.id)"
+        >
           <image class="recommend-image" :src="item.path" mode="aspectFill">
           </image>
           <view class="name">{{ item.name }}</view>
@@ -123,7 +128,8 @@
     :id="size[sizeIndex].id"
     :like="size[sizeIndex].is_like"
     :normal="true"
-    @buttonClick="buttonClick"
+    @addToCart="addToCart"
+    @buy="buy"
     @changeLike="changeLike"
   />
   <!-- 分享定义在组件goods-nav中 -->
@@ -191,7 +197,7 @@ const changeLike = () => {
     : 1
 }
 
-function buttonClick() {
+function addToCart() {
   // 加入购物车
   add_to_cart(size.value[sizeIndex.value].id, cont.value).then((res) => {
     if (res.code == 200) {
@@ -205,6 +211,26 @@ function buttonClick() {
         title: res.msg,
         icon: "none",
       })
+  })
+}
+
+/**
+ * 立即购买
+ */
+function buy() {
+  // uni.navigateTo({
+  //   url: `/pages/me/order/new_order?flash_id=${flash_id}&com_cont=${cont.value}`,
+  // })
+  uni.navigateTo({
+    url: `/pages/me/order/new_order?ids=${JSON.stringify([
+      { id: size.value[sizeIndex.value].id, cont: cont.value },
+    ])}`, // 将id传到订单页面
+  })
+}
+
+const toDetail = (id) => {
+  uni.navigateTo({
+    url: "/pages/goods/goods_detail?id=" + id,
   })
 }
 

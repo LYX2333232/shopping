@@ -1,65 +1,78 @@
 <template>
-  <TnPopup :model-value="visible" open-direction="bottom" height="750" @open="open" @close="close"
-    @overlay-click="close">
+  <TnPopup
+    :model-value="visible"
+    open-direction="bottom"
+    height="750"
+    @open="open"
+    @close="close"
+    @overlay-click="close"
+  >
     <view class="address-all">
       <view class="close">
         <TnIcon name="close" size="56" @click="close" />
       </view>
-      <view class="header">
-        选择地址
-      </view>
+      <view class="header"> 选择地址 </view>
       <view class="item" v-for="item in list" :key="item.id">
         <view class="left">
-          <TnCheckbox v-model="item.isSelect" active-color="#14bf20" checked-shape="circle"
-            @change="val => changeAddress(val, item)"></TnCheckbox>
+          <TnCheckbox
+            v-model="item.isSelect"
+            active-color="#14bf20"
+            checked-shape="circle"
+            @change="(val) => changeAddress(val, item)"
+          ></TnCheckbox>
           <view class="tn-ml-lg">
             <view class="up">
               <text class="tag" v-if="item.tag">
                 {{ item.tag }}
               </text>
-              {{ item.address_name + ' ' + item.detail }}
+              {{ item.address_name + " " + item.detail }}
             </view>
-            <view class="down">
-              {{ item.name }} {{ item.phone }}
-            </view>
+            <view class="down"> {{ item.name }} {{ item.phone }} </view>
           </view>
         </view>
         <TnIcon name="edit" size="56" @click="toDetail(item.id)" />
       </view>
-      <TnButton width="710" height="100" shape="round" type="success" @click="newAddress">新增地址</TnButton>
+      <TnButton
+        width="710"
+        height="100"
+        shape="round"
+        type="success"
+        @click="newAddress"
+        >新增地址</TnButton
+      >
     </view>
   </TnPopup>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue"
 
-import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
-import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
-import TnCheckbox from '@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue'
-import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
+import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
+import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
+import TnCheckbox from "@/uni_modules/tuniaoui-vue3/components/checkbox/src/checkbox.vue"
+import TnPopup from "@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue"
 
-import { get_address_list } from '@/api/address/address'
+import { get_address_list } from "@/api/address/address"
+
+import { AddressStore } from "@/store"
+
+const address = AddressStore()
 
 const props = defineProps({
   visible: {
     type: Boolean,
-    require
+    require,
   },
-  // 选中的地址id
-  select_id: {
-    type: Number
-  }
 })
 const list = ref([])
 
-const emit = defineEmits(['close', 'changeAddress'])
+const emit = defineEmits(["close"])
 
 const open = () => {
-  get_address_list(1).then(res => {
-    list.value = res.data.data.map(item => ({
+  get_address_list(1).then((res) => {
+    list.value = res.data.data.map((item) => ({
       ...item,
-      isSelect: item.id === props.select_id
+      isSelect: item.id === address.address.id,
     }))
   })
 }
@@ -69,22 +82,24 @@ const changeAddress = (val, item) => {
     item.isSelect = true
     return
   }
-  list.value.forEach(item => {
+  list.value.forEach((item) => {
     item.isSelect = false
   })
   item.isSelect = true
-  emit('changeAddress', item)
+  address.setAddress(item)
 }
 const close = () => {
-  console.log('close');
-  emit('close')
+  console.log("close")
+  emit("close")
 }
-const toDetail = id => uni.navigateTo({
-  url: '/pages/me/address/editPage?index=' + id
-})
-const newAddress = () => uni.navigateTo({
-  url: '/pages/me/address/editPage?index=-1'
-})
+const toDetail = (id) =>
+  uni.navigateTo({
+    url: "/pages/me/address/editPage?index=" + id,
+  })
+const newAddress = () =>
+  uni.navigateTo({
+    url: "/pages/me/address/editPage?index=-1",
+  })
 </script>
 
 <style lang="scss" scoped>
@@ -106,7 +121,7 @@ const newAddress = () => uni.navigateTo({
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
     font-size: 32rpx;
-    color: #0F0D0D;
+    color: #0f0d0d;
     line-height: 45rpx;
     text-align: center;
     font-style: normal;
@@ -116,7 +131,7 @@ const newAddress = () => uni.navigateTo({
     width: 100%;
     display: flex;
     padding: 30rpx 0;
-    border-bottom: 1rpx solid #DEDEDE;
+    border-bottom: 1rpx solid #dedede;
     align-items: center;
     justify-content: space-between;
 
@@ -135,7 +150,7 @@ const newAddress = () => uni.navigateTo({
 
         .tag {
           background: #fff2ef;
-          color: #EE2532;
+          color: #ee2532;
           margin-right: 10rpx;
         }
       }
