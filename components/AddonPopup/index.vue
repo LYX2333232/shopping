@@ -129,7 +129,7 @@ const close = () => {
 const change = (good, value) => {
   console.log(good, value)
   good.cont = value
-  // emits("changeSelect", good, value)
+  emits("changeSelect", good, value)
 }
 
 const scroll = (e) => {
@@ -141,8 +141,7 @@ const scroll = (e) => {
 .popup {
   width: 100%;
   height: 100%;
-  padding: 35rpx 30rpx;
-  margin-bottom: 150rpx;
+  padding: 35rpx 30rpx 150rpx;
   background: linear-gradient(180deg, #ffe3cc 0%, #ffffff 20%);
   overflow: auto;
 }
