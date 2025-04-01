@@ -81,7 +81,7 @@
         <view
           class="top"
           :style="{
-            background: `url(${preUrl}seckill.png)`,
+            background: `url(${preUrl}seckill.png) no-repeat`,
             backgroundSize: '100%',
           }"
         >
@@ -98,9 +98,12 @@
               <view class="name">
                 {{ card.name }}
               </view>
+              <view class="desc">
+                {{ card.label?.map((item) => item.text).join(" ") }}
+              </view>
               <view class="tn-flex-center-start tn-mt-10 tn-mb-20">
                 <view class="flash"> ￥{{ card.flash_price }} </view>
-                <view class="size">{{ card.item_name }}</view>
+                <view class="size">/{{ card.item_name }}</view>
               </view>
               <button>立即购买</button>
               <!-- <view class="old"> ￥{{ card.price }} </view> -->
@@ -113,7 +116,7 @@
         <view
           class="top"
           :style="{
-            background: `url(${preUrl}hot.png)`,
+            background: `url(${preUrl}hot.png) no-repeat`,
             backgroundSize: '100%',
           }"
         >
@@ -130,9 +133,12 @@
               <view class="name">
                 {{ card.name }}
               </view>
+              <view class="desc">
+                {{ card.label?.map((item) => item.text).join(" ") }}
+              </view>
               <view class="tn-flex-center-start tn-mt-10 tn-mb-20">
                 <view class="flash"> ￥{{ card.price }} </view>
-                <view class="size">{{ card.item_name }}</view>
+                <view class="size">/{{ card.item_name }}</view>
               </view>
               <button>立即购买</button>
               <!-- <view class="old"> ￥{{ card.price }} </view> -->
@@ -172,9 +178,7 @@
               {{ card.name }}
             </view>
             <view class="price">
-              <view>
-                {{ card.price }}
-              </view>
+              <view class="flash"> {{ card.price }}/{{ card.item_name }} </view>
               <image class="buy" :src="`${preUrl}buy.png`"> </image>
             </view>
           </view>
@@ -286,7 +290,12 @@
       >
         <image class="image" :src="item.path" mode="aspectFill"> </image>
         <view class="right">
-          <view class="name">{{ item.name }}</view>
+          <view>
+            <view class="name">{{ item.name }}</view>
+            <view class="desc">
+              {{ item.label?.map((item) => item.text).join(" ") }}
+            </view>
+          </view>
           <view class="tn-flex-center-between">
             <view class="tn-flex-center-start">
               <view class="price"> ￥{{ item.price }} </view>
@@ -634,9 +643,12 @@ onShareTimeline(() => {
   z-index: 1;
 
   .top {
+    height: 90rpx;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
     padding: 10rpx 64rpx 28rpx 400rpx;
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
@@ -664,6 +676,7 @@ onShareTimeline(() => {
       margin-bottom: 20rpx;
 
       .left {
+        width: 300rpx;
         .name {
           font-family: SourceHanSansCN, SourceHanSansCN;
           font-weight: 500;
@@ -672,7 +685,27 @@ onShareTimeline(() => {
           line-height: 57rpx;
           text-align: left;
           font-style: normal;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          text-overflow: ellipsis;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
+
+        .desc {
+          font-family: SourceHanSansCN, SourceHanSansCN;
+          font-weight: 400;
+          font-size: 26rpx;
+          color: #1f2024;
+          line-height: 39rpx;
+          text-align: left;
+          font-style: normal;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+
         .flash {
           font-family: PingFangSC, PingFang SC;
           font-weight: 600;
@@ -713,6 +746,7 @@ onShareTimeline(() => {
         margin-left: 71rpx;
         width: 280rpx;
         height: 250rpx;
+        flex-shrink: 0;
       }
     }
   }
@@ -722,6 +756,7 @@ onShareTimeline(() => {
   margin: 20rpx auto;
   width: 710rpx;
   background: #ffe4d3;
+
   .top {
     display: flex;
     align-items: center;
@@ -735,6 +770,7 @@ onShareTimeline(() => {
     text-align: left;
     font-style: normal;
   }
+
   .items {
     width: 100%;
     display: flex;
@@ -751,7 +787,7 @@ onShareTimeline(() => {
       margin-bottom: 20rpx;
 
       .left {
-        width: 100%;
+        width: 300rpx;
         .name {
           font-family: SourceHanSansCN, SourceHanSansCN;
           font-weight: 500;
@@ -767,6 +803,20 @@ onShareTimeline(() => {
           overflow: hidden;
           text-overflow: ellipsis;
         }
+
+        .desc {
+          font-family: SourceHanSansCN, SourceHanSansCN;
+          font-weight: 400;
+          font-size: 26rpx;
+          color: #1f2024;
+          line-height: 39rpx;
+          text-align: left;
+          font-style: normal;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+
         .flash {
           font-family: PingFangSC, PingFang SC;
           font-weight: 600;
@@ -784,7 +834,11 @@ onShareTimeline(() => {
           line-height: 42rpx;
           text-align: left;
           font-style: normal;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
         }
+
         button {
           width: 250rpx;
           height: 56rpx;
@@ -804,10 +858,10 @@ onShareTimeline(() => {
       }
 
       .image {
-        flex-shrink: 0;
         margin-left: 71rpx;
         width: 280rpx;
         height: 250rpx;
+        flex-shrink: 0;
       }
     }
   }
@@ -929,16 +983,25 @@ onShareTimeline(() => {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        font-family: PingFangSC, PingFang SC;
-        font-weight: 600;
-        font-size: 30rpx;
-        color: #ee2532;
-        line-height: 42rpx;
-        text-align: left;
-        font-style: normal;
+
+        .flash {
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 600;
+          font-size: 30rpx;
+          color: #ee2532;
+          line-height: 42rpx;
+          text-align: left;
+          font-style: normal;
+          width: 60%;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+
         .buy {
           width: 48rpx;
           height: 48rpx;
+          flex-shrink: 0;
         }
       }
     }
@@ -989,6 +1052,20 @@ onShareTimeline(() => {
       line-height: 40rpx;
       text-align: left;
       font-style: normal;
+    }
+
+    .desc {
+      margin-bottom: 10rpx;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 400;
+      font-size: 24rpx;
+      color: #999999;
+      line-height: 33rpx;
+      text-align: left;
+      font-style: normal;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
     .price {
       font-family: PingFangSC, PingFang SC;
