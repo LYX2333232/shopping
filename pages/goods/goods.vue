@@ -52,6 +52,7 @@
       </view>
     </view>
     <view class="main">
+      <view class="total">全部({{ total }})</view>
       <view
         class="good"
         v-for="good in goods_list"
@@ -145,6 +146,7 @@ const changeIndexs = (index) => {
 const tag_index = ref(1)
 const tag_list = ref([])
 
+const total = ref(0)
 let page = 1
 
 const changeTag = (item) => {
@@ -210,6 +212,7 @@ const getGoodsList = async () => {
 
   const res = await get_goods_list(option)
   console.log(res)
+  total.value = res.data.total
   if (res.data.data.length === 0) {
     page--
     if (page === 0) goods_list.value = []
@@ -229,12 +232,6 @@ const getGoodsList = async () => {
 const getData = () => {
   // 获取分类列表
   get_type_list(t_id).then((res) => {
-    res.data?.forEach((item) => {
-      item.new_children = [
-        { id: 0, icon: `${preUrl}team-icon.png`, name: "团购特惠" },
-        ...item.new_children,
-      ]
-    })
     indexs.value = res.data
     if (uni.getStorageSync("index")) {
       indexs_index.value = uni.getStorageSync("index")
@@ -386,6 +383,17 @@ onReachBottom(() => {
 
   .main {
     width: 100%;
+
+    .total {
+      margin: 20rpx;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 400;
+      font-size: 22rpx;
+      color: #999999;
+      line-height: 30rpx;
+      text-align: left;
+      font-style: normal;
+    }
 
     .good {
       margin: 30rpx 0;

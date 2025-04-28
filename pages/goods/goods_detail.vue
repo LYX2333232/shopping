@@ -62,6 +62,10 @@
       </view>
     </view>
     <view class="size">
+      <view class="tn-flex-center-start tn-mb-xl">
+        <view class="title">配送</view>
+        <view class="desc">同城48小时送达</view>
+      </view>
       <view class="title"> 选择规格 </view>
       <uni-section
         title="更多样式 - tag"
@@ -145,7 +149,6 @@ import Header from "@/components/header.vue"
 import swiper from "@/uni_modules/tuniaoui-vue3/components/swiper/src/swiper.vue"
 import GoodNav from "@/components/goodNav"
 import { CartStore } from "@/store"
-import { getRandomImage } from "@/utils/constant"
 
 const cart = CartStore()
 
@@ -199,19 +202,21 @@ const changeLike = () => {
 
 function addToCart() {
   // 加入购物车
-  add_to_cart(size.value[sizeIndex.value].id, cont.value).then((res) => {
-    if (res.code == 200) {
-      uni.showToast({
-        title: "加入购物车成功",
-        icon: "none",
-      })
-      cart.update()
-    } else
-      uni.showToast({
-        title: res.msg,
-        icon: "none",
-      })
-  })
+  add_to_cart({ c_id: size.value[sizeIndex.value].id, cont: cont.value }).then(
+    (res) => {
+      if (res.code == 200) {
+        uni.showToast({
+          title: "加入购物车成功",
+          icon: "none",
+        })
+        cart.update()
+      } else
+        uni.showToast({
+          title: res.msg,
+          icon: "none",
+        })
+    }
+  )
 }
 
 /**
@@ -272,7 +277,6 @@ onLoad((options) => {
 
     sell.value = res.data.volume
   })
-  getRecommend()
 })
 </script>
 
@@ -468,6 +472,15 @@ page {
     line-height: 40rpx;
     text-align: left;
     font-style: normal;
+    margin-right: 30rpx;
+  }
+
+  .desc {
+    font-size: 28rpx;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #131313;
+    line-height: 40rpx;
   }
 
   .uni-px-5 {

@@ -54,20 +54,20 @@
           </view>
         </view>
       </view>
-      <!-- <view class="desc">
+      <view class="description">
         <view class="item">
-          <TnIcon name="/static/index/self.png" size="25" />
+          <TnIcon :name="`${preUrl}self.png`" size="25" />
           <view style="margin-left: 20rpx"> 官方自营 </view>
         </view>
         <view class="item">
-          <TnIcon name="/static/index/time.png" size="25" />
-          <view style="margin-left: 20rpx"> 同城30分钟达 </view>
+          <TnIcon :name="`${preUrl}time.png`" size="25" />
+          <view style="margin-left: 20rpx"> 同城48小时送达 </view>
         </view>
         <view class="item">
-          <TnIcon name="/static/index/sale.png" size="25" />
+          <TnIcon :name="`${preUrl}sale.png`" size="25" />
           <view style="margin-left: 20rpx"> 售后无忧 </view>
         </view>
-      </view> -->
+      </view>
       <view class="functions">
         <image
           class="item"
@@ -99,7 +99,9 @@
                 {{ card.name }}
               </view>
               <view class="desc">
-                {{ card.label?.map((item) => item.text).join(" ") }}
+                {{
+                  card.label?.map((item) => (item ? item.text : "")).join(" ")
+                }}
               </view>
               <view class="tn-flex-center-start tn-mt-10 tn-mb-20">
                 <view class="flash"> ￥{{ card.flash_price }} </view>
@@ -134,7 +136,9 @@
                 {{ card.name }}
               </view>
               <view class="desc">
-                {{ card.label?.map((item) => item.text).join(" ") }}
+                {{
+                  card.label?.map((item) => (item ? item.text : "")).join(" ")
+                }}
               </view>
               <view class="tn-flex-center-start tn-mt-10 tn-mb-20">
                 <view class="flash"> ￥{{ card.price }} </view>
@@ -293,7 +297,7 @@
           <view>
             <view class="name">{{ item.name }}</view>
             <view class="desc">
-              {{ item.label?.map((item) => item.text).join(" ") }}
+              {{ item.label?.map((item) => (item ? item.text : "")).join(" ") }}
             </view>
           </view>
           <view class="tn-flex-center-between">
@@ -606,20 +610,21 @@ onShareTimeline(() => {
   }
 }
 
-// .desc {
-//   display: flex;
-//   align-items: center;
-//   justify-content: space-between;
-//   margin: 22rpx 0;
-//   color: #878787;
+.description {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 22rpx 0;
+  padding: 0 20rpx;
+  color: #878787;
 
-//   .item {
-//     vertical-align: middle;
-//     display: flex;
-//     align-items: center;
-//     font-size: 25rpx;
-//   }
-// }
+  .item {
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    font-size: 25rpx;
+  }
+}
 
 .functions {
   margin-top: 30rpx;

@@ -247,15 +247,14 @@ const deleteList = ref([])
 const infoList = ref([])
 
 const updateTotal = () => {
-  select_goods.value = [
-    ...dataList.value.filter((item) => item.order),
-    ...addon_list.value,
-  ]
+  select_goods.value = dataList.value.filter((item) => item.order)
   get_order_price({
-    ids: select_goods.value.map((item) => ({
-      id: item.item_id,
-      cont: item.cont,
-    })),
+    ids: select_goods.value.map((item) => {
+      const obj = { cont: item.cont }
+      if (item.flash) obj.flash_com_id = item.flash.flash_com_id
+      else obj.id = item.item_id
+      return obj
+    }),
   }).then((res) => {
     // console.log(res)
     freight.value = res.data.freight
@@ -373,9 +372,11 @@ const addOn = () => {
 
 // 凑单添加商品
 const changeSelect = (good, cont) => {
-  const index = addon_list.value.findIndex((item) => item.id === good.id)
-  if (index === -1) addon_list.value.push(good)
-  else addon_list.value[index].cont = cont
+  good.order = true
+  const index = dataList.value.findIndex((item) => item.id === good.id)
+  if (index === -1) dataList.value.push(good)
+  else dataList.value[index].cont = cont
+  dataList.value[index].order = true
   updateTotal()
 }
 

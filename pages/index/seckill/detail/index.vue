@@ -44,14 +44,14 @@
     <view
       class="flash"
       :style="{
-        background: `url(${preUrl}flash.png)`,
+        background: `url(${preUrl}/flash.png)`,
         backgroundSize: '100%',
       }"
     >
       <view>
         <view class="now"> ￥{{ size.price }} </view>
         <view class="tn-flex-center-start">
-          <view class="old"> ￥{{ size.or_price }} </view>
+          <view class="old" v-if="size.or_price"> ￥{{ size.or_price }} </view>
           <view style="margin: 0 10rpx">|</view>
           <view>已售{{ size.number }}</view>
         </view>
@@ -148,11 +148,14 @@ import { onLoad } from "@dcloudio/uni-app"
 
 import TnNumberBox from "@tuniao/tnui-vue3-uniapp/components/number-box/src/number-box.vue"
 import TnIcon from "@tuniao/tnui-vue3-uniapp/components/icon/src/icon.vue"
+import { add_to_cart } from "@/api/cart/cart"
 import { get_goods_detail } from "@/api/index/seckill/seckill"
 import Header from "@/components/header.vue"
 import GoodNav from "@/components/goodNav"
 import CountDown from "@/components/CountDown"
-import { getRandomImage } from "@/utils/constant"
+import { CartStore } from "@/store"
+
+const cart = CartStore()
 
 const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/detail"
 
@@ -226,6 +229,19 @@ const addToCart = () => {
   uni.showToast({
     title: "秒杀商品无法加入购物车！",
     icon: "none",
+  })
+  add_to_cart({ flash_com_id: flash_id, cont: cont.value }).then((res) => {
+    if (res.code == 200) {
+      uni.showToast({
+        title: "加入购物车成功",
+        icon: "none",
+      })
+      cart.update()
+    } else
+      uni.showToast({
+        title: res.msg,
+        icon: "none",
+      })
   })
 }
 
@@ -464,11 +480,13 @@ page {
 .size {
   padding: 30rpx 20rpx;
   .title {
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 400;
     font-size: 28rpx;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 500;
-    color: #131313;
+    color: #999999;
     line-height: 40rpx;
+    text-align: left;
+    font-style: normal;
     margin-right: 30rpx;
   }
 

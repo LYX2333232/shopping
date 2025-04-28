@@ -1,63 +1,87 @@
 <template>
   <Header />
   <view class="all">
-    <image class="background"
+    <image
+      class="background"
       src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhS8PmdQBKx8ibh5O3dju5VYEanKbAXP1GiayrWu3KLQPtian8UECGxjfNtf7eqnlKrloxNriaAQ5AuglQ/0?wx_fmt=png"
-      mode="scaleToFill" />
+      mode="scaleToFill"
+    />
     <TnScrollList :indicator="false">
       <view style="height: 180rpx">
         <view class="tn-flex-center-start indexs">
-          <view style="height:100%;overflow:visible" v-for="(item, index) in indexs" :key="index"
-            @click="changeIndex(index)">
+          <view
+            style="height: 100%; overflow: visible"
+            v-for="(item, index) in indexs"
+            :key="index"
+            @click="changeIndex(index)"
+          >
             <!-- 未开始 -->
-            <view v-if="item.start > new Date()" :class="['item', 'wait', active_index === index ? 'active' : '']">
-              <image v-if="active_index === index"
+            <view
+              v-if="item.start > new Date()"
+              :class="['item', 'wait', active_index === index ? 'active' : '']"
+            >
+              <image
+                v-if="active_index === index"
                 src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
-                class="image" mode="scaleToFill" />
+                class="image"
+                mode="scaleToFill"
+              />
               <view>
-                {{ dayText(item.start) + formatTime(item.start, 'h:m') }}
+                {{ dayText(item.start) + formatTime(item.start, "h:m") }}
               </view>
-              <view style="margin-top:20rpx;">
-                整点秒杀
-              </view>
+              <view style="margin-top: 20rpx"> 整点秒杀 </view>
             </view>
             <!-- 已开始且未结束 -->
-            <view v-else-if="item.end > new Date()" :class="['item', 'doing', active_index === index ? 'active' : '']">
-              <image v-if="active_index === index"
+            <view
+              v-else-if="item.end > new Date()"
+              :class="['item', 'doing', active_index === index ? 'active' : '']"
+            >
+              <image
+                v-if="active_index === index"
                 src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
-                class="image" mode="scaleToFill" />
-              <CountDown :time="item.end - new Date()" :textColor="active_index === index ? '#FFF' : '#EE2532'"
-                :background="active_index === index ? '#14BF20' : '#FFF'" />
-              <view style="margin-top: 20rpx;">
-                {{ item.hour }}点{{ item.min ? '半' : '' }}场
+                class="image"
+                mode="scaleToFill"
+              />
+              <CountDown
+                :time="item.end - new Date()"
+                :textColor="active_index === index ? '#FFF' : '#EE2532'"
+                :background="active_index === index ? '#14BF20' : '#FFF'"
+              />
+              <view style="margin-top: 20rpx">
+                {{ item.hour }}点{{ item.min ? "半" : "" }}场
               </view>
             </view>
           </view>
         </view>
       </view>
     </TnScrollList>
-    <view v-for="(item, index) in items" :key="'item' + index" class="item" @click="toBuy(item.id)">
+    <view
+      v-for="(item, index) in items"
+      :key="'item' + index"
+      class="item"
+      @click="toBuy(item.id)"
+    >
       <image class="image" :src="item.path" mode="scaleToFill" />
       <view class="right">
         <view class="item_name">{{ item.name }} </view>
         <view class="tn-flex-center-start">
           <view class="progress">
-            <view class="progress_background" :style="{ width: `${item.percentage}%` }"></view>
-            <view class="text">
-              已抢{{ item.percentage }}%
-            </view>
+            <view
+              class="progress_background"
+              :style="{ width: `${item.percentage}%` }"
+            ></view>
+            <view class="text"> 已抢{{ item.percentage }}% </view>
           </view>
-          <view class="limit">
-            限购{{ item.total }}件
-          </view>
+          <view class="limit"> 限购{{ item.total }}件 </view>
         </view>
-        <view :class="['buy', indexs[active_index]?.start < new Date() ? 'doing' : 'wait']">
-          <view class="flash">
-            秒杀￥ {{ item.flash_price }}
-          </view>
-          <view class="old">
-            ￥{{ item.price }}
-          </view>
+        <view
+          :class="[
+            'buy',
+            indexs[active_index]?.start < new Date() ? 'doing' : 'wait',
+          ]"
+        >
+          <view class="flash"> 秒杀￥ {{ item.flash_price }} </view>
+          <view class="old"> ￥{{ item.price }} </view>
         </view>
       </view>
     </view>
@@ -65,20 +89,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
+import { ref } from "vue"
+import { onShow } from "@dcloudio/uni-app"
 
-import TnScrollList from '@tuniao/tnui-vue3-uniapp/components/scroll-list/src/scroll-list.vue'
-import Header from '@/components/header.vue'
-import CountDown from '@/components/CountDown'
-import { get_time_list, get_goods_list } from '@/api/index/seckill/seckill'
+import TnScrollList from "@tuniao/tnui-vue3-uniapp/components/scroll-list/src/scroll-list.vue"
+import Header from "@/components/header.vue"
+import CountDown from "@/components/CountDown"
+import { get_time_list, get_goods_list } from "@/api/index/seckill/seckill"
 
 // 顶部选项框
 const indexs = ref([])
 const active_index = ref(0)
-const changeIndex = index => {
+const changeIndex = (index) => {
   active_index.value = index
-  get_goods_list(indexs.value[index].id).then(res => {
+  get_goods_list(indexs.value[index].id).then((res) => {
     console.log(res)
     items.value = res.data
   })
@@ -90,14 +114,14 @@ const items = ref([])
 // 马上抢
 const toBuy = (id) => {
   uni.navigateTo({
-    url: '/pages/index/seckill/detail/index?id=' + id
+    url: "/pages/index/seckill/detail/index?id=" + id,
   })
 }
 
 const getData = () => {
   // 获取数据
-  get_time_list().then(res => {
-    indexs.value = res.data.map(item => {
+  get_time_list().then((res) => {
+    indexs.value = res.data.map((item) => {
       const start = new Date(item.start * 1000)
       const hour = start.getHours()
       const min = start.getMinutes()
@@ -106,7 +130,7 @@ const getData = () => {
         hour,
         min,
         start,
-        end: new Date(item.end * 1000)
+        end: new Date(item.end * 1000),
       }
     })
     changeIndex(0)
@@ -116,15 +140,15 @@ const getData = () => {
 /**
  * 判断是否需要加上天（明天、后天）
  */
-const dayText = time => {
+const dayText = (time) => {
   const now = new Date().setHours(0, 0, 0, 0)
   const start = new Date(time)
   // 注意可能会跨月份，需要用getTime来比较
   const day = (start - now) / (24 * 60 * 60 * 1000)
-  if (day === 0) return ''
-  if (day === 1) return '明天'
-  if (day === 2) return '后天'
-  return day + '天后'
+  if (day === 0) return ""
+  if (day === 1) return "明天"
+  if (day === 2) return "后天"
+  return day + "天后"
 }
 
 onShow(() => {
@@ -144,7 +168,7 @@ var page = 1
 //       })
 //     }
 //   })
-// }) 
+// })
 </script>
 
 <style lang="scss" scoped>
@@ -176,38 +200,29 @@ var page = 1
   line-height: 25rpx;
   text-align: left;
   font-style: normal;
-  color: #FFF;
+  color: #fff;
   overflow: visible;
 
   .item {
-    width: 180rpx;
+    width: 400rpx;
     height: 100%;
-  }
-
-  .wait {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-
-  .doing {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    position: relative;
   }
 
   .active {
-    color: #14BF20;
+    color: #14bf20;
     overflow: visible;
     position: relative;
     z-index: 2;
 
     .image {
       position: absolute;
-      width: 260rpx;
+      width: 100%;
       top: -50rpx;
       height: 170rpx;
-      left: -40rpx;
       z-index: -1;
     }
   }
@@ -241,12 +256,12 @@ var page = 1
 
     .progress {
       width: 220rpx;
-      border: 2rpx solid #FF7C66;
+      border: 2rpx solid #ff7c66;
       border-radius: 20rpx;
       font-family: PingFangSC, PingFang SC;
       font-weight: 400;
       font-size: 18rpx;
-      color: #FF4121;
+      color: #ff4121;
       line-height: 25rpx;
       text-align: left;
       font-style: normal;
@@ -257,7 +272,7 @@ var page = 1
       .progress_background {
         height: 100%;
         position: absolute;
-        background: #FFEAE3;
+        background: #ffeae3;
         z-index: -1;
         left: 0;
       }
@@ -267,7 +282,7 @@ var page = 1
       font-family: PingFangSC, PingFang SC;
       font-weight: 400;
       font-size: 24rpx;
-      color: #FF1925;
+      color: #ff1925;
       line-height: 33rpx;
       text-align: left;
       font-style: normal;
@@ -303,13 +318,15 @@ var page = 1
     }
 
     .doing {
-      background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRVKItZSgfib07mMPF0QTRLgB4ad0Vudt0a9MKvVGTVkGEItM5RicicCrK7KZERLc9GibBF8fEmBxg0UQ/0?wx_fmt=png") no-repeat center center;
+      background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRVKItZSgfib07mMPF0QTRLgB4ad0Vudt0a9MKvVGTVkGEItM5RicicCrK7KZERLc9GibBF8fEmBxg0UQ/0?wx_fmt=png")
+        no-repeat center center;
       background-size: 100% 100%;
-      color: #FFF;
+      color: #fff;
     }
 
     .wait {
-      background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRVKItZSgfib07mMPF0QTRLgVLCIdEJ3jdbDzNoVJd3TQv74ToU0rHPYv7zr4NDCNfDI0hWCmj2nibw/0?wx_fmt=png") no-repeat center center;
+      background: url("http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhRVKItZSgfib07mMPF0QTRLgVLCIdEJ3jdbDzNoVJd3TQv74ToU0rHPYv7zr4NDCNfDI0hWCmj2nibw/0?wx_fmt=png")
+        no-repeat center center;
       background-size: 100% 100%;
       color: #000;
 

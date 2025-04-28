@@ -12,10 +12,10 @@
       :src="data.path"
       class="image"
       mode="scaleToFill"
-      @click="toDetail(data.c_id)"
+      @click="toDetail(data)"
     />
     <view class="right">
-      <view @click="toDetail(data.c_id)">
+      <view @click="toDetail(data)">
         <view class="title">{{ data.name }}</view>
         <view class="item-name">
           {{ data.item_name }}
@@ -27,6 +27,7 @@
           <view v-if="data.or_price" class="old">￥{{ data.or_price }}</view>
         </view>
         <TnNumberBox
+          v-if="!data.flash"
           v-model="data.cont"
           :min="1"
           @change="(e) => changeNum(e, i)"
@@ -63,10 +64,15 @@ const change = (e, i) => {
   emit("change", e, i, index)
 }
 
-const toDetail = (id) => {
-  uni.navigateTo({
-    url: "/pages/goods/goods_detail?id=" + id,
-  })
+const toDetail = (data) => {
+  if (data.flash) {
+    uni.navigateTo({
+      url: "/pages/index/seckill/detail/index?id=" + data.flash.flash_com_id,
+    })
+  } else
+    uni.navigateTo({
+      url: "/pages/goods/goods_detail?id=" + data.c_id,
+    })
 }
 
 // 改变数量
