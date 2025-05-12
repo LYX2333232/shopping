@@ -1,10 +1,10 @@
 <template>
-  <view class="big_out" :style="{ color: color }">
+  <view class="big_out" :style="{ color: color, background }">
     <!-- 左上角返回按钮 -->
     <!-- 这里为什么要加4px，是因为这个左箭头<的高度为16rpx需要下降一半，就是8rpx=4px,可以自己试一下，我这里没有问题 -->
     <view
       class="back"
-      :style="{ marginTop: 4 + 'px', background, border }"
+      :style="{ marginTop: 4 + 'px', border }"
       @click="back_page"
     >
       <!-- <view class="back_img" :style="{ borderColor: color }"> </view> -->
@@ -81,7 +81,7 @@ export default {
   align-items: center;
   z-index: 999;
   /* background-color: red; */
-  margin-top: 100rpx;
+  padding: 100rpx 0 20rpx;
   background: transparent;
 }
 

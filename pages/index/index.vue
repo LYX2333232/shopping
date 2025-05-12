@@ -41,8 +41,8 @@
           </view>
         </template>
       </TnSwiper>
-      <view class="absolute" :style="{ top: `${top}px` }">
-        <image class="logo" :src="`${preUrl}logo.png`" mode="aspectFill">
+      <view class="absolute" :style="{ paddingTop: `${top}px` }">
+        <image class="logo" :src="`/static/index/logo.png`" mode="aspectFill">
         </image>
         <view class="search" @click="toSearch">
           <view style="flex: 1">
@@ -114,7 +114,7 @@
           </view>
         </view>
       </view>
-      <view class="hot">
+      <view class="hot" v-if="hot_list.length">
         <view
           class="top"
           :style="{
@@ -151,7 +151,7 @@
           </view>
         </view>
       </view>
-      <view class="must">
+      <view class="must" v-if="must_list?.length">
         <view
           class="top"
           :style="{
@@ -161,14 +161,33 @@
         >
           跟榜买 不会错！
         </view>
-        <view class="main-must" @click="toDetail(must_title.c_id)">
-          <image class="background" :src="must_title.img" mode="aspectFill">
-          </image>
-          <view class="mask"></view>
-          <view class="price">
-            <view class="name">{{ must_title.name }}</view>
-            <view class="flash"> {{ must_title.price }}元 </view>
-          </view>
+        <view style="width: 670rpx">
+          <swiper
+            autoplay
+            circular
+            v-if="must_swiper?.length"
+            style="height: 420rpx"
+          >
+            <swiper-item
+              class="main-must"
+              v-for="item in must_swiper"
+              :key="item.id"
+              :item-id="item.id"
+              @click="toDetail(item.c_id)"
+            >
+              <image class="background" :src="item.img" mode="aspectFill">
+              </image>
+              <view class="mask"></view>
+              <view class="price">
+                <view class="name">{{
+                  item.commodity
+                    ? item.commodity.name + "/" + item.commodity.item.name
+                    : ""
+                }}</view>
+                <view class="flash"> {{ item.commodity?.item.price }}元 </view>
+              </view>
+            </swiper-item>
+          </swiper>
         </view>
         <view class="items">
           <view
@@ -357,10 +376,17 @@ const address_visible = ref(false)
 const swiperData = ref([])
 
 const toWeb = (value) => {
-  console.log(value)
+  console.log(swiperData.value[value])
+  const c_id = swiperData.value[value].c_id
+  // if (c_id)
   uni.navigateTo({
-    url: "/pages/web/index?src=" + swiperData.value[value].path,
+    url: "/pages/goods/goods_detail?id=" + swiperData.value[value].c_id,
   })
+  // 图片预览
+  // else
+  //   uni.navigateTo({
+  //     url: "/pages/web/index?src=" + swiperData.value[value].path,
+  //   })
 }
 
 // 顶部的按钮
@@ -390,7 +416,7 @@ const hot_list = ref([])
 
 // 必吃商品
 const must_list = ref([])
-const must_title = ref({})
+const must_swiper = ref({})
 
 // 今日开团商品
 // const today_list = ref([])
@@ -442,34 +468,8 @@ const getData = () => {
     //   },
     // ]
     hot_list.value = res.data.hot
-    must_list.value = [
-      {
-        id: 1,
-        name: "商品1sjdhgkjfdnbgkfjhgfndkjhgfgoijgihnjdkghfdjk,ghdjklgdfn",
-        price: 100,
-        path: getRandomImage(),
-      },
-      {
-        id: 2,
-        name: "商品1",
-        price: 100,
-        path: getRandomImage(),
-      },
-      {
-        id: 3,
-        name: "商品1",
-        price: 100,
-        path: getRandomImage(),
-      },
-      {
-        id: 4,
-        name: "商品1",
-        price: 100,
-        path: getRandomImage(),
-      },
-    ]
     must_list.value = res.data.must_eat.commoditys
-    must_title.value = { ...res.data.must_eat }
+    must_swiper.value = res.data.must_eat.swipers
   })
   get_commodity({ ids: [] }).then((res) => {
     infoList.value = res.data.data
@@ -593,20 +593,27 @@ onShareTimeline(() => {
 }
 
 .absolute {
-  position: absolute;
-  left: 20rpx;
+  width: 100%;
+  position: fixed;
+  padding-left: 20rpx;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+
   .logo {
     width: 162rpx;
     height: 40rpx;
     margin-bottom: 24rpx;
   }
+
   .search {
     display: flex;
     align-items: center;
     width: 710rpx;
-    background: #fff;
-    border-radius: 40rpx;
+    background: #f6f6f6;
+    border-radius: 30rpx;
     padding: 10rpx 20rpx;
+    margin-bottom: 20rpx;
   }
 }
 
@@ -641,6 +648,7 @@ onShareTimeline(() => {
 .seckill {
   margin: 20rpx auto;
   width: 710rpx;
+  border-radius: 24rpx;
   // 旧背景
   // background: url('http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhQALAl1LiaicbL5icnESbI4SrzibNddNnPdXOx9x0xhMQ0qZqC16ib9gS6UibSa3kbofcg2cYEVj58NU3gw/0?wx_fmt=png') no-repeat center center;
   // background-size: 100% 100%;
@@ -670,14 +678,17 @@ onShareTimeline(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
 
     .item {
       width: 670rpx;
       background: #ffffff;
       display: flex;
       align-items: center;
-      padding: 32rpx 0 32rpx 30rpx;
+      justify-content: space-between;
+      padding: 10rpx;
+      padding-left: 30rpx;
+      border-radius: 16rpx;
       margin-bottom: 20rpx;
 
       .left {
@@ -748,9 +759,10 @@ onShareTimeline(() => {
       }
 
       .image {
-        margin-left: 71rpx;
-        width: 280rpx;
-        height: 250rpx;
+        margin: 10rpx 10rpx;
+        width: 260rpx;
+        height: 260rpx;
+        border-radius: 16rpx;
         flex-shrink: 0;
       }
     }
@@ -760,6 +772,7 @@ onShareTimeline(() => {
 .hot {
   margin: 20rpx auto;
   width: 710rpx;
+  border-radius: 24rpx;
   background: #ffe4d3;
 
   .top {
@@ -781,14 +794,16 @@ onShareTimeline(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
 
     .item {
       width: 670rpx;
+      border-radius: 32rpx;
       background: #ffffff;
       display: flex;
       align-items: center;
-      padding: 32rpx 0 32rpx 30rpx;
+      justify-content: space-between;
+      padding: 10rpx;
+      padding-left: 30rpx;
       margin-bottom: 20rpx;
 
       .left {
@@ -863,9 +878,9 @@ onShareTimeline(() => {
       }
 
       .image {
-        margin-left: 71rpx;
-        width: 280rpx;
-        height: 250rpx;
+        margin-right: 10rpx;
+        width: 260rpx;
+        height: 260rpx;
         flex-shrink: 0;
       }
     }
@@ -875,6 +890,7 @@ onShareTimeline(() => {
 .must {
   margin: 20rpx auto;
   width: 710rpx;
+  border-radius: 24rpx;
   background: #e5f3cc;
   display: flex;
   flex-direction: column;
@@ -915,7 +931,7 @@ onShareTimeline(() => {
     .price {
       position: absolute;
       left: 0;
-      top: 271rpx;
+      bottom: 41rpx;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -936,6 +952,7 @@ onShareTimeline(() => {
       .flash {
         width: 240rpx;
         height: 69rpx;
+        border-radius: 3rpx;
         background: #ffffff;
         display: flex;
         align-items: center;
@@ -1036,6 +1053,7 @@ onShareTimeline(() => {
     height: 220rpx;
     border-radius: 16rpx;
     margin-right: 20rpx;
+    flex-shrink: 0; //防止图片被压缩
   }
   .right {
     width: 100%;

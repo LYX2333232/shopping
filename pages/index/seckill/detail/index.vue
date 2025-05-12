@@ -1,8 +1,5 @@
 <template>
-  <Header
-    background="rgba(255, 255, 255, 0.6)"
-    border="1rpx solid rgba(151, 151, 151, 0.2)"
-  />
+  <Header background="#FFF" title="商品详情" />
   <view style="position: relative">
     <swiper
       :indicator-dots="false"
@@ -281,7 +278,7 @@ onLoad((options) => {
 
     content.value = res.data.content.replace(
       /(<img [^>]*)(style="[^"]*")?/gi,
-      '$1 style="width:100%;"'
+      '$1 style="width:100%;margin:0;"'
     )
 
     like.value = res.data.is_like
@@ -418,6 +415,7 @@ page {
 }
 
 .white_boxs {
+  padding-bottom: 20rpx;
   .info {
     font-family: PingFangSC, PingFang SC;
     font-weight: 500;
@@ -436,7 +434,7 @@ page {
     padding: 5rpx 10rpx;
     font-size: 25rpx;
     color: #999;
-    border: 2rpx dotted #999;
+    border: 2rpx solid #999;
     line-height: 35rpx;
     display: flex;
     align-items: center;
@@ -584,7 +582,7 @@ page {
       .recommend-image {
         width: 210rpx;
         height: 210rpx;
-        border-radius: 20rpx 20rpx 0 0;
+        border-radius: 20rpx;
       }
       .name {
         margin: 12rpx;
@@ -611,6 +609,10 @@ page {
 }
 
 .detail {
+  width: 100%;
+  background-color: #fff;
+  margin: 20rpx;
+  border-radius: 24rpx;
   padding-bottom: 150rpx;
 
   .title {
@@ -621,7 +623,7 @@ page {
     line-height: 40rpx;
     text-align: left;
     font-style: normal;
-    margin: 30rpx 20rpx;
+    margin: 20rpx 30rpx;
   }
 }
 

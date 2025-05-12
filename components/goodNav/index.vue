@@ -98,7 +98,7 @@ const buy = () => {
 .nav {
   box-sizing: border-box;
   width: 750rpx;
-  height: 110rpx;
+  height: 200rpx;
   position: fixed;
   bottom: 0;
   background: #ffffff;

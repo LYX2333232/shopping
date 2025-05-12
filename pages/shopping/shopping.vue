@@ -171,6 +171,8 @@
           type="success"
           shape="round"
           font-size="30"
+          bg-color="#14BF20"
+          text-color="#FFFFFF"
           @click="tocaculate"
         >
           结算（{{ select_goods.length }}）
@@ -548,7 +550,7 @@ onReachBottom(() => {
 
 .all {
   margin-top: 20vh;
-  padding: 20rpx 40rpx 200rpx;
+  padding: 20rpx 20rpx 200rpx;
   background: #f7f7f7;
   min-height: 80vh;
   display: flex;
@@ -592,14 +594,19 @@ onReachBottom(() => {
   }
 
   .block3 {
-    width: 100%;
+    width: 345rpx;
+    margin: 10rpx;
     background: #fff;
     margin-bottom: 20rpx;
     border-radius: 20rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .image {
-      width: 300rpx;
-      height: 300rpx;
+      width: 345rpx;
+      height: 345rpx;
+      border-radius: 20rpx 20rpx 0 0;
     }
 
     .name {
@@ -636,6 +643,7 @@ onReachBottom(() => {
     }
 
     .bottom {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
