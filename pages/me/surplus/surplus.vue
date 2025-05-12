@@ -8,7 +8,9 @@
           <text class="label">可提现</text>
           <text>{{ usable }}</text>
         </view>
-        <button class="btn" size="mini" @click="priceVisible = true">提现</button>
+        <button class="btn" size="mini" @click="priceVisible = true">
+          提现
+        </button>
       </view>
       <view class="bottom">
         <view>
@@ -31,27 +33,56 @@
     </view>
   </view>
   <TnPopup v-model="priceVisible">
-    <view style="width: 600rpx;height: 300rpx;padding: 20px;display: flex;flex-direction: column;align-items: center;">
-      <view style="display: flex;align-items: center;">
-        <view style="width: 150rpx;">提现金额</view>
-        <TnInput v-model="price" placeholder="请输入提现金额" type="number"></TnInput>
+    <view
+      style="
+        width: 600rpx;
+        height: 300rpx;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      "
+    >
+      <view style="display: flex; align-items: center">
+        <view style="width: 150rpx">提现金额</view>
+        <TnInput
+          v-model="price"
+          placeholder="请输入提现金额"
+          type="number"
+        ></TnInput>
       </view>
-      <view style="margin-top: 80rpx;width: 80%;display: flex;justify-content: space-between;">
-        <TnButton width="30%" height="50rpx" type="info" @click="cancel">取消</TnButton>
-        <TnButton width="30%" height="50rpx" type="success" @click="confirm">确定</TnButton>
+      <view
+        style="
+          margin-top: 80rpx;
+          width: 80%;
+          display: flex;
+          justify-content: space-between;
+        "
+      >
+        <TnButton width="30%" height="50rpx" type="info" @click="cancel"
+          >取消</TnButton
+        >
+        <TnButton
+          width="30%"
+          height="50rpx"
+          bg-color="#14BF20"
+          text-color="#FFF"
+          @click="confirm"
+          >确定</TnButton
+        >
       </view>
     </view>
   </TnPopup>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { get_balance, get_record, withdrawal } from '@/api/surplus/surplus'
-import Header from '@/components/header.vue'
-import { onShow } from '@dcloudio/uni-app'
-import TnPopup from '@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue'
-import TnInput from '@/uni_modules/tuniaoui-vue3/components/input/src/input.vue'
-import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import { ref } from "vue"
+import { get_balance, get_record, withdrawal } from "@/api/surplus/surplus"
+import Header from "@/components/header.vue"
+import { onShow } from "@dcloudio/uni-app"
+import TnPopup from "@/uni_modules/tuniaoui-vue3/components/popup/src/popup.vue"
+import TnInput from "@/uni_modules/tuniaoui-vue3/components/input/src/input.vue"
+import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
 
 // 保留两位小数
 const toFixed = (num) => {
@@ -70,9 +101,9 @@ const price = ref(undefined)
 const recordList = ref([
   {
     id: 1,
-    price: '1.00',
-    updated_at: '2024-03-16 08:09:29'
-  }
+    price: "1.00",
+    updated_at: "2024-03-16 08:09:29",
+  },
 ])
 
 const cancel = () => {
@@ -83,44 +114,43 @@ const cancel = () => {
 const confirm = () => {
   if (price.value === undefined) {
     uni.showToast({
-      title: '请输入提现金额',
-      icon: 'none'
+      title: "请输入提现金额",
+      icon: "none",
     })
     return
   }
   if (price.value <= 0) {
     uni.showToast({
-      title: '提现金额必须大于0',
-      icon: 'none'
+      title: "提现金额必须大于0",
+      icon: "none",
     })
     return
-  }
-  else {
+  } else {
     uni.showLoading({
-      title: '正在提交'
+      title: "正在提交",
     })
     // 提交
-    withdrawal(price.value).then(res => {
+    withdrawal(price.value).then((res) => {
       uni.hideLoading({
         success: () => {
           uni.showToast({
-            title: '提现成功',
-            icon: 'none'
+            title: "提现成功",
+            icon: "none",
           })
           getData()
-        }
+        },
       })
     })
   }
 }
 
 const getData = () => {
-  get_balance().then(res => {
+  get_balance().then((res) => {
     usable.value = toFixed(res.data.balance)
     total.value = res.data.cumulative
     frozen.value = toFixed(res.data.freeze)
   })
-  get_record().then(res => {
+  get_record().then((res) => {
     recordList.value = res.data.data
   })
 }
@@ -128,7 +158,6 @@ const getData = () => {
 onShow(() => {
   getData()
 })
-
 </script>
 
 <style lang="scss" scoped>
@@ -139,7 +168,7 @@ onShow(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #F7F7F7;
+  background: #f7f7f7;
   position: relative;
   z-index: 0;
 
@@ -155,7 +184,7 @@ onShow(() => {
   .main {
     width: 100%;
     padding: 50rpx 40rpx 30rpx;
-    background: linear-gradient(to right, #3BC66E, #30C36B);
+    background: linear-gradient(to right, #3bc66e, #30c36b);
     border-radius: 30rpx;
     display: flex;
     flex-direction: column;
@@ -174,7 +203,7 @@ onShow(() => {
         font-family: PingFangSC, PingFang SC;
         font-weight: 500;
         font-size: 56rpx;
-        color: #FFFFFF;
+        color: #ffffff;
         line-height: 78rpx;
         text-align: left;
         font-style: normal;
@@ -190,22 +219,20 @@ onShow(() => {
         }
       }
 
-
       .btn {
-        background: #FFFFFF;
-        color: #14BF20;
+        background: #ffffff;
+        color: #14bf20;
         border-radius: 48rpx;
         margin-right: 0;
       }
     }
-
 
     .bottom {
       width: 100%;
       display: flex;
       justify-content: space-around;
       margin-top: 40rpx;
-      color: #FFFFFF;
+      color: #ffffff;
 
       .label {
         font-family: PingFangSC, PingFang SC;
@@ -228,8 +255,6 @@ onShow(() => {
     }
   }
 
-
-
   .title {
     width: 100%;
     border-top: 2rpx solid #999999;
@@ -247,7 +272,7 @@ onShow(() => {
 
   .card {
     width: 100%;
-    background: #FFF;
+    background: #fff;
     margin-top: 10rpx;
     padding: 30rpx 50rpx;
     display: flex;
@@ -270,7 +295,7 @@ onShow(() => {
       font-family: Inter, Inter;
       font-weight: 400;
       font-size: 25rpx;
-      color: #9D9D9D;
+      color: #9d9d9d;
       line-height: 27rpx;
       text-align: left;
       font-style: normal;

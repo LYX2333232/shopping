@@ -59,58 +59,62 @@
         mode="scaleToFill"
         class="logo"
       />
-      <TnWaterFall :data="infoList" mode="calc">
-        <template #left="{ item }">
-          <view class="block3" @click="toDetail(item)">
-            <image :src="item.path" mode="aspectFit" class="image"></image>
-            <view class="name">
-              {{ item.name }}
-            </view>
-            <view class="good-desc">
-              {{ item.desc }}
-            </view>
-            <view class="bottom">
-              <view class="left">
-                <view class="price"> ¥{{ item.price }} </view>
-                <view v-if="item.or_price" class="old">
-                  ￥{{ item.or_price }}
-                </view>
+      <view class="suggest-goods">
+        <TnWaterFall :data="infoList" mode="calc">
+          <template #left="{ item }">
+            <view class="block3" @click="toDetail(item)">
+              <image :src="item.path" mode="aspectFit" class="image"></image>
+              <view class="name">
+                {{ item.name }}
               </view>
-              <TnButton
-                icon="cart"
-                type="success"
-                shape="circle"
-                font-size="40"
-              ></TnButton>
-            </view>
-          </view>
-        </template>
-        <template #right="{ item }">
-          <view class="block3" @click="toDetail(item)">
-            <image :src="item.path" mode="aspectFit" class="image"></image>
-            <view class="name">
-              {{ item.name }}
-            </view>
-            <view class="good-desc">
-              {{ item.desc }}
-            </view>
-            <view class="bottom">
-              <view class="left">
-                <view class="price"> ¥{{ item.price }} </view>
-                <view v-if="item.or_price" class="old">
-                  ￥{{ item.or_price }}
-                </view>
+              <view class="good-desc">
+                {{ item.desc }}
               </view>
-              <TnButton
-                icon="cart"
-                type="success"
-                shape="circle"
-                font-size="40"
-              ></TnButton>
+              <view class="bottom">
+                <view class="left">
+                  <view class="price"> ¥{{ item.price }} </view>
+                  <view v-if="item.or_price" class="old">
+                    ￥{{ item.or_price }}
+                  </view>
+                </view>
+                <TnButton
+                  icon="cart"
+                  bg-color="#14BF20"
+                  text-color="#FFF"
+                  shape="circle"
+                  font-size="40"
+                ></TnButton>
+              </view>
             </view>
-          </view>
-        </template>
-      </TnWaterFall>
+          </template>
+          <template #right="{ item }">
+            <view class="block3 item-right" @click="toDetail(item)">
+              <image :src="item.path" mode="aspectFit" class="image"></image>
+              <view class="name">
+                {{ item.name }}
+              </view>
+              <view class="good-desc">
+                {{ item.desc }}
+              </view>
+              <view class="bottom">
+                <view class="left">
+                  <view class="price"> ¥{{ item.price }} </view>
+                  <view v-if="item.or_price" class="old">
+                    ￥{{ item.or_price }}
+                  </view>
+                </view>
+                <TnButton
+                  icon="cart"
+                  bg-color="#14BF20"
+                  text-color="#FFF"
+                  shape="circle"
+                  font-size="40"
+                ></TnButton>
+              </view>
+            </view>
+          </template>
+        </TnWaterFall>
+      </view>
     </view>
   </view>
   <view class="fix-bottom">
@@ -168,11 +172,10 @@
         <TnButton
           width="220"
           height="80"
-          type="success"
+          bg-color="#14BF20"
+          text-color="#FFF"
           shape="round"
           font-size="30"
-          bg-color="#14BF20"
-          text-color="#FFFFFF"
           @click="tocaculate"
         >
           结算（{{ select_goods.length }}）
@@ -593,9 +596,12 @@ onReachBottom(() => {
     margin: 40rpx;
   }
 
+  .suggest-goods {
+    width: 100%;
+  }
+
   .block3 {
     width: 345rpx;
-    margin: 10rpx;
     background: #fff;
     margin-bottom: 20rpx;
     border-radius: 20rpx;
@@ -676,13 +682,17 @@ onReachBottom(() => {
       }
     }
   }
+
+  .item-right {
+    margin-left: 10rpx;
+  }
 }
 
 .fix-bottom {
   width: 750rpx;
   background: #ffffff;
   position: fixed;
-  z-index: 50000;
+  z-index: 500;
   bottom: 0;
 
   .free {

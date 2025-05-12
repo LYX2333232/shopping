@@ -1,5 +1,5 @@
 <template>
-  <Header background="#FFF" title="商品详情" />
+  <Header :background="`rgba(255,255,255,${alpha})`" />
   <view style="position: relative">
     <swiper
       :indicator-dots="false"
@@ -138,7 +138,7 @@
 
 <script setup>
 import { ref } from "vue"
-import { onLoad } from "@dcloudio/uni-app"
+import { onLoad, onPageScroll } from "@dcloudio/uni-app"
 
 import { get_goods_detail } from "@/api/goods/goods"
 import { add_to_cart } from "@/api/cart/cart"
@@ -235,6 +235,12 @@ const toDetail = (id) => {
     url: "/pages/goods/goods_detail?id=" + id,
   })
 }
+
+const alpha = ref(0)
+onPageScroll((e) => {
+  console.log(e)
+  alpha.value = e.scrollTop / 300
+})
 
 onLoad((options) => {
   const that = this

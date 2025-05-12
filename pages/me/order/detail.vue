@@ -4,33 +4,60 @@
     <view class="card header">
       <view class="background" v-if="order.state_text === '待分享'">
         拼团剩余时间
-        <CountDown :time="Math.floor((new Date(order.order_end) - new Date()) / 1000)" background="#EE2532"
-          textColor="#FFF" />
+        <CountDown
+          :time="Math.floor((new Date(order.order_end) - new Date()) / 1000)"
+          background="#EE2532"
+          textColor="#FFF"
+        />
       </view>
       <view class="title">
         {{ order.state_text }}
       </view>
       <!-- 拼团部分 -->
       <view v-if="order.teamwork" class="others">
-        <image v-for="(user, index) in order.teamwork.users" :key="index" :src="user.avatar" mode="scaleToFill"
-          class="avatar" />
+        <image
+          v-for="(user, index) in order.teamwork.users"
+          :key="index"
+          :src="user.avatar"
+          mode="scaleToFill"
+          class="avatar"
+        />
         <view v-if="order.teamwork.state === 0">
           已有{{ order.teamwork.seng_count }}人拼团，
-          <text style="color:#EE2532">还差{{ order.teamwork.count - order.teamwork.seng_count }}人</text>
+          <text style="color: #ee2532"
+            >还差{{ order.teamwork.count - order.teamwork.seng_count }}人</text
+          >
         </view>
-        <view v-else-if="order.teamwork.state === 1">拼团成功！商家正在备货</view>
+        <view v-else-if="order.teamwork.state === 1"
+          >拼团成功！商家正在备货</view
+        >
         <view v-else>拼团失败</view>
       </view>
-      <view v-else-if="order.state_text === '待发货'" class="desc">商家正在备货</view>
-      <TnButton v-if="order.state_text === '待分享' || order.state_text === '拼团中'" width="100%" height="80" shape="round"
-        type="success">
+      <view v-else-if="order.state_text === '待发货'" class="desc"
+        >商家正在备货</view
+      >
+      <TnButton
+        v-if="order.state_text === '待分享' || order.state_text === '拼团中'"
+        width="100%"
+        height="80"
+        shape="round"
+        bg-color="#14BF20"
+        text-color="#FFF"
+      >
         邀请好友拼单
       </TnButton>
 
       <view v-if="order.state_text === '待收货'">
         {{ deliver[order.state] }}
       </view>
-      <TnButton v-if="order.state_text === '待收货'" width="100%" height="80" shape="round" type="success">
+      <TnButton
+        v-if="order.state_text === '待收货'"
+        width="100%"
+        height="80"
+        shape="round"
+        bg-color="#14BF20"
+        text-color="#FFF"
+      >
         确认收货
       </TnButton>
 
@@ -38,16 +65,26 @@
       <view v-if="order.state_text === '待支付'" class="desc">
         15分钟后订单关闭，请尽快支付哦
       </view>
-      <TnButton v-if="order.state_text === '待支付'" width="100%" height="80" shape="round" type="success" @click="rePay">
+      <TnButton
+        v-if="order.state_text === '待支付'"
+        width="100%"
+        height="80"
+        shape="round"
+        bg-color="#14BF20"
+        text-color="#FFF"
+        @click="rePay"
+      >
         去支付
-        <TnCountDown :time="Math.floor((new Date(order.end) - new Date()) / 1000)" text-color="#FFF"
-          separator-color="#FFF" @finish="uni.navigateBack()" />
+        <TnCountDown
+          :time="Math.floor((new Date(order.end) - new Date()) / 1000)"
+          text-color="#FFF"
+          separator-color="#FFF"
+          @finish="uni.navigateBack()"
+        />
       </TnButton>
     </view>
     <view class="card deliver">
-      <view class="title">
-        配送信息
-      </view>
+      <view class="title"> 配送信息 </view>
       <view class="tn-flex-start-start tn-m-lg tn-w-full">
         <TnIcon name="map" size="40" />
         <view class="tn-ml-sm">
@@ -63,12 +100,8 @@
     <view class="card goods">
       <view class="tn-flex-center-between tn-w-full">
         <view class="tn-flex-center-start">
-          <view class="title">
-            商品信息
-          </view>
-          <view class="type">
-            共{{ order.order_com.length }}种
-          </view>
+          <view class="title"> 商品信息 </view>
+          <view class="type"> 共{{ order.order_com.length }}种 </view>
         </view>
         <TnIcon name="right" />
       </view>
@@ -77,93 +110,75 @@
         <view class="right">
           <view class="tn-flex-center-between tn-w-full">
             <view class="title">{{ good.name }}</view>
-            <view class="total">
-              ￥ {{ good.price }}
-            </view>
+            <view class="total"> ￥ {{ good.price }} </view>
           </view>
           <view class="tn-flex-center-between tn-w-full">
-            <view>
-              规格：{{ good.item_name }}
-            </view>
-            <view>
-              {{ good.com_cont }}袋
-            </view>
+            <view> 规格：{{ good.item_name }} </view>
+            <view> {{ good.com_cont }}袋 </view>
           </view>
           <view>
             单价：￥ {{ good.price }}
-            <text v-if="good.old_price" class="old">￥{{ good.old_price }}</text>
+            <text v-if="good.old_price" class="old"
+              >￥{{ good.old_price }}</text
+            >
           </view>
         </view>
       </view>
     </view>
     <view class="card order">
       <view class="tn-flex-center-between tn-w-full">
-        <view class="title">
-          商品金额
-        </view>
-        <view class="right">
-          ￥ {{ order.price }}
-        </view>
+        <view class="title"> 商品金额 </view>
+        <view class="right"> ￥ {{ order.price }} </view>
       </view>
       <view class="tn-flex-center-between tn-w-full">
-        <view class="title">
-          配送费
-        </view>
-        <view class="right">
-          ￥ {{ order.freight }}
-        </view>
+        <view class="title"> 配送费 </view>
+        <view class="right"> ￥ {{ order.freight }} </view>
       </view>
       <view v-if="order.coupon_price" class="tn-flex-center-between tn-w-full">
-        <view class="title">
-          共优惠
-        </view>
-        <view class="discount">
-          -￥ {{ discount.toFixed(2) }}
-        </view>
+        <view class="title"> 共优惠 </view>
+        <view class="discount"> -￥ {{ discount.toFixed(2) }} </view>
       </view>
       <view v-if="discount > 0" class="sub-card">
-        <view v-if="discount > parseFloat(order.coupon_price)" class="tn-flex-center-between tn-w-full">
-          <view class="title" style="font-size:24rpx">
-            活动优惠
-          </view>
-          <view class="discount" style="font-size:24rpx">
+        <view
+          v-if="discount > parseFloat(order.coupon_price)"
+          class="tn-flex-center-between tn-w-full"
+        >
+          <view class="title" style="font-size: 24rpx"> 活动优惠 </view>
+          <view class="discount" style="font-size: 24rpx">
             -￥ {{ discount.price }}
           </view>
         </view>
-        <view v-if="order.coupon_price" class="tn-flex-center-between tn-w-full">
-          <view class="title" style="font-size:24rpx">
-            优惠券
-          </view>
-          <view class="discount" style="font-size:24rpx">
+        <view
+          v-if="order.coupon_price"
+          class="tn-flex-center-between tn-w-full"
+        >
+          <view class="title" style="font-size: 24rpx"> 优惠券 </view>
+          <view class="discount" style="font-size: 24rpx">
             -￥ {{ discount.coupon_price }}
           </view>
         </view>
       </view>
       <view class="tn-flex-center-end">
         <TnButton shape="round" type="info" plain>取消订单</TnButton>
-        <view class="total">
-          应付合计：￥{{ order.should_price }}
-        </view>
+        <view class="total"> 应付合计：￥{{ order.should_price }} </view>
       </view>
     </view>
     <view class="card order_info">
       <view class="tn-flex-center-between tn-w-full">
-        <view class="title">
-          下单时间
-        </view>
+        <view class="title"> 下单时间 </view>
         <view class="right">
           {{ order.created_at }}
         </view>
       </view>
       <view class="tn-flex-center-between tn-w-full">
-        <view class="title">
-          订单编号
-        </view>
+        <view class="title"> 订单编号 </view>
         <view class="tn-flex-center-start">
           <view class="right">
             {{ order.out_trade_no }}
           </view>
-          <TnButton shape="round" type="info" plain @click="copy">复制</TnButton>
+          <TnButton shape="round" type="info" plain @click="copy"
+            >复制</TnButton
+          >
         </view>
       </view>
     </view>
@@ -175,66 +190,70 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { ref, computed } from "vue"
+import { onLoad } from "@dcloudio/uni-app"
 
-import TnButton from '@tuniao/tnui-vue3-uniapp/components/button/src/button.vue'
-import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
-import TnCountDown from '@tuniao/tnui-vue3-uniapp/components/count-down/src/count-down.vue'
-import CountDown from '@/components/CountDown'
-import Header from '@/components/header'
-import { get_order_detail, repay_order } from '@/api/order/order'
+import TnButton from "@tuniao/tnui-vue3-uniapp/components/button/src/button.vue"
+import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
+import TnCountDown from "@tuniao/tnui-vue3-uniapp/components/count-down/src/count-down.vue"
+import CountDown from "@/components/CountDown"
+import Header from "@/components/header"
+import { get_order_detail, repay_order } from "@/api/order/order"
 
 const deliver = {
-  10: '正在等待接单',
-  20: '骑手已经接单',
-  30: '骑手已到店',
-  40: '商品配送中',
-  50: '配送已完成',
-  60: '配送已取消',
-  70: '配送失败'
+  10: "正在等待接单",
+  20: "骑手已经接单",
+  30: "骑手已到店",
+  40: "商品配送中",
+  50: "配送已完成",
+  60: "配送已取消",
+  70: "配送失败",
 }
 
 const order = ref({})
-const getDetail = id => {
-  get_order_detail(id).then(res => {
+const getDetail = (id) => {
+  get_order_detail(id).then((res) => {
     console.log(res)
     order.value = {
       ...res.data,
-      end: new Date(res.data.created_at).getTime() + 15 * 60 * 1000
+      end: new Date(res.data.created_at).getTime() + 15 * 60 * 1000,
     }
   })
 }
 
 /**
  * 重新支付订单
-  */
+ */
 const rePay = () => {
-  repay_order(order.value.id).then(res => {
+  repay_order(order.value.id).then((res) => {
     uni.requestPayment({
-      provider: 'wxpay',
+      provider: "wxpay",
       timeStamp: res.data.timeStamp,
       nonceStr: res.data.nonceStr,
       package: res.data.package,
       signType: res.data.signType,
       paySign: res.data.paySign,
       success: function (res) {
-        if (res.errMsg === 'requestPayment:ok') {
+        if (res.errMsg === "requestPayment:ok") {
           uni.showToast({
-            title: '支付成功',
-            icon: 'none'
+            title: "支付成功",
+            icon: "none",
           })
         }
       },
       fail: function (err) {
-        console.log('fail', err)
-      }
+        console.log("fail", err)
+      },
     })
   })
 }
 
 const discount = computed(() => {
-  return parseFloat(order.value.should_price) - parseFloat(order.value.price) - parseFloat(order.value.freight)
+  return (
+    parseFloat(order.value.should_price) -
+    parseFloat(order.value.price) -
+    parseFloat(order.value.freight)
+  )
 })
 
 const copy = () => {
@@ -242,11 +261,11 @@ const copy = () => {
     data: order.value.out_trade_no,
     success: () => {
       uni.showToast
-    }
+    },
   })
 }
 
-onLoad(options => {
+onLoad((options) => {
   console.log(options)
   getDetail(options.id)
 })
@@ -256,13 +275,13 @@ onLoad(options => {
 .all {
   width: 100%;
   min-height: 100vh;
-  background: #F6F6F6;
+  background: #f6f6f6;
   padding: 190rpx 20rpx 0;
 }
 
 .card {
   width: 100%;
-  background: #FFF;
+  background: #fff;
   margin: 20rpx 0;
 }
 
@@ -271,8 +290,8 @@ onLoad(options => {
 
   .background {
     width: 100%;
-    background: #FFF3DD;
-    color: #EE2532;
+    background: #fff3dd;
+    color: #ee2532;
     display: flex;
     justify-content: center;
     padding: 20rpx;
@@ -463,7 +482,7 @@ onLoad(options => {
     font-family: WeChat-Sans-Std, WeChat-Sans-Std;
     font-weight: 400;
     font-size: 28rpx;
-    color: #EE2532;
+    color: #ee2532;
     line-height: 31rpx;
     text-align: left;
     font-style: normal;
@@ -472,7 +491,7 @@ onLoad(options => {
   .sub-card {
     width: 100%;
     margin: 20rpx 0;
-    background: #F7F7F7;
+    background: #f7f7f7;
     border-radius: 8rpx;
     padding: 20rpx;
   }
@@ -517,7 +536,7 @@ onLoad(options => {
 .bottom {
   width: 100%;
   padding: 10rpx 30rpx;
-  background: #FFF;
+  background: #fff;
   margin-top: 30rpx;
   display: flex;
   justify-content: flex-end;

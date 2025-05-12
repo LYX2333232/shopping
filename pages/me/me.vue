@@ -38,7 +38,12 @@
         />
         <view> 多重好礼任你选，各种特权 </view>
       </view>
-      <TnButton type="success" width="170" height="60" shape="round"
+      <TnButton
+        bg-color="#14BF20"
+        text-color="#FFF"
+        width="170"
+        height="60"
+        shape="round"
         >立即加盟</TnButton
       >
     </view>

@@ -8,7 +8,9 @@
           <TnTag v-if="item.tag" bg-color="#fff2ef" text-color="tn-red">
             {{ item.tag }}
           </TnTag>
-          <text class="address">{{ item.address_name + ' ' + item.detail }}</text>
+          <text class="address">{{
+            item.address_name + " " + item.detail
+          }}</text>
           <view class="info">
             <view class="name">
               {{ item.name }}
@@ -23,7 +25,14 @@
       </view>
     </view>
     <view class="btns">
-      <TnButton width="650" height="90" type="success" shape="round" @click="toEdit(-1)">
+      <TnButton
+        width="650"
+        height="90"
+        bg-color="#14BF20"
+        text-color="#FFF"
+        shape="round"
+        @click="toEdit(-1)"
+      >
         新增地址
       </TnButton>
     </view>
@@ -31,42 +40,42 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
-import { get_address_list, delete_address } from '@/api/address/address.js'
-import Header from '@/components/header.vue'
-import TnIcon from '@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue'
-import TnTag from '@tuniao/tnui-vue3-uniapp/components/tag/src/tag.vue'
-import TnButton from '@/uni_modules/tuniaoui-vue3/components/button/src/button.vue'
+import { ref } from "vue"
+import { onShow } from "@dcloudio/uni-app"
+import { get_address_list, delete_address } from "@/api/address/address.js"
+import Header from "@/components/header.vue"
+import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
+import TnTag from "@tuniao/tnui-vue3-uniapp/components/tag/src/tag.vue"
+import TnButton from "@/uni_modules/tuniaoui-vue3/components/button/src/button.vue"
 
 const addressList = ref([])
 
 const toEdit = (index) => {
   uni.navigateTo({
-    url: `/pages/me/address/editPage?index=${index}`
+    url: `/pages/me/address/editPage?index=${index}`,
   })
 }
 
 const deleteAddress = (id) => {
   uni.showModal({
-    title: '提示',
-    content: '确定删除该地址吗？',
-    success: res => {
+    title: "提示",
+    content: "确定删除该地址吗？",
+    success: (res) => {
       if (res.confirm) {
-        delete_address(id).then(res => {
+        delete_address(id).then((res) => {
           uni.showToast({
-            title: '删除成功',
-            icon: 'none'
+            title: "删除成功",
+            icon: "none",
           })
           getData()
         })
       }
-    }
+    },
   })
 }
 
 const getData = () => {
-  get_address_list().then(res => {
+  get_address_list().then((res) => {
     console.log(res)
     addressList.value = res.data.data
   })
@@ -81,7 +90,7 @@ onShow(() => {
 .all {
   width: 100%;
   min-height: 100vh;
-  background-color: #F6F6F6;
+  background-color: #f6f6f6;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -98,7 +107,7 @@ onShow(() => {
 
   .list {
     width: 100%;
-    background: #FFF;
+    background: #fff;
     padding: 0 30rpx;
 
     .card {
@@ -151,11 +160,10 @@ onShow(() => {
       }
     }
 
-    .card:nth-child(n+2) {
-      border-top: 1rpx solid #DEDEDE;
+    .card:nth-child(n + 2) {
+      border-top: 1rpx solid #dedede;
     }
   }
-
 }
 
 .btns {

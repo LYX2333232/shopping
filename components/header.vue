@@ -81,7 +81,7 @@ export default {
   align-items: center;
   z-index: 999;
   /* background-color: red; */
-  padding: 100rpx 0 20rpx;
+  padding: 100rpx 0 40rpx;
   background: transparent;
 }
 

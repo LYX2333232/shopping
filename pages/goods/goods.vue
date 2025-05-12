@@ -11,7 +11,13 @@
         @confirm="search"
       />
       <view class="flex:1">
-        <TnButton type="success" shape="round" @click="search">搜索</TnButton>
+        <TnButton
+          bg-color="#14BF20"
+          text-color="#FFF"
+          shape="round"
+          @click="search"
+          >搜索</TnButton
+        >
       </view>
     </view>
     <view class="indexes">

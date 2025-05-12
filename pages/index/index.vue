@@ -41,7 +41,13 @@
           </view>
         </template>
       </TnSwiper>
-      <view class="absolute" :style="{ paddingTop: `${top}px` }">
+      <view
+        class="absolute"
+        :style="{
+          paddingTop: `${top}px`,
+          background: `rgba(255,255,255, ${alpha})`,
+        }"
+      >
         <image class="logo" :src="`/static/index/logo.png`" mode="aspectFill">
         </image>
         <view class="search" @click="toSearch">
@@ -50,7 +56,9 @@
           </view>
           <input style="flex: auto" type="text" disabled />
           <view>
-            <TnButton type="success" shape="round">搜索</TnButton>
+            <TnButton bg-color="#14BF20" text-color="#FFF" shape="round"
+              >搜索</TnButton
+            >
           </view>
         </view>
       </view>
@@ -357,18 +365,17 @@ import {
   onShareAppMessage,
   onShareTimeline,
   onLoad,
+  onPageScroll,
 } from "@dcloudio/uni-app"
 
 import AddressPopup from "@/components/AddressPopup"
 import { AddressStore } from "@/store"
 import { get_home, get_commodity } from "@/api/index"
 // import { get_today_list } from "@/api/index/today/today"
-import { getRandomImage } from "@/utils/constant"
 
 const preUrl = import.meta.env.VITE_BASE_URL + "/mini_app/static/index/"
 
-const VIP =
-  "http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhR0plibtQOMrUJ4Dz7ibKHmkdbjMxvh0aszJibS4uLXx2BHNic33zhvIn40jQiaVW9hPXiaaSFOymIpk23Q/0?wx_fmt=png"
+const VIP = "/static/index/VIP.gif"
 
 const address = AddressStore()
 const address_visible = ref(false)
@@ -505,6 +512,12 @@ onReachBottom(() => {
   })
 })
 
+const alpha = ref(0)
+onPageScroll((e) => {
+  // 滚动距离
+  alpha.value = Math.min(1, e.scrollTop / 300)
+})
+
 onShareAppMessage(() => {
   return {
     title: "森美臻品",
@@ -598,7 +611,6 @@ onShareTimeline(() => {
   padding-left: 20rpx;
   top: 0;
   z-index: 100;
-  background: #fff;
 
   .logo {
     width: 162rpx;

@@ -36,7 +36,8 @@
         width="710"
         height="100"
         shape="round"
-        type="success"
+        bg-color="#14BF20"
+        text-color="#fff"
         @click="newAddress"
         >新增地址</TnButton
       >

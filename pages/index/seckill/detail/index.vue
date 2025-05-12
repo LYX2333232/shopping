@@ -1,5 +1,5 @@
 <template>
-  <Header background="#FFF" title="商品详情" />
+  <Header :background="`rgba(255,255,255,${alpha})`" />
   <view style="position: relative">
     <swiper
       :indicator-dots="false"
@@ -141,7 +141,7 @@
 
 <script setup>
 import { ref } from "vue"
-import { onLoad } from "@dcloudio/uni-app"
+import { onLoad, onPageScroll } from "@dcloudio/uni-app"
 
 import TnNumberBox from "@tuniao/tnui-vue3-uniapp/components/number-box/src/number-box.vue"
 import TnIcon from "@tuniao/tnui-vue3-uniapp/components/icon/src/icon.vue"
@@ -250,6 +250,11 @@ function buy() {
     url: `/pages/me/order/new_order?flash_id=${flash_id}&com_cont=${cont.value}`,
   })
 }
+const alpha = ref(0)
+onPageScroll((e) => {
+  console.log(e)
+  alpha.value = e.scrollTop / 300
+})
 
 onLoad((options) => {
   const that = this

@@ -7,49 +7,47 @@
       mode="scaleToFill"
     />
     <TnScrollList :indicator="false">
-      <view style="height: 180rpx">
-        <view class="tn-flex-center-start indexs">
+      <view class="tn-flex-center-start indexs">
+        <view
+          style="height: 100%; overflow: visible"
+          v-for="(item, index) in indexs"
+          :key="index"
+          @click="changeIndex(index)"
+        >
+          <!-- 未开始 -->
           <view
-            style="height: 100%; overflow: visible"
-            v-for="(item, index) in indexs"
-            :key="index"
-            @click="changeIndex(index)"
+            v-if="item.start > new Date()"
+            :class="['index', 'wait', active_index === index ? 'active' : '']"
           >
-            <!-- 未开始 -->
-            <view
-              v-if="item.start > new Date()"
-              :class="['item', 'wait', active_index === index ? 'active' : '']"
-            >
-              <image
-                v-if="active_index === index"
-                src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
-                class="image"
-                mode="scaleToFill"
-              />
-              <view>
-                {{ dayText(item.start) + formatTime(item.start, "h:m") }}
-              </view>
-              <view style="margin-top: 20rpx"> 整点秒杀 </view>
+            <image
+              v-if="active_index === index"
+              src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
+              class="image"
+              mode="scaleToFill"
+            />
+            <view>
+              {{ dayText(item.start) + formatTime(item.start, "h:m") }}
             </view>
-            <!-- 已开始且未结束 -->
-            <view
-              v-else-if="item.end > new Date()"
-              :class="['item', 'doing', active_index === index ? 'active' : '']"
-            >
-              <image
-                v-if="active_index === index"
-                src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
-                class="image"
-                mode="scaleToFill"
-              />
-              <CountDown
-                :time="item.end - new Date()"
-                :textColor="active_index === index ? '#FFF' : '#EE2532'"
-                :background="active_index === index ? '#14BF20' : '#FFF'"
-              />
-              <view style="margin-top: 20rpx">
-                {{ item.hour }}点{{ item.min ? "半" : "" }}场
-              </view>
+            <view style="margin-top: 20rpx"> 整点秒杀 </view>
+          </view>
+          <!-- 已开始且未结束 -->
+          <view
+            v-else-if="item.end > new Date()"
+            :class="['index', 'doing', active_index === index ? 'active' : '']"
+          >
+            <image
+              v-if="active_index === index"
+              src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
+              class="image"
+              mode="scaleToFill"
+            />
+            <CountDown
+              :time="item.end - new Date()"
+              :textColor="active_index === index ? '#FFF' : '#EE2532'"
+              :background="active_index === index ? '#14BF20' : '#FFF'"
+            />
+            <view style="margin-top: 20rpx">
+              {{ item.hour }}点{{ item.min ? "半" : "" }}场
             </view>
           </view>
         </view>
@@ -190,7 +188,7 @@ var page = 1
 }
 
 .indexs {
-  margin: 20rpx 0;
+  margin: 20rpx 0 0;
   width: 750rpx;
   height: 130rpx;
   background: #fd745a;
@@ -203,7 +201,7 @@ var page = 1
   color: #fff;
   overflow: visible;
 
-  .item {
+  .index {
     width: 400rpx;
     height: 100%;
     display: flex;
@@ -230,9 +228,10 @@ var page = 1
 
 .item {
   width: 100%;
-  margin: 20rpx auto;
+  margin: 0 auto;
   padding: 20rpx;
   display: flex;
+  background: #fff;
 
   .image {
     width: 200rpx;

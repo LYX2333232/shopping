@@ -1,64 +1,82 @@
 <template>
   <Header title="我的团队"></Header>
   <view class="all">
-    <view style="height:100rpx"></view>
+    <view style="height: 100rpx"></view>
     <view v-for="(item, index) in userList" :key="index" class="user">
-      <view style="display: flex;align-items: center">
-        <image :src="item.avatar" mode="scaleToFill"
-          style="width: 100rpx;height: 100rpx;border-radius: 50%;margin-right: 20rpx;" />
+      <view style="display: flex; align-items: center">
+        <image
+          :src="item.avatar"
+          mode="scaleToFill"
+          style="
+            width: 100rpx;
+            height: 100rpx;
+            border-radius: 50%;
+            margin-right: 20rpx;
+          "
+        />
         <text class="name">{{ item.name }}</text>
       </view>
-      <TnTag v-if="item.referee" type="success" shape="circle" width="100" height="40">推荐人</TnTag>
+      <TnTag
+        v-if="item.referee"
+        bg-color="#14BF20"
+        text-color="#FFF"
+        shape="circle"
+        width="100"
+        height="40"
+        >推荐人</TnTag
+      >
     </view>
   </view>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { onShow } from '@dcloudio/uni-app'
-import { get_up_list } from '@/api/user/user.js'
-import Header from '@/components/header.vue'
-import TnTag from '@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue'
+import { ref } from "vue"
+import { onShow } from "@dcloudio/uni-app"
+import { get_up_list } from "@/api/user/user.js"
+import Header from "@/components/header.vue"
+import TnTag from "@/uni_modules/tuniaoui-vue3/components/tag/src/tag.vue"
 
 const userList = ref([])
 
 const getData = () => {
   const list = [
     {
-      avatar: 'https://picsum.photos/50/50',
-      name: '张三',
-      referee: true
+      avatar: "https://picsum.photos/50/50",
+      name: "张三",
+      referee: true,
     },
     {
-      avatar: 'https://picsum.photos/50/50',
-      name: '李四',
-      referee: false
+      avatar: "https://picsum.photos/50/50",
+      name: "李四",
+      referee: false,
     },
     {
-      avatar: 'https://picsum.photos/50/50',
-      name: '王五',
-      referee: false
+      avatar: "https://picsum.photos/50/50",
+      name: "王五",
+      referee: false,
     },
     {
-      avatar: 'https://picsum.photos/50/50',
-      name: '赵六',
-      referee: true
-    }
+      avatar: "https://picsum.photos/50/50",
+      name: "赵六",
+      referee: true,
+    },
   ]
   userList.value = list
-  get_up_list().then(res => {
+  get_up_list().then((res) => {
     if (res.data.up_user)
       userList.value.push({
         ...res.data.up_user,
-        referee: true
+        referee: true,
       })
     // 数组拼接
-    userList.value = userList.value.concat(res.data.data.map(item => {
-      return {
-        ...item,
-        referee: false
-      }
-    }))
+    userList.value = userList.value.concat(
+      res.data.data.map((item) => {
+        return {
+          ...item,
+          referee: false,
+        }
+      })
+    )
   })
 }
 
@@ -74,7 +92,7 @@ onShow(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #F6F6F6;
+  background: #f6f6f6;
 
   .user {
     width: 100%;
@@ -94,6 +112,5 @@ onShow(() => {
       text-transform: none;
     }
   }
-
 }
 </style>

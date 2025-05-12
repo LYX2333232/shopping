@@ -106,7 +106,13 @@
       应付：
       <view class="pay"> ￥{{ order.price }} </view>
     </view>
-    <TnButton type="success" size="xl" shape="round" @click="pay">
+    <TnButton
+      bg-color="#14BF20"
+      text-color="#FFF"
+      size="xl"
+      shape="round"
+      @click="pay"
+    >
       去支付
     </TnButton>
   </view>
