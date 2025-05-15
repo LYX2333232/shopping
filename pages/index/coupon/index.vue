@@ -52,7 +52,7 @@
       </view>
       <TnButton
         :type="isUsable(coupon) ? 'danger' : 'info'"
-        :plain="(coupon.state = 1)"
+        :plain="coupon.state === 1"
         shape="round"
       >
         {{ coupon.state === 0 ? "立即领取" : "已领取" }}
@@ -91,6 +91,7 @@ const type = ["无门槛券", "满减券", "折扣券", "类目券", "新人券"
 
 // 领取优惠券
 const receive = (coupon) => {
+  console.log(coupon)
   // 还有优惠券未领取
   if (coupon.state === 0) {
     receive_coupon(coupon.id).then((res) => {

@@ -809,7 +809,7 @@ onShareTimeline(() => {
 
     .item {
       width: 670rpx;
-      border-radius: 32rpx;
+      border-radius: 16rpx;
       background: #ffffff;
       display: flex;
       align-items: center;
@@ -840,7 +840,7 @@ onShareTimeline(() => {
           font-family: SourceHanSansCN, SourceHanSansCN;
           font-weight: 400;
           font-size: 26rpx;
-          color: #1f2024;
+          color: #666;
           line-height: 39rpx;
           text-align: left;
           font-style: normal;
@@ -893,6 +893,7 @@ onShareTimeline(() => {
         margin-right: 10rpx;
         width: 260rpx;
         height: 260rpx;
+        border-radius: 16rpx;
         flex-shrink: 0;
       }
     }

@@ -129,6 +129,7 @@
     :id="size[sizeIndex].id"
     :like="size[sizeIndex].is_like"
     :normal="true"
+    :top="alpha"
     @addToCart="addToCart"
     @buy="buy"
     @changeLike="changeLike"
@@ -356,12 +357,12 @@ page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20rpx;
+  padding: 0 20rpx;
 }
 
 .white_boxs {
   width: 710rpx;
-  margin: 20rpx;
+  margin-top: 20rpx;
   padding: 20rpx;
   background-color: #fff;
   border-radius: 24rpx;
@@ -432,8 +433,9 @@ page {
     margin-right: 15rpx;
     padding: 5rpx 10rpx;
     font-size: 25rpx;
-    color: #999;
-    border: 2rpx solid #999;
+    border-radius: 4rpx;
+    color: #666;
+    border: 2rpx solid #d0d0d0;
     line-height: 35rpx;
     display: flex;
     align-items: center;
@@ -466,7 +468,7 @@ page {
 .size {
   width: 100%;
   background-color: #fff;
-  margin: 20rpx;
+  margin-top: 20rpx;
   border-radius: 24rpx;
   padding: 30rpx 20rpx;
 
@@ -499,7 +501,7 @@ page {
 .param {
   width: 100%;
   background-color: #fff;
-  margin: 20rpx;
+  margin-top: 20rpx;
   padding: 30rpx 20rpx;
 
   .title {
@@ -559,7 +561,7 @@ page {
 
 .card {
   width: 710rpx;
-  margin: 20rpx 0;
+  margin-top: 20rpx;
   padding: 0rpx 20rpx;
   background-color: #fff;
   border-radius: 24rpx;

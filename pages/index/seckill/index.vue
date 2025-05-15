@@ -1,85 +1,93 @@
 <template>
-  <Header />
+  <Header background="#fe2228" />
   <view class="all">
     <image
       class="background"
       src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhS8PmdQBKx8ibh5O3dju5VYEanKbAXP1GiayrWu3KLQPtian8UECGxjfNtf7eqnlKrloxNriaAQ5AuglQ/0?wx_fmt=png"
       mode="scaleToFill"
     />
-    <TnScrollList :indicator="false">
-      <view class="tn-flex-center-start indexs">
-        <view
-          style="height: 100%; overflow: visible"
-          v-for="(item, index) in indexs"
-          :key="index"
-          @click="changeIndex(index)"
-        >
-          <!-- 未开始 -->
+    <view style="position: sticky; top: 100rpx; z-index: 100">
+      <TnScrollList :indicator="false">
+        <view class="tn-flex-center-start indexs">
           <view
-            v-if="item.start > new Date()"
-            :class="['index', 'wait', active_index === index ? 'active' : '']"
+            style="height: 100%; overflow: visible"
+            v-for="(item, index) in indexs"
+            :key="index"
+            @click="changeIndex(index)"
           >
-            <image
-              v-if="active_index === index"
-              src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
-              class="image"
-              mode="scaleToFill"
-            />
-            <view>
-              {{ dayText(item.start) + formatTime(item.start, "h:m") }}
-            </view>
-            <view style="margin-top: 20rpx"> 整点秒杀 </view>
-          </view>
-          <!-- 已开始且未结束 -->
-          <view
-            v-else-if="item.end > new Date()"
-            :class="['index', 'doing', active_index === index ? 'active' : '']"
-          >
-            <image
-              v-if="active_index === index"
-              src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
-              class="image"
-              mode="scaleToFill"
-            />
-            <CountDown
-              :time="item.end - new Date()"
-              :textColor="active_index === index ? '#FFF' : '#EE2532'"
-              :background="active_index === index ? '#14BF20' : '#FFF'"
-            />
-            <view style="margin-top: 20rpx">
-              {{ item.hour }}点{{ item.min ? "半" : "" }}场
-            </view>
-          </view>
-        </view>
-      </view>
-    </TnScrollList>
-    <view
-      v-for="(item, index) in items"
-      :key="'item' + index"
-      class="item"
-      @click="toBuy(item.id)"
-    >
-      <image class="image" :src="item.path" mode="scaleToFill" />
-      <view class="right">
-        <view class="item_name">{{ item.name }} </view>
-        <view class="tn-flex-center-start">
-          <view class="progress">
+            <!-- 未开始 -->
             <view
-              class="progress_background"
-              :style="{ width: `${item.percentage}%` }"
-            ></view>
-            <view class="text"> 已抢{{ item.percentage }}% </view>
+              v-if="item.start > new Date()"
+              :class="['index', 'wait', active_index === index ? 'active' : '']"
+            >
+              <image
+                v-if="active_index === index"
+                src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
+                class="image"
+                mode="scaleToFill"
+              />
+              <view>
+                {{ dayText(item.start) + formatTime(item.start, "h:m") }}
+              </view>
+              <view style="margin-top: 20rpx"> 整点秒杀 </view>
+            </view>
+            <!-- 已开始且未结束 -->
+            <view
+              v-else-if="item.end > new Date()"
+              :class="[
+                'index',
+                'doing',
+                active_index === index ? 'active' : '',
+              ]"
+            >
+              <image
+                v-if="active_index === index"
+                src="http://mmbiz.qpic.cn/mmbiz_png/4UKU63bxibhShtTUhH934Jtia8VR1p39plXzlB1BtEQqSLFsiabWVMMHjdgb8Wvxyn5xt5rBADdvYVfZ3U2Nm8F7g/0?wx_fmt=png"
+                class="image"
+                mode="scaleToFill"
+              />
+              <CountDown
+                :time="item.end - new Date()"
+                :textColor="active_index === index ? '#FFF' : '#EE2532'"
+                :background="active_index === index ? '#14BF20' : '#FFF'"
+              />
+              <view style="margin-top: 20rpx">
+                {{ item.hour }}点{{ item.min ? "半" : "" }}场
+              </view>
+            </view>
           </view>
-          <view class="limit"> 限购{{ item.total }}件 </view>
         </view>
-        <view
-          :class="[
-            'buy',
-            indexs[active_index]?.start < new Date() ? 'doing' : 'wait',
-          ]"
-        >
-          <view class="flash"> 秒杀￥ {{ item.flash_price }} </view>
-          <view class="old"> ￥{{ item.price }} </view>
+      </TnScrollList>
+    </view>
+    <view class="items">
+      <view
+        v-for="(item, index) in items"
+        :key="'item' + index"
+        class="item"
+        @click="toBuy(item.id)"
+      >
+        <image class="image" :src="item.path" mode="scaleToFill" />
+        <view class="right">
+          <view class="item_name">{{ item.name }} </view>
+          <view class="tn-flex-center-start">
+            <view class="progress">
+              <view
+                class="progress_background"
+                :style="{ width: `${item.percentage}%` }"
+              ></view>
+              <view class="text"> 已抢{{ item.percentage }}% </view>
+            </view>
+            <view class="limit"> 限购{{ item.total }}件 </view>
+          </view>
+          <view
+            :class="[
+              'buy',
+              indexs[active_index]?.start < new Date() ? 'doing' : 'wait',
+            ]"
+          >
+            <view class="flash"> 秒杀￥ {{ item.flash_price }} </view>
+            <view class="old"> ￥{{ item.price }} </view>
+          </view>
         </view>
       </view>
     </view>
@@ -87,7 +95,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { nextTick, getCurrentInstance, ref } from "vue"
 import { onShow } from "@dcloudio/uni-app"
 
 import TnScrollList from "@tuniao/tnui-vue3-uniapp/components/scroll-list/src/scroll-list.vue"
@@ -102,7 +110,7 @@ const changeIndex = (index) => {
   active_index.value = index
   get_goods_list(indexs.value[index].id).then((res) => {
     console.log(res)
-    items.value = res.data
+    items.value = [...res.data, ...res.data]
   })
 }
 
@@ -149,8 +157,21 @@ const dayText = (time) => {
   return day + "天后"
 }
 
+const instance = getCurrentInstance()
+
 onShow(() => {
   getData()
+  //获取dom元素
+  nextTick(() => {
+    uni
+      .createSelectorQuery()
+      .in(instance)
+      .select(".header")
+      .boundingClientRect((rect) => {
+        console.log(rect)
+      })
+      .exec()
+  })
 })
 
 var page = 1
@@ -226,12 +247,19 @@ var page = 1
   }
 }
 
+.items {
+  position: sticky;
+  top: 250rpx;
+  height: calc(100vh - 300rpx);
+  overflow: auto;
+  background: #fff;
+}
+
 .item {
   width: 100%;
   margin: 0 auto;
   padding: 20rpx;
   display: flex;
-  background: #fff;
 
   .image {
     width: 200rpx;

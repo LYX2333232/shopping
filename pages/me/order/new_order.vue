@@ -239,12 +239,12 @@ var shopping_cart_ids
  */
 const getOrderPrice = () => {
   const address = order.value.address
-  console.log(address)
   // 秒杀商品
   if (flash_com_id) {
     get_order_price({ flash_com_id, com_cont, address_id: address?.id }).then(
       (res) => {
         order.value = {
+          ...order.value,
           ...res.data,
           com_item: [res.data.com_item],
           address,
@@ -257,6 +257,7 @@ const getOrderPrice = () => {
   if (teamwork_com_id) {
     get_order_price({ teamwork_com_id, com_cont }).then((res) => {
       order.value = {
+        ...order.value,
         ...res.data,
         com_item: [res.data.com_item],
         address,
@@ -270,20 +271,13 @@ const getOrderPrice = () => {
   get_order_price({
     ids,
     address_id: address?.id,
-    coupon_id: order.value.coupon?.id,
+    coupon_id: order.value.coupon?.couup_id,
   }).then((res) => {
-    console.log(res.data)
     order.value = {
+      ...order.value,
       ...res.data,
       address,
     }
-  })
-  get_usable_coupon({ ids }).then((res) => {
-    usable_list.value = res.data.keyong.map((item) => ({
-      ...item,
-      isSelect: false,
-    }))
-    unusable_list.value = res.data.bukeyong
   })
 }
 
@@ -332,6 +326,7 @@ const selectCoupon = (coupon) => {
 }
 // 计算使用优惠券降价
 const coupon_price = computed(() => {
+  console.log("coupon", order.value.coupon)
   if (!order.value.coupon) return 0
   if (order.value.coupon.type_text === "折扣券")
     return order.value.show_price * (1 - order.value.coupon.price / 10)
@@ -348,7 +343,7 @@ const pay = async () => {
     res = await new_order({
       ids,
       address_id: order.value.address.id,
-      coupon_id: order.value.coupon ? order.value.coupon.id : undefined,
+      coupon_id: order.value.coupon ? order.value.coupon.couup_id : undefined,
       shopping_cart_ids,
     })
   // 拼团商品
@@ -391,7 +386,6 @@ const pay = async () => {
 }
 
 onLoad((options) => {
-  console.log(options)
   flash_com_id = options.flash_id
   teamwork_com_id = options.teamwork_id
   com_cont = options.com_cont
@@ -399,6 +393,13 @@ onLoad((options) => {
     ids = JSON.parse(options.ids)
     if (options.shopping) shopping_cart_ids = JSON.parse(options.shopping)
   }
+  get_usable_coupon({ ids }).then((res) => {
+    usable_list.value = res.data.keyong.map((item) => ({
+      ...item,
+      isSelect: false,
+    }))
+    unusable_list.value = res.data.bukeyong
+  })
   order.value.address = address.address
   getOrderPrice()
 })

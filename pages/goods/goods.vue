@@ -38,7 +38,7 @@
     class="goods"
     style="display: flex; background-color: rgba(255, 255, 255, 1)"
   >
-    <view class="tags">
+    <view class="tags" :style="{ minHeight: `calc(100vh - ${height}px)` }">
       <view
         :class="['tag', tag.id === tag_index ? 'active' : '']"
         v-for="tag in tag_list"
@@ -114,7 +114,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { getCurrentInstance, ref } from "vue"
 import { onShow, onLoad, onHide, onReachBottom } from "@dcloudio/uni-app"
 
 import TnIcon from "@/uni_modules/tuniaoui-vue3/components/icon/src/icon.vue"
@@ -250,6 +250,7 @@ const getData = () => {
 }
 
 const top = ref(0)
+const height = ref(0)
 
 onShow(() => {
   if (uni.getStorageSync("index")) {
@@ -259,6 +260,15 @@ onShow(() => {
 
 onLoad(() => {
   top.value = uni.getMenuButtonBoundingClientRect().top
+  uni
+    .createSelectorQuery()
+    .in(getCurrentInstance())
+    .select(".header")
+    .boundingClientRect((rect) => {
+      console.log(rect)
+      height.value = rect.height
+    })
+    .exec()
   searchInfo.value = uni.getStorageSync("searchInfo") ?? ""
   t_id = uni.getStorageSync("t_id") ?? undefined
   getData()
@@ -314,7 +324,12 @@ onReachBottom(() => {
         width: 72rpx;
         height: 72rpx;
         border-radius: 20rpx;
+        border: 5rpx transparent solid;
         margin-bottom: 8rpx;
+      }
+
+      .text {
+        padding: 1rpx 10rpx;
       }
     }
     .active {
@@ -322,7 +337,6 @@ onReachBottom(() => {
         border: 5rpx solid #14bf20;
       }
       .text {
-        padding: 1rpx 10rpx;
         background: #14bf20;
         border-radius: 20rpx;
         color: #fff;
@@ -338,7 +352,7 @@ onReachBottom(() => {
   .tags {
     width: 250rpx;
     overflow-y: auto;
-    background-color: #f1ede9;
+    background-color: #f5f5f5;
     display: flex;
     flex-direction: column;
     align-items: center;

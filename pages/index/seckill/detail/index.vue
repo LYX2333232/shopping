@@ -109,7 +109,7 @@
         </view>
       </view>
     </view>
-    <view class="detail card">
+    <view class="detail">
       <view class="title">
         <text>商品详情</text>
       </view>
@@ -135,6 +135,7 @@
     @buy="buy"
     @addToCart="addToCart"
     @changeLike="changeLike"
+    :top="alpha"
   />
   <!-- 分享定义在组件goods-nav中 -->
 </template>
@@ -413,7 +414,7 @@ page {
 
 .card {
   width: 710rpx;
-  margin: 20rpx 0;
+  margin-top: 20rpx;
   padding: 0rpx 20rpx;
   background-color: #fff;
   border-radius: 24rpx;
@@ -438,8 +439,8 @@ page {
     margin-right: 15rpx;
     padding: 5rpx 10rpx;
     font-size: 25rpx;
-    color: #999;
-    border: 2rpx solid #999;
+    color: #666;
+    border: 2rpx solid #d0d0d0;
     line-height: 35rpx;
     display: flex;
     align-items: center;
